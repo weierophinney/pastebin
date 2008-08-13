@@ -1,7 +1,7 @@
 <?  $this->dojo()->enable() ?>
 <?  $this->tabContainer()->captureStart('pastebin', array('class' => 'paste-tab')) ?>
 <?= $this->render('paste/_about.phtml') ?>
-<?  $this->contentPane()->captureStart('new-paste', array('title' => 'New Paste', 'class' => 'tab', 'href' => '/paste/new/format/ajax', 'parseOnLoad' => true, 'selected' => true)) ?>
+<?  $this->contentPane()->captureStart('new-paste', array('title' => 'New Paste', 'class' => 'tab', 'selected' => true)) ?>
 <?= $this->form ?>
 <?= $this->contentPane()->captureEnd('new-paste') ?>
 <?= $this->tabContainer()->captureEnd('pastebin') ?>

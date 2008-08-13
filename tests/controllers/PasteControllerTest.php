@@ -74,7 +74,7 @@ class controllers_PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCa
     {
         $this->dispatch('/paste/new');
         $this->assertNotRedirect();
-        $this->assertQuery('.paste #pasteform-type', $this->response->getBody());
+        $this->assertQuery('#pasteform-type', $this->response->getBody());
     }
 
     public function testNewPastePageShouldProvideUserFillin()
