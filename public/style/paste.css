@@ -1,0 +1,51 @@
+#pasteform .paste-tab, #pastebin {
+    margin-left: 1em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    width:   90%;
+    height:  600px;
+}
+
+#pasteform .paste-tab .tab, #pastebin .tab {
+    padding: 1em;
+    overflow: auto;
+}
+
+div.code {
+    white-space: pre;
+    font-size: 0.8em;
+    width: 80em;
+    height: 25em;
+    overflow: auto;
+    background-color: #EEE;
+    padding: 1em;
+    border: 1px solid black;
+}
+
+div.code ol li {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    margin-top: 0;
+}
+
+pre.unformatted {
+    display: none;
+}
+
+form textarea.codeTextarea {
+    width: 90%;
+    height: 25em;
+    overflow: auto;
+}
+
+form textarea.summaryTextarea {
+    width: 90%;
+    height: 1.5em;
+    overflow: auto;
+}
+
+#activePastes {
+    height: 20em;
+    width: 80%;
+}

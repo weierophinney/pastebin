@@ -1,0 +1,18 @@
+<h1>Error!</h1>
+<p><?= $this->message ?></p>
+<? if (isset($this->info)): ?>
+<? if (404 == $this->code): ?>
+    <p>
+        <b>Reason:</b> <?= $this->info ?>
+    </p>
+<? elseif (500 == $this->code): ?>
+    <h2>Exception information:</h2>
+    <p>
+        <b>Message:</b> <?= $this->info->getMessage() ?>
+    </p>
+    <h4>Stack trace:</h4>
+    <pre>
+    <?= $this->info->getTraceAsString() ?>
+    </pre>
+<? endif ?>
+<? endif ?>

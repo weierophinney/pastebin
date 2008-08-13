@@ -1,0 +1,26 @@
+<? 
+Zend_Dojo_View_Helper_Dojo::setUseDeclarative(); 
+$this->dojo()->addStylesheet('/js/dojox/grid/_grid/tundraGrid.css')
+             ->requireModule('dojo.data.ItemFileReadStore')
+             ->requireModule('dojox.grid.Grid');
+?>
+<span dojoType="dojo.data.ItemFileReadStore" jsId="activeStore"
+    url="/paste/active-data/format/ajax"></span>
+<h2>Active Pastes</h2>
+<table id="activePastes" dojoType="dojox.grid.Grid" store="activeStore"
+    clientSort="true" query="{ id: '*' }">
+    <script type="dojo/method" event="onSelected" args="inRowIndex">
+var row = dijit.byId("activePastes").model.getRow(inRowIndex);
+location.href = "/paste/display/id/" + row.id;
+    </script>
+    <thead>
+        <tr>
+            <th field="id" width="16em">ID</th>
+            <th field="type">Type</th>
+            <th field="user">User</th>
+            <th field="summary">Summary</th>
+            <th field="expires">Expires</th>
+        </tr>
+    </thead>
+</table>
+

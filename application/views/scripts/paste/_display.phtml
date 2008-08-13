@@ -1,0 +1,32 @@
+    <? if (isset($this->message)): ?>
+    <p class="error"><?= $this->escape($this->message) ?></p>
+    <? else: ?>
+    <h3>Code (<a id="format-toggle" href="#" onClick="paste.main.unformattedShow();">unformatted</a>)</h3>
+    <div class="code">
+        <?= $this->geshi($this->paste['code'], $this->paste['type']) ?>
+        <pre class="unformatted"><?= $this->escape($this->paste['code']) ?></pre>
+    </div>
+    <? if (!empty($this->paste['summary'])): ?>
+    <h3>Summary</h3>
+    <p class="summary"><?= $this->escape($this->paste['summary']) ?></p>
+    <? endif ?>
+    <p class="metadata">
+        <?= $this->paste['type'] ?> code pasted <?= $this->paste['created'] ?>
+        <?= (empty($this->paste['user'])) ? '' : ' by ' . $this->escape($this->paste['user']) ?>
+        <?= (empty($this->paste['expires'])) ? '' : '; expires ' . $this->paste['expires'] ?>
+    </p>
+    <? if (!empty($this->paste['parent'])): ?>
+    <p class="parent">
+        <a href="/paste/display/id/<?= $this->paste['parent'] ?>">Parent paste (<?= $this->paste['parent'] ?>)</a>
+    </p>
+    <? endif ?>
+    <? if (!empty($this->paste['children'])): ?>
+    <p class="children">Child pastes:</p>
+    <ul class="children">
+    <? foreach ($this->paste['children'] as $child): ?>
+        <li><a href="/paste/display/id/<?= $child ?>"><?= $child ?></a></li>
+    <? endforeach ?>
+    </ul>
+    <? endif ?>
+    <? endif ?>
+
