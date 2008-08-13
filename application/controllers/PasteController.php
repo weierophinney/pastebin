@@ -20,6 +20,8 @@ class PasteController extends Zend_Controller_Action
      */
     public function preDispatch()
     {
+        $request = $this->getRequest();
+
         Zend_Dojo_View_Helper_Dojo::setUseDeclarative();
         $contextSwitch = $this->_helper->contextSwitch;
         $contextSwitch->addContext('ajax', array('suffix' => 'ajax'))
@@ -33,6 +35,16 @@ class PasteController extends Zend_Controller_Action
         $this->view->dojo()->registerModulePath('paste', '../paste')
                            ->requireModule('paste.main')
                            ->addOnLoad('paste.main.init');
+
+        $message = array(
+            'Current request information',
+            array(
+                array('Module', 'Controller', 'Action'),
+                array($request->getModuleName(), $request->getControllerName(), $request->getActionName()),
+            )
+        );
+
+        Zend_Registry::get('log')->table($message);
     }
 
     /**

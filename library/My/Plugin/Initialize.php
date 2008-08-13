@@ -24,6 +24,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     {
         $this->initConfig()
              ->initControllers()
+             ->initLog()
              ->initCache()
              ->initDb()
              ->initView();
@@ -51,7 +52,18 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     public function initControllers()
     {
         $this->front->setControllerDirectory($this->appPath . '/controllers', 'default');
-        $this->front->registerPlugin(Zend_Wildfire_Channel_HttpHeaders::getInstance()); 
+        return $this;
+    }
+
+    public function initLog()
+    {
+        $writer = new Zend_Log_Writer_Firebug();
+        $log    = new Zend_Log($writer);
+
+        $writer->setPriorityStyle(8, 'TABLE');
+        $log->addPriority('TABLE', 8);
+
+        Zend_Registry::set('log', $log);
         return $this;
     }
 
