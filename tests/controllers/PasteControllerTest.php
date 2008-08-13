@@ -81,28 +81,28 @@ class controllers_PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCa
     {
         $this->dispatch('/paste/new');
         $this->assertNotRedirect();
-        $this->assertQuery('.paste #pasteform-user');
+        $this->assertQuery('#pasteform-user');
     }
 
     public function testNewPastePageShouldProvideSummaryFillin()
     {
         $this->dispatch('/paste/new');
         $this->assertNotRedirect();
-        $this->assertQuery('.paste #pasteform-summary', $this->response->getBody());
+        $this->assertQuery('#pasteform-summary', $this->response->getBody());
     }
 
     public function testNewPastePageShouldProvideCodeFillin()
     {
         $this->dispatch('/paste/new');
         $this->assertNotRedirect();
-        $this->assertQuery('.paste #pasteform-code');
+        $this->assertQuery('#pasteform-code');
     }
 
     public function testNewPastePageShouldProvideExpirationSelection()
     {
         $this->dispatch('/paste/new');
         $this->assertNotRedirect();
-        $this->assertQuery('.paste #pasteform-expires');
+        $this->assertQuery('#pasteform-expires');
     }
 
     public function testSavePasteShouldRedirectToNewPasteFormWhenNonPostRequestDetected()
