@@ -51,6 +51,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     public function initControllers()
     {
         $this->front->setControllerDirectory($this->appPath . '/controllers', 'default');
+        $this->front->registerPlugin(Zend_Wildfire_Channel_HttpHeaders::getInstance()); 
         return $this;
     }
 
@@ -69,6 +70,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         $profiler = new Zend_Db_Profiler_Firebug('All DB Queries');
         $db       = Zend_Db::factory($config->cxn);
 
+        $profiler->setEnabled(true);
         $db->setProfiler($profiler);
         Zend_Db_Table_Abstract::setDefaultAdapter($db);
         Zend_Db_Table_Abstract::setDefaultMetadataCache($cache);
