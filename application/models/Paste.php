@@ -34,14 +34,23 @@ class Paste
      */
     public function add(array $data)
     {
-        $form = $this->getForm();
+        $form     = $this->getForm();
+
+        $belongTo = $form->getElementsBelongTo();
+        if (!empty($belongTo) && array_key_exists($belongTo, $data)) {
+            $data = $data[$belongTo];
+        }
+
         if (!$form->isValid($data)) {
             return false;
         }
 
         $values = $form->getValues();
+        if (!empty($belongTo)) {
+            $values = $values[$belongTo];
+        }
 
-        return $this->_getTable()->insert($data);
+        return $this->_getTable()->insert($values);
     }
 
     /**
@@ -88,13 +97,13 @@ class Paste
     /**
      * Retrieve form/input filter
      * 
-     * @return PasteForm
+     * @return Paste_Form
      */
     public function getForm()
     {
         if (null === $this->_form) {
-            require_once dirname(__FILE__) . '/../forms/PasteForm.php';
-            $this->_form = new PasteForm();
+            require_once dirname(__FILE__) . '/Paste/Form.php';
+            $this->_form = new Paste_Form();
         }
         return $this->_form;
     }

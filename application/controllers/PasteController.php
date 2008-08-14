@@ -79,16 +79,12 @@ class PasteController extends Zend_Controller_Action
             return $this->_helper->redirector('new');
         }
 
-        $form = $this->getForm();
-        if (!$form->isValid($request->getPost($form->getElementsBelongTo()))) {
-            $this->view->form = $form;
+        $model = $this->getModel();
+        if (false === ($id = $model->add($request->getPost()))) {
+            $this->view->form = $model->getForm();
             return $this->render('new');
         }
 
-        $data = $form->getValues();
-        $data = $data['pasteform'];
-        $model = $this->getModel();
-        $id = $model->add($data);
         $this->_helper->redirector('display', null, null, array('id' => $id));
     }
 
