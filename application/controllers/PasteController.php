@@ -209,8 +209,10 @@ class PasteController extends Zend_Controller_Action
      */
     public function getForm()
     {
-        require_once dirname(__FILE__) . '/../forms/PasteForm.php';
-        return new PasteForm(array('action' => '/paste/save', 'method' => 'post'));
+        $form = $this->getModel()->getForm();
+        $form->setAction('/paste/save')
+             ->setMethod('post');
+        return $form;
     }
 
     /**

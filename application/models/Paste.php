@@ -15,6 +15,13 @@ class Paste
     protected $_fields;
 
     /**
+     * Form representation/input filter of model data
+     * 
+     * @var PasteForm
+     */
+    protected $_form;
+
+    /**
      * @var Zend_Db_Table_Abstract
      */
     protected $_table;
@@ -27,12 +34,13 @@ class Paste
      */
     public function add(array $data)
     {
-        $fields = $this->_getFields();
-        foreach ($data as $key => $value) {
-            if (!in_array($key, $fields)) {
-                unset($data[$key]);
-            }
+        $form = $this->getForm();
+        if (!$form->isValid($data)) {
+            return false;
         }
+
+        $values = $form->getValues();
+
         return $this->_getTable()->insert($data);
     }
 
@@ -75,6 +83,20 @@ class Paste
                ->order('created DESC');
 
         return $adapter->fetchAll($select);
+    }
+
+    /**
+     * Retrieve form/input filter
+     * 
+     * @return PasteForm
+     */
+    public function getForm()
+    {
+        if (null === $this->_form) {
+            require_once dirname(__FILE__) . '/../forms/PasteForm.php';
+            $this->_form = new PasteForm();
+        }
+        return $this->_form;
     }
 
     /**
