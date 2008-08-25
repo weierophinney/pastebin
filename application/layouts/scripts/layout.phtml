@@ -1,4 +1,9 @@
-<?  $content = $this->render('_layout.phtml') ?>
+<?
+$content = $this->render('_layout.phtml');
+if (Zend_Controller_Front::getInstance()->getRequest()->getParam('nojs', false)) {
+    $this->dojo()->disable();
+}
+?>
 <html>
 <head>
     <?= $this->headTitle() ?> 
