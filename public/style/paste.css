@@ -1,3 +1,12 @@
+#layout {
+    width:  100%;
+    height: 100%;
+}
+
+#navPane {
+    width: 200px;
+}
+
 #pasteform .paste-tab, #pastebin {
     margin-left: 1em;
     margin-top: 1em;
@@ -46,6 +55,36 @@ form textarea.summaryTextarea {
 }
 
 #activePastes {
-    height: 20em;
+    height: 25em;
     width: 80%;
+}
+
+#headline {
+    height: 2.5em;
+    background-color: #CCCCCC;
+}
+
+#headline h1 {
+    font-height: 1.2em;
+    margin: 0;
+    padding: 0 0 0 0.5em;
+}
+
+#headline a {
+    text-decoration: none;
+    color: black;
+}
+
+#headline a:hover {
+    text-decoration: underline;
+}
+
+#footer {
+    height: 1.5em;
+    background-color: #CCCCCC;
+}
+
+#footer p {
+    margin: 0;
+    padding: 0 0 0 0.5em;
 }

@@ -33,12 +33,13 @@ paste.main = {
     },
 
     init: function() {
+        dojo.require("dijit.layout.ContentPane");
+        dojo.require("dijit.layout.BorderContainer");
+        dojo.require("dijit.layout.TabContainer");
         dojo.require("dijit.form.FilteringSelect");
         dojo.require("dijit.form.ValidationTextBox");
         dojo.require("dijit.form.SimpleTextarea");
         dojo.require("dijit.form.Button");
-        dojo.require("dijit.layout.ContentPane");
-        dojo.require("dijit.layout.TabContainer");
         dojo.require("dijit.form.Form");
         dojo.require("dojox.grid.Grid");
         dojo.require("dojo.data.ItemFileReadStore");

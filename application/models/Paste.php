@@ -94,6 +94,18 @@ class Paste
         return $adapter->fetchAll($select);
     }
 
+    public function fetchActiveCount()
+    {
+        $table   = $this->_getTable();
+        $adapter = $table->getAdapter();
+        $select  = $adapter->select();
+        $select->from('paste', array('count' => 'COUNT(*)'))
+               ->where('expires IS NULL OR expires = "" OR expires > ?', date('Y-m-d H:i:s'))
+               ->order('created DESC');
+
+        return $adapter->fetchOne($select);
+    }
+
     /**
      * Retrieve form/input filter
      * 

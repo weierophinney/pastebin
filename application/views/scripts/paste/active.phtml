@@ -4,6 +4,7 @@
 <?= $this->render('paste/_about.phtml') ?>
 <?= $this->render('paste/_new-paste.phtml') ?>
 <?  $this->contentPane()->captureStart('active', array('title' => 'Active Pastes', 'selected' => true), array('class' => 'tab')) ?>
+    <h2>Active Pastes</h2>
     <?= $this->render('paste/active.ajax.phtml') ?>
 <?= $this->contentPane()->captureEnd('active') ?>
 <?= $this->tabContainer()->captureEnd('pastebin') ?>

@@ -127,6 +127,16 @@ class models_PasteTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(2, count($paste['children']));
         $this->assertEquals(array($child1, $child2), $paste['children']);
     }
+
+    public function testFetchActiveCountShouldReturnNumberOfActivePastes()
+    {
+        $data   = $this->getData();
+        for ($i = 0; $i < 10; ++$i) {
+            $this->model->add($data);
+        }
+        $count = $this->model->fetchActiveCount();
+        $this->assertEquals(10, $count);
+    }
 }
 
 // Call models_PasteTest::main() if this source file is executed directly.

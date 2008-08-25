@@ -93,7 +93,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     public function initView()
     {
         $layout = Zend_Layout::startMvc(array(
-            'layoutPath' => $this->appPath . '/views/layouts'
+            'layoutPath' => $this->appPath . '/layouts/scripts'
         ));
 
         $view = $layout->getView();
@@ -106,10 +106,10 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         $view->headTitle('Pastebin');
         $view->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=utf-8');
         $view->dojo()->setDjConfigOption('usePlainJson', true)
-                     ->setDjConfigOption('isDebug', true)
+                     // ->setDjConfigOption('isDebug', true)
                      ->addStylesheetModule('dijit.themes.tundra')
                      ->addStylesheet('/js/dojox/grid/_grid/tundraGrid.css')
-                     ->addStylesheet('/js/dojo/resources/dojo.css')
+                     // ->addStylesheet('/js/dojo/resources/dojo.css')
                      ->setLocalPath('/js/dojo/dojo.js')
                      // ->addLayer('/js/paste/main.js')
                      ->addLayer('/js/paste/paste.js')

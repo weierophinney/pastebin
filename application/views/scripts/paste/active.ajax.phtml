@@ -6,7 +6,6 @@ $this->dojo()->addStylesheet('/js/dojox/grid/_grid/tundraGrid.css')
 ?>
 <span dojoType="dojo.data.ItemFileReadStore" jsId="activeStore"
     url="/paste/active-data/format/ajax"></span>
-<h2>Active Pastes</h2>
 <table id="activePastes" dojoType="dojox.grid.Grid" store="activeStore"
     clientSort="true" query="{ id: '*' }">
     <script type="dojo/method" event="onSelected" args="inRowIndex">
