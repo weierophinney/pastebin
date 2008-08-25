@@ -53,6 +53,7 @@ paste.main = {
                 dojo.query(query).style("display", "none");
             }
         );
+        dojo.style("footer", "visibility", "visible");
     },
 
     findParentForm: function(elementNode) {

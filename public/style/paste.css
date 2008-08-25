@@ -80,6 +80,7 @@ form textarea.summaryTextarea {
 }
 
 #footer {
+    visibility: collapse;
     height: 1.5em;
     background-color: #CCCCCC;
 }
