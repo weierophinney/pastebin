@@ -157,8 +157,8 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
                      ->addStylesheetModule('dijit.themes.tundra')
                      ->addStylesheet('/js-src/dojox/grid/_grid/tundraGrid.css')
                      ->setLocalPath('/js/dojo/dojo.js')
-                     ->addLayer('/js/paste/main.js')
-                     // ->addLayer('/js/paste/paste.js')
+                     // ->addLayer('/js/paste/main.js')
+                     ->addLayer('/js/paste/paste.js')
                      ->addJavascript('paste.main.init();')
                      ->disable();
 

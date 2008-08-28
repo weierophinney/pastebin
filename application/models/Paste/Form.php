@@ -94,10 +94,10 @@ class Paste_Form extends Zend_Dojo_Form
         if (null === $this->_languages) {
             $this->_languages = array(
                 'css'        => 'CSS',
-                'django'     => 'Django',
                 'html'       => 'HTML',
                 'javascript' => 'Javascript',
                 'php'        => 'PHP',
+                'text'       => 'Plain Text',
                 'python'     => 'Python',
                 'xml'        => 'XML',
             );

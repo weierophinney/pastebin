@@ -2,7 +2,10 @@
     <p class="error"><?= $this->escape($this->message) ?></p>
 <? else: ?>
     <h3 class="pastebin-display">
-        Code (<a id="format-toggle" href="#" onClick="paste.main.unformattedShow();">unformatted</a>)
+        Code 
+        <? if ('text' != $this->paste['type']): ?>
+        (<a id="format-toggle" href="#" onClick="paste.main.unformattedShow();">unformatted</a>)
+        <? endif ?>
         <span class="permalink">[<a href="<?= $this->url(array('id' => $this->paste['id'])) ?>">Permalink</a>]</span>
     </h3>
     <div id="pastecode" class="highlight">
@@ -31,15 +34,15 @@
     </ul>
     <? endif ?>
 <? endif ?>
-<?  switch ($this->paste['type']) {
+<?  if ('text' == $this->paste['type']) {
+        return;
+    }
+    switch ($this->paste['type']) {
         case 'html':
             $this->dojo()->requireModule('dojox.highlight.languages.html');
             break;
         case 'xml':
             $this->dojo()->requireModule('dojox.highlight.languages.xml');
-            break;
-        case 'django':
-            $this->dojo()->requireModule('dojox.highlight.languages.django');
             break;
         case 'python':
             $this->dojo()->requireModule('dojox.highlight.languages.python');
