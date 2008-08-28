@@ -15,21 +15,21 @@ paste.main = {
     },
 
     unformattedShow: function() {
-        dojo.query(".formatted").style("display", "none");
-        dojo.query(".unformatted").style("display", "block");
-        dojo.query("#format-toggle").forEach(function (node) {
-            dojo.attr(node, "onClick", "paste.main.formattedShow()");
-            node.innerHTML = "formatted";
-        });
+        dojo.toggleClass("pastecode", "highlight", false);
+        var linkNode = dojo.byId("format-toggle");
+        dojo.attr(linkNode, "onClick", "paste.main.formattedShow()");
+        linkNode.innerHTML = "formatted";
     },
 
     formattedShow: function() {
-        dojo.query(".unformatted").style("display", "none");
-        dojo.query(".formatted").style("display", "block");
-        dojo.query("#format-toggle").forEach(function (node) {
-            dojo.attr(node, "onClick", "paste.main.unformattedShow()");
-            node.innerHTML = "unformatted";
+        dojo.toggleClass("pastecode", "highlight", true);
+        dojo.query("#pastecode pre code").forEach(function(node) {
+            dojox.highlight.init(node);
         });
+
+        var linkNode = dojo.byId("format-toggle");
+        dojo.attr(linkNode, "onClick", "paste.main.unformattedShow()");
+        linkNode.innerHTML = "unformatted";
     },
 
     init: function() {
@@ -63,4 +63,3 @@ paste.main = {
         return elementNode;
     },
 };
-

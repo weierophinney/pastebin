@@ -79,6 +79,13 @@ form textarea.summaryTextarea {
     text-decoration: underline;
 }
 
+#navPane {
+    width: 225px;
+    margin-left: 1em;
+    margin-top: 1em;
+    padding-left: 1em;
+}
+
 #footer {
     visibility: collapse;
     height: 1.5em;
@@ -89,3 +96,12 @@ form textarea.summaryTextarea {
     margin: 0;
     padding: 0 0 0 0.5em;
 }
+
+div#pastecode {
+    padding: 1em;
+    border: 1px solid black;
+    width: 80%;
+    overflow: auto;
+    background-color: #FFFFF1;
+}
+

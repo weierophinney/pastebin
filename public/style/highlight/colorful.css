@@ -1,0 +1,43 @@
+/* Pygments colorful style */
+
+.highlight code .comment {color: #888}
+.highlight code .comment.preproc {color: #579}
+.highlight code .comment.special {color: #c00; font-weight: bold}
+
+.highlight code .keyword {color: #080; font-weight: bold}
+.highlight code .keyword.pseudo {color: #038}
+.highlight code .keyword.type {color: #339}
+
+.highlight code .operator {color: #333}
+.highlight code .operator.word {color: #000; font-weight: bold}
+
+.highlight code .name.builtin {color: #007020}
+.highlight code .name.function {color: #06b; font-weight: bold}
+.highlight code .name.class {color: #b06; font-weight: bold}
+.highlight code .name.namespace {color: #0e84b5; font-weight: bold}
+.highlight code .name.exception {color: #f00; font-weight: bold}
+.highlight code .name.variable {color: #963}
+.highlight code .name.variable.instance {color: #33b}
+.highlight code .name.variable.class {color: #369}
+.highlight code .name.variable.global {color: #d70; font-weight: bold}
+.highlight code .name.constant {color: #036; font-weight: bold}
+.highlight code .name.label {color: #970; font-weight: bold}
+.highlight code .name.entity {color: #800; font-weight: bold}
+.highlight code .name.attribute {color: #00c}
+.highlight code .name.tag {color: #070}
+.highlight code .name.decorator {color: #555; font-weight: bold}
+
+.highlight code .string {background-color: #fff0f0}
+.highlight code .string.char {color: #04d; background-color: transparent}
+.highlight code .string.doc {color: #d42; background-color: transparent}
+.highlight code .string.interpol {background-color: #eee}
+.highlight code .string.escape {color: #666; font-weight: bold}
+.highlight code .string.regex {color: #000; background-color: #fff0f0}
+.highlight code .string.symbol {color: #a60; background-color: transparent}
+.highlight code .string.other {color: #d20}
+
+.highlight code .number {color: #60e}
+.highlight code .number.integer {color: #00d}
+.highlight code .number.float {color: #60e}
+.highlight code .number.hex {color: #058}
+.highlight code .number.oct {color: #40e}

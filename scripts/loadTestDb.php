@@ -1,4 +1,8 @@
 <?php
+/**
+ * Script for creating and loading test database
+ */
+
 if (!class_exists('Zend_Registry', false) || !Zend_Registry::isRegistered('config')) {
     $base  = realpath(dirname(__FILE__) . '/../');
     $paths = array(

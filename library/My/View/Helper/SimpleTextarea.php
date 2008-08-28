@@ -1,21 +1,31 @@
 <?php
+/** Zend_Dojo_View_Helper_Dijit */
+require_once 'Zend/Dojo/View/Helper/Dijit.php';
+
+/**
+ * dijit.form.SimpleTextarea view helper
+ * 
+ * @uses       Zend_Dojo_View_Helper_Dijit
+ * @category   My
+ * @package    My_View
+ * @subpackage Helper
+ * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
+ * @version    $Id: $
+ */
 class My_View_Helper_SimpleTextarea extends Zend_Dojo_View_Helper_Dijit
 {
     /**
-     * Dijit being used
-     * @var string
+     * @var string Dijit type
      */
     protected $_dijit  = 'dijit.form.SimpleTextarea';
 
     /**
-     * HTML element type
-     * @var string
+     * @var string HTML element type
      */
     protected $_elementType = 'textarea';
 
     /**
-     * Dojo module to use
-     * @var string
+     * @var string Dojo module
      */
     protected $_module = 'dijit.form.SimpleTextarea';
 

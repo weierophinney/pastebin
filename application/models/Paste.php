@@ -94,6 +94,11 @@ class Paste
         return $adapter->fetchAll($select);
     }
 
+    /**
+     * Fetch count of active pastes
+     * 
+     * @return int
+     */
     public function fetchActiveCount()
     {
         $table   = $this->_getTable();

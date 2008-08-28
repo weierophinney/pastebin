@@ -4,13 +4,14 @@
  * 
  * @uses      Zend_Controller_Action
  * @package   Paste
- * @author    Matthew Weier O'Phinney <matthew@weierophinney.net> 
- * @copyright Copyright (C) 2008 - Present, Matthew Weier O'Phinney
  * @license   New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version   $Id: $
  */
 class PasteController extends Zend_Controller_Action
 {
+    /**
+     * @var Paste
+     */
     protected $_model;
 
     /**
@@ -174,10 +175,20 @@ class PasteController extends Zend_Controller_Action
         $this->_helper->redirector('display', null, null, array('id' => $id));
     }
 
+    /**
+     * List active pastes
+     * 
+     * @return void
+     */
     public function activeAction()
     {
     }
 
+    /**
+     * Retrieve data representing active pastes
+     * 
+     * @return void
+     */
     public function activeDataAction()
     {
         $model = $this->getModel();

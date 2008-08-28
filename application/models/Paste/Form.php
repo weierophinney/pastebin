@@ -45,9 +45,6 @@ class Paste_Form extends Zend_Dojo_Form
             'label'        => 'Language:',
             'multiOptions' => $languages,
             'required'     => true,
-            'validators'   => array(
-                array('InArray', true, array(array_keys($languages))),
-            ),
         ));
 
         $this->addElement('ValidationTextBox', 'user', array(
@@ -66,9 +63,6 @@ class Paste_Form extends Zend_Dojo_Form
         $this->addElement('FilteringSelect', 'expires', array(
             'label'        => 'Expiration:',
             'multiOptions' => $expiries,
-            'validators'   => array(
-                array('InArray', true, array(array_keys($expiries))),
-            ),
         ));
 
         $this->addElement('SimpleTextarea', 'code', array(
@@ -98,20 +92,15 @@ class Paste_Form extends Zend_Dojo_Form
     protected function _getLanguages()
     {
         if (null === $this->_languages) {
-            $cache = Zend_Registry::get('cache');
-            if (!$languages = $cache->load('PasteForm_Languages')) {
-                $config = Zend_Registry::get('config');
-                $di = new DirectoryIterator($config->paths->libPath . '/geshi');
-                $ri = new RegexIterator($di, '/\.php$/');
-                $languages = array();
-                foreach ($ri as $match) {
-                    $file = $match->getFilename();
-                    $lang = substr($file, 0, strlen($file) - 4);
-                    $languages[$lang] = $lang;
-                }
-                $cache->save($languages, 'PasteForm_Languages', array('form', 'data'));
-            }
-            $this->_languages = $languages;
+            $this->_languages = array(
+                'css'        => 'CSS',
+                'django'     => 'Django',
+                'html'       => 'HTML',
+                'javascript' => 'Javascript',
+                'php'        => 'PHP',
+                'python'     => 'Python',
+                'xml'        => 'XML',
+            );
         }
         return $this->_languages;
     }

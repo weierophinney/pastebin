@@ -1,10 +1,19 @@
 <?php
 require_once 'Zend/Controller/Action.php';
 
+/**
+ * ErrorController 
+ * 
+ * @uses      Zend_Controller_Action
+ * @package   Paste
+ * @license   New BSD {@link http://framework.zend.com/license/new-bsd}
+ * @version   $Id: $
+ */
 class ErrorController extends Zend_Controller_Action
 {
     public function errorAction()
     {
+        $this->_helper->viewRenderer->setViewSuffix('phtml');
         $errors = $this->_getParam('error_handler');
 
         switch ($errors->type) {

@@ -1,0 +1,58 @@
+/*
+You can use this file as is or as a starting point for you own styling
+*/
+
+.highlight .string,
+.highlight .function .title,
+.highlight .class .title, 
+.highlight .tag .attribute .value,
+.highlight .css .rules .value,
+.highlight .preprocessor,
+.highlight .ruby .symbol,
+.highlight .ruby .instancevar,
+.highlight .ruby .class .parent,
+.highlight .built_in,
+.highlight .sql .aggregate,
+.highlight .django .template_tag,
+.highlight .django .variable,
+.highlight .smalltalk .class {
+	color: #880000;
+}
+
+.highlight .comment,
+.highlight .java .annotation,
+.highlight .template_comment {
+	color: #888888;
+}
+
+.highlight .number,
+.highlight .regexp,
+.highlight .javascript .literal,
+.highlight .smalltalk .symbol,
+.highlight .smalltalk .char {
+	color: #008800;
+}
+
+.highlight .javadoc,
+.highlight .ruby .string,
+.highlight .python .decorator,
+.highlight .django .filter .argument,
+.highlight .smalltalk .localvars,
+.highlight .smalltalk .array,
+.highlight .css .attr_selector,
+.highlight .xml .pi {
+	color: #8888FF;
+}
+
+.highlight .keyword,
+.highlight .css .id,
+.highlight .phpdoc,
+.highlight .function .title,
+.highlight .class .title,
+.highlight .vbscript .built_in,
+.highlight .sql .aggregate,
+.highlight .rsl .built_in,
+.highlight .smalltalk .class,
+.highlight .xml .tag .title {
+	font-weight: bold;
+}

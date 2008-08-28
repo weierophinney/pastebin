@@ -1,14 +1,25 @@
 <?php
+/** Zend_Controller_Plugin_Abstract */
+require_once 'Zend/Controller/Plugin/Abstract.php';
+
 /**
  * Plugin to initialize application state
  * 
  * @uses       Zend_Controller_Plugin_Abstract
- * @package    My
- * @subpackage Plugin
+ * @category   My
+ * @package    My_Plugin
+ * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version    $Id: $
  */
 class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
 {
+    /**
+     * Constructor
+     * 
+     * @param  string $basePath Base path of application
+     * @param  string $env Application environment
+     * @return void
+     */
     public function __construct($basePath, $env = 'production')
     {
         $this->env      = $env;
@@ -20,6 +31,12 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         $this->front    = Zend_Controller_Front::getInstance();
     }
 
+    /**
+     * Route Startup handler
+     * 
+     * @param  Zend_Controller_Request_Abstract $request 
+     * @return void
+     */
     public function routeStartup(Zend_Controller_Request_Abstract $request)
     {
         $this->initConfig()
@@ -30,6 +47,11 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
              ->initView();
     }
 
+    /**
+     * Initialize configuration
+     * 
+     * @return My_Plugin_Initialize
+     */
     public function initConfig()
     {
         $config = new Zend_Config_Ini($this->appPath . '/configs/paste.ini', $this->env, true);
@@ -49,12 +71,22 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         return $this;
     }
 
+    /**
+     * Initialize controller directories
+     * 
+     * @return My_Plugin_Initialize
+     */
     public function initControllers()
     {
         $this->front->setControllerDirectory($this->appPath . '/controllers', 'default');
         return $this;
     }
 
+    /**
+     * Initialize logger(s)
+     * 
+     * @return My_Plugin_Initialize
+     */
     public function initLog()
     {
         $writer = new Zend_Log_Writer_Firebug();
@@ -67,6 +99,11 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         return $this;
     }
 
+    /**
+     * Initialize caching
+     * 
+     * @return My_Plugin_Initialize
+     */
     public function initCache()
     {
         $config = $this->config->cache;
@@ -75,6 +112,11 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         return $this;
     }
 
+    /**
+     * Initialize database
+     * 
+     * @return My_Plugin_Initialize
+     */
     public function initDb()
     {
         $config   = $this->config->db;
@@ -90,6 +132,11 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         return $this;
     }
 
+    /**
+     * Initialize view and layouts
+     * 
+     * @return My_Plugin_Initialize
+     */
     public function initView()
     {
         $layout = Zend_Layout::startMvc(array(
@@ -108,17 +155,22 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         $view->dojo()->setDjConfigOption('usePlainJson', true)
                      // ->setDjConfigOption('isDebug', true)
                      ->addStylesheetModule('dijit.themes.tundra')
-                     ->addStylesheet('/js/dojox/grid/_grid/tundraGrid.css')
-                     // ->addStylesheet('/js/dojo/resources/dojo.css')
+                     ->addStylesheet('/js-src/dojox/grid/_grid/tundraGrid.css')
                      ->setLocalPath('/js/dojo/dojo.js')
-                     // ->addLayer('/js/paste/main.js')
-                     ->addLayer('/js/paste/paste.js')
+                     ->addLayer('/js/paste/main.js')
+                     // ->addLayer('/js/paste/paste.js')
                      ->addJavascript('paste.main.init();')
                      ->disable();
 
         return $this;
     }
 
+    /**
+     * Retrieve cache object based on configuration
+     * 
+     * @param  Zend_Config $config 
+     * @return Zend_Cache
+     */
     protected function _getCache(Zend_Config $config)
     {
         $cache = Zend_Cache::factory(

@@ -1,0 +1,36 @@
+/* Pygments pastie style */
+
+.highlight code .comment {color: #888}
+.highlight code .comment.preproc {color: #c00; font-weight: bold}
+.highlight code .comment.special {color: #c00; font-weight: bold; background-color: #fff0f0}
+
+.highlight code .keyword {color: #008800; font-weight: bold}
+.highlight code .keyword.pseudo {font-weight: normal}
+.highlight code .keyword.type {color: #888}
+
+.highlight code .operator.word {color: #080}
+
+.highlight code .name.builtin {color: #038}
+.highlight code .name.function {color: #06b; font-weight: bold}
+.highlight code .name.class {color: #b06; font-weight: bold}
+.highlight code .name.namespace {color: #b06; font-weight: bold}
+.highlight code .name.exception {color: #b06; font-weight: bold}
+.highlight code .name.variable {color: #369}
+.highlight code .name.variable.class {color: #369}
+.highlight code .name.variable.instance {color: #33b}
+.highlight code .name.variable.global {color: #d70}
+.highlight code .name.constant {color: #036; font-weight: bold}
+.highlight code .name.label {color: #369; font-style: italic}
+.highlight code .name.attribute {color: #369}
+.highlight code .name.tag {color: #b06; font-weight: bold}
+.highlight code .name.decorator {color: #555}
+.highlight code .name.property {color: #369; font-weight: bold}
+
+.highlight code .string {color: #d20; background-color: #fff0f0}
+.highlight code .string.interpol {color: #33b}
+.highlight code .string.escape {color: #04d}
+.highlight code .string.regex {color: #080; background-color: #fff0f0}
+.highlight code .string.symbol {color: #a60}
+.highlight code .string.other {color: #2b2; background-color: #f0fff0}
+
+.highlight code .number {color: #00d; font-weight: bold}

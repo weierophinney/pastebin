@@ -1,0 +1,28 @@
+/* Pygments autumn style */
+
+.highlight code .comment {color: #aaa; font-style: italic}
+.highlight code .comment.preproc {color: #4c8317; font-style: normal}
+.highlight code .comment.special {color: #00a}
+
+.highlight code .keyword {color: #00a}
+.highlight code .keyword.type {color: #0aa}
+
+.highlight code .operator.word {color: #00a}
+
+.highlight code .name.builtin {color: #0aa}
+.highlight code .name.function {color: #0a0}
+.highlight code .name.class {color: #0a0; text-decoration: underline}
+.highlight code .name.namespace {color: #0aa; text-decoration: underline}
+.highlight code .name.exception {color: #D2413A; font-weight: bold}
+.highlight code .name.variable {color: #a00}
+.highlight code .name.constant {color: #a00}
+.highlight code .name.entity {color: #800; font-weight: bold}
+.highlight code .name.attribute {color: #1e90ff}
+.highlight code .name.tag {color: #1e90ff; font-weight: bold}
+.highlight code .name.decorator {color: #888}
+
+.highlight code .string {color: #a50}
+.highlight code .string.regex {color: #099}
+.highlight code .string.symbol {color: #00a}
+
+.highlight code .number {color: #099}

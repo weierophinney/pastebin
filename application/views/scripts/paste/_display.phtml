@@ -1,10 +1,12 @@
-    <? if (isset($this->message)): ?>
+<? if (isset($this->message)): ?>
     <p class="error"><?= $this->escape($this->message) ?></p>
-    <? else: ?>
-    <h3>Code (<a id="format-toggle" href="#" onClick="paste.main.unformattedShow();">unformatted</a>)</h3>
-    <div class="code">
-        <?= $this->geshi($this->paste['code'], $this->paste['type']) ?>
-        <pre class="unformatted"><?= $this->escape($this->paste['code']) ?></pre>
+<? else: ?>
+    <h3 class="pastebin-display">
+        Code (<a id="format-toggle" href="#" onClick="paste.main.unformattedShow();">unformatted</a>)
+        <span class="permalink">[<a href="<?= $this->url(array('id' => $this->paste['id'])) ?>">Permalink</a>]</span>
+    </h3>
+    <div id="pastecode" class="highlight">
+        <pre><code class="<?= $this->paste['type'] ?>"><?= $this->escape($this->paste['code']) ?></code></pre>
     </div>
     <? if (!empty($this->paste['summary'])): ?>
     <h3>Summary</h3>
@@ -28,5 +30,24 @@
     <? endforeach ?>
     </ul>
     <? endif ?>
-    <? endif ?>
-
+<? endif ?>
+<?  switch ($this->paste['type']) {
+        case 'html':
+            $this->dojo()->requireModule('dojox.highlight.languages.html');
+            break;
+        case 'xml':
+            $this->dojo()->requireModule('dojox.highlight.languages.xml');
+            break;
+        case 'django':
+            $this->dojo()->requireModule('dojox.highlight.languages.django');
+            break;
+        case 'python':
+            $this->dojo()->requireModule('dojox.highlight.languages.python');
+            break;
+        default:
+            $this->dojo()->requireModule('dojox.highlight.languages._www');
+            break;
+    }
+    $this->dojo()->addStylesheet("/style/highlight/highlight.css");
+    $this->dojo()->addStylesheet("/style/highlight/autumn.css");
+    $this->dojo()->addOnLoad('paste.main.formattedShow');
