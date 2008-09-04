@@ -7,9 +7,23 @@ INSTALLATION
 
     tar xzf <packagefile>
 
+2. I recommend creating a symlink to the directory created when
+   extracting from the archive:
+
+     ln -s /var/www/pastebin /path/to/<packagedir>
+
+   (Assuming /var/www contains directories for your vhosts.)
+
 2. Symlink the library/Zend/ directory of your Zend Framework
    installation (1.6.0RC1 or later, or current trunk) to library/Zend/
    -- this is done to keep the tarball size down.
+
+   Alternately, you can grab current trunk or the 1.6 release branch
+   from SVN using:
+
+     svn co http://framework.zend.com/svn/framework/standard/trunk/library/Zend
+
+     svn co http://framework.zend.com/svn/framework/standard/branches/release-1.6/library/Zend
 
 3. Make the directory application/data and all files within it world
    writeable; this can be accomplished on *nix systems using:
@@ -20,12 +34,12 @@ INSTALLATION
    subdirectory. As an example:
 
     <VirtualHost *>
-        DocumentRoot /home/matthew/sites/pastebin-0.9.0beta/public
+        DocumentRoot /var/www/pastebin/public
         ServerName paste.local
         ErrorLog /var/log/apache2/paste.local-error_log
         CustomLog /var/log/apache2/paste.local-access_log common
 
-        <Directory /home/matthew/sites/pastebin-0.9.0beta/public>
+        <Directory /var/www/pastebin/public>
             DirectoryIndex index.php
             AllowOverride All
             Order allow,deny

@@ -1,4 +1,5 @@
 php_value date.timezone "America/New_York"
+php_value short_open_tag 1
 
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} -s [OR]
