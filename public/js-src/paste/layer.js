@@ -1,5 +1,21 @@
-dojo.provide("paste.main");
-paste.main = {
+dojo.provide("paste.layer");
+
+dojo.require("dijit.layout.ContentPane");
+dojo.require("dijit.layout.BorderContainer");
+dojo.require("dijit.layout.TabContainer");
+dojo.require("dijit.form.FilteringSelect");
+dojo.require("dijit.form.ValidationTextBox");
+dojo.require("dijit.form.SimpleTextarea");
+dojo.require("dijit.form.Button");
+dojo.require("dijit.form.Form");
+dojo.require("dojox.grid.Grid");
+dojo.require("dojo.data.ItemFileReadStore");
+dojo.require("dojo.parser");
+dojo.addOnLoad(function() {
+    paste.upgrade(); 
+});
+
+dojo.mixin(paste, {
     newPasteButton:  function() {
         var form = dijit.byId("pasteform");
         if (form.isValid()) {
@@ -17,7 +33,7 @@ paste.main = {
     unformattedShow: function() {
         dojo.toggleClass("pastecode", "highlight", false);
         var linkNode = dojo.byId("format-toggle");
-        dojo.attr(linkNode, "onClick", "paste.main.formattedShow()");
+        dojo.attr(linkNode, "onClick", "paste.formattedShow()");
         linkNode.innerHTML = "formatted";
     },
 
@@ -28,23 +44,8 @@ paste.main = {
         });
 
         var linkNode = dojo.byId("format-toggle");
-        dojo.attr(linkNode, "onClick", "paste.main.unformattedShow()");
+        dojo.attr(linkNode, "onClick", "paste.unformattedShow()");
         linkNode.innerHTML = "unformatted";
-    },
-
-    init: function() {
-        dojo.require("dijit.layout.ContentPane");
-        dojo.require("dijit.layout.BorderContainer");
-        dojo.require("dijit.layout.TabContainer");
-        dojo.require("dijit.form.FilteringSelect");
-        dojo.require("dijit.form.ValidationTextBox");
-        dojo.require("dijit.form.SimpleTextarea");
-        dojo.require("dijit.form.Button");
-        dojo.require("dijit.form.Form");
-        dojo.require("dojox.grid.Grid");
-        dojo.require("dojo.data.ItemFileReadStore");
-        dojo.require("dojo.parser");
-        dojo.addOnLoad(paste.main.upgrade);
     },
 
     upgrade: function() {
@@ -62,4 +63,4 @@ paste.main = {
         }
         return elementNode;
     },
-};
+});

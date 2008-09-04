@@ -4,7 +4,7 @@
     <h3 class="pastebin-display">
         Code 
         <? if ('text' != $this->paste['type']): ?>
-        (<a id="format-toggle" href="#" onClick="paste.main.unformattedShow();">unformatted</a>)
+        (<a id="format-toggle" href="#" onClick="paste.unformattedShow();">unformatted</a>)
         <? endif ?>
         <span class="permalink">[<a href="<?= $this->url(array('id' => $this->paste['id'])) ?>">Permalink</a>]</span>
     </h3>
@@ -56,4 +56,4 @@
     }
     $this->dojo()->addStylesheet("/style/highlight/highlight.css");
     $this->dojo()->addStylesheet("/style/highlight/autumn.css");
-    $this->dojo()->addOnLoad('paste.main.formattedShow');
+    $this->dojo()->addOnLoad('paste.formattedShow');

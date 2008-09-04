@@ -33,10 +33,6 @@ class PasteController extends Zend_Controller_Action
                       ->addActionContext('active-data', 'ajax')
                       ->initContext();
 
-        $this->view->dojo()->registerModulePath('paste', '../paste')
-                           ->requireModule('paste.main')
-                           ->addOnLoad('paste.main.init');
-
         $message = array(
             'Current request information',
             array(
