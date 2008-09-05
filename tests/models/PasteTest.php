@@ -142,9 +142,24 @@ class PasteTest extends PHPUnit_Framework_TestCase
         $count = $this->model->fetchActiveCount();
         $this->assertEquals(10, $count);
     }
+
+    public function testFetchActiveShouldRetrieveAllActivePastes()
+    {
+        $data   = $this->getData();
+        $ids    = array();
+        for ($i = 0; $i < 10; ++$i) {
+            $ids[] = $this->model->add($data);
+        }
+        $active = $this->model->fetchActive();
+        $test   = array();
+        foreach ($active as $paste) {
+            $test[] = $paste['id'];
+        }
+        $this->assertSame($ids, $test);
+    }
 }
 
 // Call models_PasteTest::main() if this source file is executed directly.
 if (PHPUnit_MAIN_METHOD == "PasteTest::main") {
-    models_PasteTest::main();
+    PasteTest::main();
 }

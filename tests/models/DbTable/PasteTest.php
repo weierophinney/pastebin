@@ -122,6 +122,34 @@ class DbTable_PasteTest extends PHPUnit_Framework_TestCase
         $record = $this->table->find($id1)->current();
         $record->delete();
     }
+
+    public function testInsertingDataShouldAllowStringExpireDates()
+    {
+        $data = $this->getData();
+        $data['expires'] = date('Y-m-d H:i:s', time() + 3600);
+        $id = $this->table->insert($data);
+        $record = $this->table->find($id)->current();
+        $this->assertFalse(empty($record->expires));
+    }
+
+    public function testExpiryShouldNotBeSetIfStringExpiresIsInPast()
+    {
+        $this->markTestSkipped("Noticing oddities with timestamp calculations in sqlite");
+        $data = $this->getData();
+        $data['expires'] = date('Y-m-d H:i:s', time() - (60 * 60 * 7 * 4));
+        $id = $this->table->insert($data);
+        $record = $this->table->find($id)->current();
+        $this->assertTrue(empty($record->expires), "Inserting {$data['expires']} resulted in {$record->expires}");
+    }
+
+    public function testNoExpiryShouldBeSetForInvalidExpiryFormat()
+    {
+        $data = $this->getData();
+        $data['expires'] = array(time());
+        $id = $this->table->insert($data);
+        $record = $this->table->find($id)->current();
+        $this->assertTrue(empty($record->expires), "Inserting array resulted in {$record->expires}");
+    }
 }
 
 // Call DbTable_PasteTest::main() if this source file is executed directly.

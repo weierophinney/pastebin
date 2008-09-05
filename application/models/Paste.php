@@ -140,19 +140,6 @@ class Paste
     }
 
     /**
-     * Retrieve table fields
-     * 
-     * @return array
-     */
-    protected function _getFields()
-    {
-        if (null === $this->_fields) {
-            $this->_fields = $this->_getTable()->info('cols');
-        }
-        return $this->_fields;
-    }
-
-    /**
      * Retrieve paste children
      * 
      * @param  string $id 

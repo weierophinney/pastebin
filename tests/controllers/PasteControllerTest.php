@@ -168,6 +168,114 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
         $this->assertQuery('#paste ul.children');
         $this->assertQueryContentContains('#paste ul.children', $childId, $this->response->getBody());
     }
+
+    public function testFollowupFormShouldDisplayOriginalPasteWithinForm()
+    {
+        $this->testSavePasteShouldRedirectToPasteDisplayWhenSuccessful();
+        
+        $db = Zend_Db_Table_Abstract::getDefaultAdapter();
+        $select = $db->select();
+        $select->from('paste', 'id')
+               ->order('created DESC');
+        $paste = $db->fetchOne($select);
+
+        $this->resetResponse();
+
+        $this->dispatch('/paste/followup/id/' . $paste);
+        $this->assertNotRedirect();
+        $this->assertNotController('error');
+        $this->assertQuery('#followupform');
+    }
+
+    public function testInvalidPasteIdProvidedToFollowupShouldIndicateNotFound()
+    {
+        $this->dispatch('/paste/followup/id/bogus');
+        $this->assertQueryContentContains('#followup p', 'Paste not found', $this->response->getBody());
+    }
+
+    public function testMissingPasteIdProvidedToFollowupShouldRedirectToLanding()
+    {
+        $this->dispatch('/paste/followup');
+        $this->assertRedirectTo('/paste');
+    }
+
+    public function testSavingFollowupShouldRedirectToNewPastePageWhenNotSubmittedViaPost()
+    {
+        $this->dispatch('/paste/save-followup');
+        $this->assertRedirectTo('/paste/new');
+    }
+
+    public function testSavingFollowupShouldRedirectToPasteLandingPageWhenNoIdPresent()
+    {
+        $data = $this->getData();
+        $this->request->setPost($data)
+                      ->setMethod('post');
+        $this->dispatch('/paste/save-followup');
+        $this->assertRedirectTo('/paste');
+    }
+
+    public function testSavingFollowupShouldRedisplayFormWhenValuesAreInvalid()
+    {
+        $data  = $this->getData();
+        $data  = $data['pasteform'];
+        $model = new Paste();
+        $id    = $model->add($data);
+
+        $data['parent'] = $id;
+        $data['type']   = 'bogus';
+        $data           = array('followupform' => $data);
+
+        $this->request->setPost($data)
+                      ->setMethod('post');
+
+        $this->dispatch('/paste/save-followup/id/' . $id);
+        $this->assertNotRedirect(var_export($this->response->getHeaders(), 1));
+        $this->assertQuery('#followupform', $this->response->getBody());
+    }
+
+    public function testSavingValidFollowupShouldRedirectToDisplayPage()
+    {
+        $data  = $this->getData();
+        $data  = $data['pasteform'];
+        $model = new Paste();
+        $id    = $model->add($data);
+        $data['parent'] = $id;
+
+        $data         = array('followupform' => $data);
+
+        $this->request->setPost($data)
+                      ->setMethod('post');
+
+        $this->dispatch('/paste/save-followup/id/' . $id);
+        $this->assertRedirect(var_export($this->response->getBody(), 1));
+        $this->assertRedirectRegex('#/paste/display/id/[a-z0-9]{13}$#', var_export($this->response->getHeaders(), 1));
+    }
+
+    public function testActivePastesActionShouldDisplayGrid()
+    {
+        $this->dispatch('/paste/active');
+        $this->assertQuery('#activePastes');
+    }
+
+    public function testActiveDataShouldReturnJsonFormattedData()
+    {
+        $data  = $this->getData();
+        $model = new Paste();
+        $ids   = array();
+        for ($i = 0; $i < 5; ++$i) {
+            $ids[] = $model->add($data);
+        }
+        $this->dispatch('/paste/active-data');
+        $content = $this->response->getBody();
+        $test = Zend_Json::decode($content);
+        $this->assertTrue(is_array($test), var_export($test, 1));
+        $this->assertTrue(array_key_exists('items', $test), var_export($test, 1));
+        foreach ($test['items'] as $item) {
+            $this->assertTrue(is_array($item), var_export($item, 1));
+            $this->assertTrue(array_key_exists('id', $item));
+            $this->assertTrue(in_array($item['id'], $ids));
+        }
+    }
 }
 
 // Call PasteControllerTest::main() if this source file is executed directly.

@@ -25,13 +25,15 @@ class PasteController extends Zend_Controller_Action
 
         Zend_Dojo_View_Helper_Dojo::setUseDeclarative();
         $contextSwitch = $this->_helper->contextSwitch;
-        $contextSwitch->addContext('ajax', array('suffix' => 'ajax'))
-                      ->addActionContext('new', 'ajax')
-                      ->addActionContext('followup', 'ajax')
-                      ->addActionContext('display', 'ajax')
-                      ->addActionContext('active', 'ajax')
-                      ->addActionContext('active-data', 'ajax')
-                      ->initContext();
+        if (!$contextSwitch->hasContext('ajax')) {
+            $contextSwitch->addContext('ajax', array('suffix' => 'ajax'))
+                        ->addActionContext('new', 'ajax')
+                        ->addActionContext('followup', 'ajax')
+                        ->addActionContext('display', 'ajax')
+                        ->addActionContext('active', 'ajax')
+                        ->addActionContext('active-data', 'ajax')
+                        ->initContext();
+        }
 
         $message = array(
             'Current request information',
@@ -120,7 +122,7 @@ class PasteController extends Zend_Controller_Action
         }
 
         $model = $this->getModel();
-        if (!$paste = $model->get($id)) {$view = Zend_Layout::getMvcInstance()->getView();
+        if (!$paste = $model->get($id)) {
             $this->view->title   = 'Not Found';
             $this->view->message = "Paste not found";
             return;
@@ -187,6 +189,7 @@ class PasteController extends Zend_Controller_Action
      */
     public function activeDataAction()
     {
+        $this->_helper->layout->disableLayout(true);
         $model = $this->getModel();
         $dojoData = new Zend_Dojo_Data('id', $model->fetchActive(), 'id');
         $this->view->data = $dojoData;
