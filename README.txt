@@ -14,7 +14,7 @@ INSTALLATION
 
    (Assuming /var/www contains directories for your vhosts.)
 
-2. Symlink the library/Zend/ directory of your Zend Framework
+3. Symlink or install the library/Zend/ directory of your Zend Framework
    installation (1.6.0RC1 or later, or current trunk) to library/Zend/
    -- this is done to keep the tarball size down.
 
@@ -25,12 +25,16 @@ INSTALLATION
 
      svn co http://framework.zend.com/svn/framework/standard/branches/release-1.6/library/Zend
 
-3. Make the directory application/data and all files within it world
+4. If you are on Windows, rename the public/js-src directory to
+   public/js; on *nix, verify that public/js is a symlink to
+   public/js-src.
+
+5. Make the directory application/data and all files within it world
    writeable; this can be accomplished on *nix systems using:
 
     chmod -R a+rwX <packagedir>/application/data
 
-4. Create a vhost that points its DocumentRoot to the public
+6. Create a vhost that points its DocumentRoot to the public
    subdirectory. As an example:
 
     <VirtualHost *>
@@ -52,7 +56,7 @@ INSTALLATION
 
     127.0.1.1 paste.local
 
-5. Finally, simply fire your browser to:
+7. Finally, simply fire your browser to:
 
     http://paste.local/
 
@@ -73,6 +77,15 @@ ZF specific features include:
       ContentPane, etc.)
     * Zend_Dojo_Form (form and form elements)
     * Zend_Dojo_Data (used to populate the grid)
+
+CUSTOM DOJO BUILDS
+=======================================================================
+For the adventurous, I have provided a profile for creating a custom
+Dojo build for the pastebin application. You will need to copy the
+public/js-src/paste directory and contents to your Dojo source
+installation, and then use the misc/paste.profile.js build profile to
+create the build. Further instructions are in misc/README.txt.
+
 
 REQUESTS
 =======================================================================
