@@ -15,7 +15,7 @@
     <h3>Summary</h3>
     <p class="summary"><?= $this->escape($this->paste['summary']) ?></p>
     <? endif ?>
-    <p class="metadata">
+    <p id="metadata">
         <?= $this->paste['type'] ?> code pasted <?= $this->paste['created'] ?>
         <?= (empty($this->paste['user'])) ? '' : ' by ' . $this->escape($this->paste['user']) ?>
         <?= (empty($this->paste['expires'])) ? '' : '; expires ' . $this->paste['expires'] ?>
@@ -56,4 +56,5 @@
     }
     $this->dojo()->addStylesheet("/style/highlight/highlight.css");
     $this->dojo()->addStylesheet("/style/highlight/autumn.css");
-    $this->dojo()->addOnLoad('paste.formattedShow');
+    $this->dojo()->addOnLoad('paste.formattedShow')
+                 ->addOnLoad('paste.setStatusFromMetadata');

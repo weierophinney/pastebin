@@ -63,4 +63,10 @@ dojo.mixin(paste, {
         }
         return elementNode;
     },
+
+    setStatusFromMetadata: function() {
+        var metadata = dojo.byId("metadata");
+        var footer = dijit.byId("footer");
+        footer.setContent(metadata);
+    }
 });

@@ -149,7 +149,7 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
         $this->dispatch('/paste/display/id/' . $id);
         $this->assertNotQuery('p.error');
         $this->assertQueryContentContains('#pastecode code', htmlentities($data['pasteform']['code']), $this->response->getBody());
-        $this->assertQueryContentContains('p.metadata', $data['pasteform']['user']);
+        $this->assertQueryContentContains('#metadata', $data['pasteform']['user']);
     }
 
     public function testDisplayPasteShouldDisplayParentAndChildPastesWhenPresent()
