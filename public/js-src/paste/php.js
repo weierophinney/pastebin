@@ -2,7 +2,10 @@ dojo.provide("paste.php");
 
 dojo.require("dojox.highlight._base");
 
+// Adapted from dojox/highlight/languages/php.js from current Dojo trunk at the
+// time of this writing.
 //
+// Original attribution:
 // PHP5 definition (c) Victor Karamzin <Victor.Karamzin@enterra-inc.com>
 // released under BSD, submitted to the Dojo Foundation under CLA
 //
