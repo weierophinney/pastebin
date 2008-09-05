@@ -77,6 +77,10 @@ class Paste_Form extends Zend_Dojo_Form
             'label'       => 'Save',
         ));
 
+        $this->addElement('hidden', 'parent', array(
+            'value' => '',
+        ));
+
         $this->setDecorators(array(
             'FormElements',
             array('HtmlTag', array('tag' => 'dl')),

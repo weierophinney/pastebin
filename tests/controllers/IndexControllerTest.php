@@ -1,15 +1,17 @@
 <?php
-// Call controllers_IndexControllerTest::main() if this source file is executed directly.
+// Call IndexControllerTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
-    define("PHPUnit_MAIN_METHOD", "controllers_IndexControllerTest::main");
+    define("PHPUnit_MAIN_METHOD", "IndexControllerTest::main");
 }
 
 require_once dirname(__FILE__) . '/../TestHelper.php';
 
 /**
  * Test class for Index controller
+ *
+ * @group Controllers
  */
-class controllers_IndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
+class IndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
 {
     /**
      * Runs the test methods of this class.
@@ -18,7 +20,7 @@ class controllers_IndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCa
      */
     public static function main()
     {
-        $suite  = new PHPUnit_Framework_TestSuite("controllers_IndexControllerTest");
+        $suite  = new PHPUnit_Framework_TestSuite("IndexControllerTest");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
     }
 
@@ -50,16 +52,14 @@ class controllers_IndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCa
         $this->frontController->registerPlugin(new My_Plugin_Initialize(dirname(__FILE__) . '/../../', 'testing'));
     }
 
-    public function testIndexAction() 
+    public function testLandingPageShouldRedirectToPasteLandingPage() 
     { 
-        $this->request->setQuery('mr', 'proper')
-                      ->setQuery('james', 'bond');
-        $this->dispatch('/index/index');
-        $this->fail(var_export($this->request->getQuery(), 1));
+        $this->dispatch('/');
+        $this->assertRedirectRegex('#/paste(/index)?$#');
     }
 }
 
-// Call controllers_IndexControllerTest::main() if this source file is executed directly.
-if (PHPUnit_MAIN_METHOD == "controllers_IndexControllerTest::main") {
-    controllers_IndexControllerTest::main();
+// Call IndexControllerTest::main() if this source file is executed directly.
+if (PHPUnit_MAIN_METHOD == "IndexControllerTest::main") {
+    IndexControllerTest::main();
 }

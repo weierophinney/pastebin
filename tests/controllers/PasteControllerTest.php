@@ -1,15 +1,17 @@
 <?php
-// Call controllers_PasteControllerTest::main() if this source file is executed directly.
+// Call PasteControllerTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
-    define("PHPUnit_MAIN_METHOD", "controllers_PasteControllerTest::main");
+    define("PHPUnit_MAIN_METHOD", "PasteControllerTest::main");
 }
 
 require_once dirname(__FILE__) . '/../TestHelper.php';
 
 /**
  * Test class for Paste.
+ *
+ * @group Controllers
  */
-class controllers_PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
+class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
 {
     /**
      * Runs the test methods of this class.
@@ -18,7 +20,7 @@ class controllers_PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCa
      */
     public static function main()
     {
-        $suite  = new PHPUnit_Framework_TestSuite("controllers_PasteControllerTest");
+        $suite  = new PHPUnit_Framework_TestSuite("PasteControllerTest");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
     }
 
@@ -145,9 +147,9 @@ class controllers_PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCa
         $id    = $paste->add($data['pasteform']);
 
         $this->dispatch('/paste/display/id/' . $id);
-        $this->assertNotQuery('#paste p.error');
-        $this->assertQueryContentContains('#paste div.code', htmlentities($data['pasteform']['code']), $this->response->getBody());
-        $this->assertQueryContentContains('#paste p.metadata', $data['pasteform']['user']);
+        $this->assertNotQuery('p.error');
+        $this->assertQueryContentContains('#pastecode code', htmlentities($data['pasteform']['code']), $this->response->getBody());
+        $this->assertQueryContentContains('p.metadata', $data['pasteform']['user']);
     }
 
     public function testDisplayPasteShouldDisplayParentAndChildPastesWhenPresent()
@@ -168,7 +170,7 @@ class controllers_PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCa
     }
 }
 
-// Call controllers_PasteControllerTest::main() if this source file is executed directly.
-if (PHPUnit_MAIN_METHOD == "controllers_PasteControllerTest::main") {
-    controllers_PasteControllerTest::main();
+// Call PasteControllerTest::main() if this source file is executed directly.
+if (PHPUnit_MAIN_METHOD == "PasteControllerTest::main") {
+    PasteControllerTest::main();
 }

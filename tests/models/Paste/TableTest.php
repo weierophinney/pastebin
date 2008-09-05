@@ -1,18 +1,20 @@
 <?php
-// Call models_Paste_TableTest::main() if this source file is executed directly.
+// Call Paste_TableTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
-    define("PHPUnit_MAIN_METHOD", "models_Paste_TableTest::main");
+    define("PHPUnit_MAIN_METHOD", "Paste_TableTest::main");
 }
 
 require_once dirname(__FILE__) . '/../../TestHelper.php';
 
-/** models_Paste_Table */
+/** Paste_Table */
 require_once 'Paste/Table.php';
 
 /**
  * Test class for Paste_Table.
+ *
+ * @group Models
  */
-class models_Paste_TableTest extends PHPUnit_Framework_TestCase 
+class Paste_TableTest extends PHPUnit_Framework_TestCase 
 {
     /**
      * Runs the test methods of this class.
@@ -21,7 +23,7 @@ class models_Paste_TableTest extends PHPUnit_Framework_TestCase
      */
     public static function main()
     {
-        $suite  = new PHPUnit_Framework_TestSuite("models_Paste_TableTest");
+        $suite  = new PHPUnit_Framework_TestSuite("Paste_TableTest");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
     }
 
@@ -83,11 +85,12 @@ class models_Paste_TableTest extends PHPUnit_Framework_TestCase
 
     public function testNewPasteShouldVerifyExpiryIsInFutureWhenProvidedAsString()
     {
-        $data   = $this->getData();
+        $data    = $this->getData();
+        $current = date('Y-m-d H:i:s');
         $data['expires'] = date('Y-m-d H:i:s', time() - 3600);
-        $id1    = $this->table->insert($data);
-        $record = $this->table->find($id1)->current();
-        $this->assertNull($record->expires);
+        $id1     = $this->table->insert($data);
+        $record  = $this->table->find($id1)->current();
+        $this->assertTrue($current < strtotime($record->expires));
     }
 
     public function testNewPasteShouldOmitExpiryWhenProvidedInvalidDataType()
@@ -96,7 +99,7 @@ class models_Paste_TableTest extends PHPUnit_Framework_TestCase
         $data['expires'] = false;
         $id1    = $this->table->insert($data);
         $record = $this->table->find($id1)->current();
-        $this->assertNull($record->expires);
+        $this->assertTrue(empty($record->expires), 'Expires: ' . var_export($record->expires, 1));
     }
 
     /**
@@ -121,7 +124,7 @@ class models_Paste_TableTest extends PHPUnit_Framework_TestCase
     }
 }
 
-// Call models_Paste_TableTest::main() if this source file is executed directly.
-if (PHPUnit_MAIN_METHOD == "models_Paste_TableTest::main") {
-    models_Paste_TableTest::main();
+// Call Paste_TableTest::main() if this source file is executed directly.
+if (PHPUnit_MAIN_METHOD == "Paste_TableTest::main") {
+    Paste_TableTest::main();
 }

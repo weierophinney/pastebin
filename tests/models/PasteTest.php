@@ -1,7 +1,7 @@
 <?php
 // Call models_PasteTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
-    define("PHPUnit_MAIN_METHOD", "models_PasteTest::main");
+    define("PHPUnit_MAIN_METHOD", "PasteTest::main");
 }
 
 require_once dirname(__FILE__) . '/../TestHelper.php';
@@ -11,8 +11,10 @@ require_once 'Paste.php';
 
 /**
  * Test class for Paste.
+ *
+ * @group Models
  */
-class models_PasteTest extends PHPUnit_Framework_TestCase 
+class PasteTest extends PHPUnit_Framework_TestCase 
 {
     /**
      * Runs the test methods of this class.
@@ -21,7 +23,7 @@ class models_PasteTest extends PHPUnit_Framework_TestCase
      */
     public static function main()
     {
-        $suite  = new PHPUnit_Framework_TestSuite("models_PasteTest");
+        $suite  = new PHPUnit_Framework_TestSuite("PasteTest");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
     }
 
@@ -108,10 +110,11 @@ class models_PasteTest extends PHPUnit_Framework_TestCase
     {
         $data   = $this->getData();
         $parent = $this->model->add($data);
+        $this->assertFalse(empty($parent), 'Did not receive identifier');
         $data['parent'] = $parent;
         $child  = $this->model->add($data);
         $paste  = $this->model->get($child);
-        $this->assertSame($paste['parent'], $parent);
+        $this->assertSame($paste['parent'], $parent, "Expected $parent; received " . var_export($paste['parent'], 1));
     }
 
     public function testChildPastesShouldBeReturnedAsAnArrayOfIdentifiers()
@@ -120,11 +123,13 @@ class models_PasteTest extends PHPUnit_Framework_TestCase
         $parent = $this->model->add($data);
         $data['parent'] = $parent;
         $child1 = $this->model->add($data);
+        $this->assertFalse(empty($child1), 'Failed to add first child paste');
         $child2 = $this->model->add($data);
+        $this->assertFalse(empty($child2), 'Failed to add second child paste');
         $paste  = $this->model->get($parent);
         $this->assertTrue(array_key_exists('children', $paste));
         $this->assertTrue(is_array($paste['children']));
-        $this->assertEquals(2, count($paste['children']));
+        $this->assertEquals(2, count($paste['children']), var_export($paste, 1));
         $this->assertEquals(array($child1, $child2), $paste['children']);
     }
 
@@ -140,6 +145,6 @@ class models_PasteTest extends PHPUnit_Framework_TestCase
 }
 
 // Call models_PasteTest::main() if this source file is executed directly.
-if (PHPUnit_MAIN_METHOD == "models_PasteTest::main") {
+if (PHPUnit_MAIN_METHOD == "PasteTest::main") {
     models_PasteTest::main();
 }

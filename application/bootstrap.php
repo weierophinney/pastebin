@@ -4,6 +4,7 @@ if (isset($bootstrap) && $bootstrap) {
     Zend_Loader::registerAutoload();
 }
 
+$base  = realpath(dirname(__FILE__) . '/../');
 $front = Zend_Controller_Front::getInstance();
 $front->registerPlugin(new My_Plugin_Initialize($base, 'development'))
       ->addControllerDirectory($base . '/application/controllers');
