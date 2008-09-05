@@ -7,7 +7,7 @@
  * @license New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version $Id: $
  */
-class Paste_Form extends Zend_Dojo_Form
+class Form_Paste extends Zend_Dojo_Form
 {
     /**
      * @var array Programming languages with syntax highlighting

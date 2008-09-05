@@ -17,7 +17,7 @@ class Paste
     /**
      * Form representation/input filter of model data
      * 
-     * @var PasteForm
+     * @var Form_Paste
      */
     protected $_form;
 
@@ -114,13 +114,13 @@ class Paste
     /**
      * Retrieve form/input filter
      * 
-     * @return Paste_Form
+     * @return Form_Paste
      */
     public function getForm()
     {
         if (null === $this->_form) {
-            require_once dirname(__FILE__) . '/Paste/Form.php';
-            $this->_form = new Paste_Form();
+            require_once dirname(__FILE__) . '/Form/Paste.php';
+            $this->_form = new Form_Paste();
         }
         return $this->_form;
     }
@@ -133,7 +133,8 @@ class Paste
     protected function _getTable()
     {
         if (null === $this->_table) {
-            $this->_table = new Paste_Table();
+            require_once dirname(__FILE__) . '/DbTable/Paste.php';
+            $this->_table = new DbTable_Paste();
         }
         return $this->_table;
     }

@@ -7,7 +7,7 @@
  * @license New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version $Id: $
  */
-class Paste_Table extends Zend_Db_Table_Abstract
+class DbTable_Paste extends Zend_Db_Table_Abstract
 {
     /**
      * @var string Table name

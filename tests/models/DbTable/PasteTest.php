@@ -1,20 +1,20 @@
 <?php
-// Call Paste_TableTest::main() if this source file is executed directly.
+// Call DbTable_PasteTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
-    define("PHPUnit_MAIN_METHOD", "Paste_TableTest::main");
+    define("PHPUnit_MAIN_METHOD", "DbTable_PasteTest::main");
 }
 
 require_once dirname(__FILE__) . '/../../TestHelper.php';
 
-/** Paste_Table */
-require_once 'Paste/Table.php';
+/** DbTable_Paste */
+require_once 'DbTable/Paste.php';
 
 /**
- * Test class for Paste_Table.
+ * Test class for DbTable_Paste.
  *
  * @group Models
  */
-class Paste_TableTest extends PHPUnit_Framework_TestCase 
+class DbTable_PasteTest extends PHPUnit_Framework_TestCase 
 {
     /**
      * Runs the test methods of this class.
@@ -23,7 +23,7 @@ class Paste_TableTest extends PHPUnit_Framework_TestCase
      */
     public static function main()
     {
-        $suite  = new PHPUnit_Framework_TestSuite("Paste_TableTest");
+        $suite  = new PHPUnit_Framework_TestSuite("DbTable_PasteTest");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
     }
 
@@ -36,7 +36,7 @@ class Paste_TableTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         include dirname(__FILE__) . '/../../../scripts/loadTestDb.php';
-        $this->table = new Paste_Table();
+        $this->table = new DbTable_Paste();
     }
 
     /**
@@ -124,7 +124,7 @@ class Paste_TableTest extends PHPUnit_Framework_TestCase
     }
 }
 
-// Call Paste_TableTest::main() if this source file is executed directly.
-if (PHPUnit_MAIN_METHOD == "Paste_TableTest::main") {
-    Paste_TableTest::main();
+// Call DbTable_PasteTest::main() if this source file is executed directly.
+if (PHPUnit_MAIN_METHOD == "DbTable_PasteTest::main") {
+    DbTable_PasteTest::main();
 }
