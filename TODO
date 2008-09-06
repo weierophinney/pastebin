@@ -1,0 +1,3 @@
+QueryReadStore for active pastes
+    fetch pages at a time of active pastes
+    will require modification to active pastes for pagination
