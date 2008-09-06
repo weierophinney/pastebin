@@ -5,17 +5,6 @@ dependencies = {
             name: "../paste/layer.js",
             dependencies: [
                 "paste.layer",
-                "dijit.layout.ContentPane",
-                "dijit.layout.BorderContainer",
-                "dijit.layout.TabContainer",
-                "dijit.form.FilteringSelect",
-                "dijit.form.ValidationTextBox",
-                "dijit.form.SimpleTextarea",
-                "dijit.form.Button",
-                "dijit.form.Form",
-                "dojo.data.ItemFileReadStore",
-                "dojox.grid.Grid",
-                "dojo.parser"
             ]
         },
     ],
