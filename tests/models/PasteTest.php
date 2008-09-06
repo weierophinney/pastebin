@@ -117,6 +117,21 @@ class PasteTest extends PHPUnit_Framework_TestCase
         $this->assertSame($paste['parent'], $parent, "Expected $parent; received " . var_export($paste['parent'], 1));
     }
 
+    public function testParentPasteShouldNotBeReturnedIfExpired()
+    {
+        $data   = $this->getData();
+        $parent = $this->model->add($data);
+        $this->assertFalse(empty($parent), 'Did not receive identifier');
+
+        $db = Zend_Db_Table_Abstract::getDefaultAdapter();
+        $db->update('paste', array('expires' => date('Y-m-d H:i:s', time() - 6789000)), $db->quoteInto('id = ?', $parent));
+
+        $data['parent'] = $parent;
+        $child  = $this->model->add($data);
+        $paste  = $this->model->get($child);
+        $this->assertTrue(empty($paste['parent']));
+    }
+
     public function testChildPastesShouldBeReturnedAsAnArrayOfIdentifiers()
     {
         $data   = $this->getData();
@@ -131,6 +146,34 @@ class PasteTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($paste['children']));
         $this->assertEquals(2, count($paste['children']), var_export($paste, 1));
         $this->assertEquals(array($child1, $child2), $paste['children']);
+    }
+
+    public function testChildPastesShouldNotIncludeExpiredPastes()
+    {
+        $data   = $this->getData();
+        $parent = $this->model->add($data);
+        $data['parent'] = $parent;
+
+        $children = array();
+        for ($i = 0; $i < 5; ++$i) {
+            $child = $this->model->add($data);
+            $this->assertFalse(empty($child), 'Failed to add child paste');
+            $children[] = $child;
+        }
+
+        $paste  = $this->model->get($parent);
+        $this->assertTrue(array_key_exists('children', $paste));
+        $this->assertTrue(is_array($paste['children']));
+        $this->assertEquals(5, count($paste['children']), var_export($paste, 1));
+
+        $child = $paste['children'][2];
+        $db = Zend_Db_Table_Abstract::getDefaultAdapter();
+        $db->update('paste', array('expires' => date('Y-m-d H:i:s', time() - 6789000)), $db->quoteInto('id = ?', $child));
+
+        $paste  = $this->model->get($parent);
+        $this->assertTrue(array_key_exists('children', $paste));
+        $this->assertTrue(is_array($paste['children']));
+        $this->assertEquals(4, count($paste['children']), var_export($paste, 1));
     }
 
     public function testFetchActiveCountShouldReturnNumberOfActivePastes()

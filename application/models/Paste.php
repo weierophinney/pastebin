@@ -73,6 +73,14 @@ class Paste
             return false;
         }
         $data = $row->toArray();
+
+        if (!empty($data['parent'])) {
+            $parent = $this->get($data['parent']);
+            if (!$parent) {
+                $data['parent'] = null;
+            }
+        }
+
         $data['children'] = $this->_getChildren($id);
         return $data;
     }
@@ -150,7 +158,8 @@ class Paste
         $adapter = $this->_getTable()->getAdapter();
         $select  = $adapter->select();
         $select->from('paste', array('id'))
-               ->where('parent = ?', $id);
+               ->where('parent = ?', $id)
+               ->where('expires IS NULL OR expires = "" OR expires > ?', date('Y-m-d H:i:s'));
         return $adapter->fetchCol($select);
     }
 }
