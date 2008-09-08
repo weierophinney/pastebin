@@ -1,4 +1,4 @@
-/* ./build.sh profile="paste" action="release" version="1.1.1-paste" releaseName="paste" loader="default" optimize="shrinksafe" layerOptimize="shrinksafe" copyTests="false" */
+/* ./build.sh profile="paste" action="release" version="1.1.1-paste" releaseName="paste" loader="default" cssOptimize=comments.keepLines optimize="shrinksafe" layerOptimize="shrinksafe" copyTests="false" */
 dependencies = {
     layers: [
         {

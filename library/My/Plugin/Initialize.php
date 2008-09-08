@@ -129,19 +129,16 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         $view = $layout->getView();
         $view->addHelperPath('My/View/Helper/', 'My_View_Helper');
 
-        $view->headLink()->appendStylesheet('/style/paste.css');
-
         Zend_Dojo::enableView($view);
         $view->doctype('XHTML1_TRANSITIONAL');
         $view->headTitle('Pastebin');
         $view->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=utf-8');
         $view->dojo()->setDjConfigOption('usePlainJson', true)
                      ->setDjConfigOption('isDebug', $this->config->view->dojo->isDebug)
-                     ->addStylesheetModule('dijit.themes.tundra')
-                     ->addStylesheet('/js/dojox/grid/_grid/tundraGrid.css')
                      ->setLocalPath('/js/dojo/dojo.js')
                      ->addLayer('/js/paste/layer.js')
                      ->registerModulePath('../paste', 'paste')
+                     ->addStylesheetModule('paste.styles')
                      ->disable();
 
         return $this;
