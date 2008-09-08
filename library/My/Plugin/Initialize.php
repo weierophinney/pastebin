@@ -20,15 +20,11 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      * @param  string $env Application environment
      * @return void
      */
-    public function __construct($basePath, $env = 'production')
+    public function __construct($env = 'production')
     {
-        $this->env      = $env;
-
-        $this->basePath = $basePath;
-        $this->appPath  = $this->basePath . '/application';
-        $this->libPath  = $this->basePath . '/library';
-        $this->pubPath  = $this->basePath . '/public';
-        $this->front    = Zend_Controller_Front::getInstance();
+        $this->env   = $env;
+        $this->initConfig();
+        $this->front = Zend_Controller_Front::getInstance();
     }
 
     /**
@@ -39,8 +35,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function routeStartup(Zend_Controller_Request_Abstract $request)
     {
-        $this->initConfig()
-             ->initControllers()
+        $this->initControllers()
              ->initLog()
              ->initCache()
              ->initDb()
@@ -54,20 +49,8 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function initConfig()
     {
-        $config = new Zend_Config_Ini($this->appPath . '/configs/paste.ini', $this->env, true);
-
-        $config->paths->basePath = $this->basePath;
-        $config->paths->appPath  = $this->appPath;
-        $config->paths->libPath  = $this->libPath;
-        $config->paths->pubPath  = $this->pubPath;
-
-        $config->db->cxn->params->dbname = $config->paths->appPath . '/data/' . $config->db->cxn->params->dbname;
-        $config->db->cache->backendOptions->cache_db_complete_path = $config->paths->appPath . '/data/' . $config->db->cache->backendOptions->cache_db_complete_path;
-
-        $config->cache->backendOptions->cache_db_complete_path = $config->paths->appPath . '/data/' . $config->cache->backendOptions->cache_db_complete_path;
-
-        $this->config = $config;
-        Zend_Registry::set('config', $config);
+        $this->config = new Zend_Config_Ini(APPLICATION_PATH . '/application/config/paste.ini', $this->env);
+        Zend_Registry::set('config', $this->config);
         return $this;
     }
 
@@ -78,7 +61,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function initControllers()
     {
-        $this->front->setControllerDirectory($this->appPath . '/controllers', 'default');
+        $this->front->setControllerDirectory($this->config->appPath . '/controllers', 'default');
         return $this;
     }
 
@@ -124,7 +107,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         $profiler = new Zend_Db_Profiler_Firebug('All DB Queries');
         $db       = Zend_Db::factory($config->cxn);
 
-        $profiler->setEnabled(true);
+        $profiler->setEnabled($config->profiler->enabled);
         $db->setProfiler($profiler);
         Zend_Db_Table_Abstract::setDefaultAdapter($db);
         Zend_Db_Table_Abstract::setDefaultMetadataCache($cache);
@@ -140,7 +123,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     public function initView()
     {
         $layout = Zend_Layout::startMvc(array(
-            'layoutPath' => $this->appPath . '/layouts/scripts'
+            'layoutPath' => $this->config->appPath . '/layouts/scripts'
         ));
 
         $view = $layout->getView();
@@ -153,7 +136,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         $view->headTitle('Pastebin');
         $view->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=utf-8');
         $view->dojo()->setDjConfigOption('usePlainJson', true)
-                     // ->setDjConfigOption('isDebug', true)
+                     ->setDjConfigOption('isDebug', $this->config->view->dojo->isDebug)
                      ->addStylesheetModule('dijit.themes.tundra')
                      ->addStylesheet('/js/dojox/grid/_grid/tundraGrid.css')
                      ->setLocalPath('/js/dojo/dojo.js')

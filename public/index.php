@@ -1,5 +1,5 @@
 <?php
-$bootstrap = true;
+define('BOOTSTRAP', true);
 $base      = realpath(dirname(__FILE__) . '/../');
 $paths     = array(
     '.', 

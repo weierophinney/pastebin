@@ -34,7 +34,9 @@
     </ul>
     <? endif ?>
 <? endif ?>
-<?  if ('text' == $this->paste['type']) {
+<?
+    $this->dojo()->addOnLoad('paste.setStatusFromMetadata');
+    if ('text' == $this->paste['type']) {
         return;
     }
     switch ($this->paste['type']) {
@@ -56,5 +58,4 @@
     }
     $this->dojo()->addStylesheet("/style/highlight/highlight.css");
     $this->dojo()->addStylesheet("/style/highlight/autumn.css");
-    $this->dojo()->addOnLoad('paste.formattedShow')
-                 ->addOnLoad('paste.setStatusFromMetadata');
+    $this->dojo()->addOnLoad('paste.formattedShow');
