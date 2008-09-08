@@ -1,4 +1,4 @@
-dojo.provide("paste.php"); 
+dojo.provide("paste.highlight.php"); 
 
 dojo.require("dojox.highlight._base");
 
