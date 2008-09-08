@@ -32,6 +32,7 @@ class PasteController extends Zend_Controller_Action
                         ->addActionContext('display', 'ajax')
                         ->addActionContext('active', 'ajax')
                         ->addActionContext('active-data', 'ajax')
+                        ->addActionContext('active-data-count', 'ajax')
                         ->initContext();
         }
 
@@ -193,6 +194,17 @@ class PasteController extends Zend_Controller_Action
         $model = $this->getModel();
         $dojoData = new Zend_Dojo_Data('id', $model->fetchActive($this->getRequest()->getQuery()), 'id');
         $this->view->data = $dojoData;
+        $this->view->count = $model->fetchActiveCount();
+    }
+
+    /**
+     * Return count of active pastes
+     * 
+     * @return void
+     */
+    public function activeDataCountAction()
+    {
+        $model = $this->getModel();
         $this->view->count = $model->fetchActiveCount();
     }
 

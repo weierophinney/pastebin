@@ -18,6 +18,8 @@ dojo.provide("paste.layer");
     });
 
     dojo.mixin(paste, {
+        activeStatusTabs: ["about", "active", "new-paste"],
+
         newPasteButton:  function() {
             var form = dijit.byId("pasteform");
             if (form.isValid()) {
@@ -44,7 +46,7 @@ dojo.provide("paste.layer");
             dojo.query("#pastecode pre code").forEach(function(node) {
                 dojox.highlight.init(node);
             });
-
+ 
             var linkNode = dojo.byId("format-toggle");
             dojo.attr(linkNode, "onClick", "paste.unformattedShow()");
             linkNode.innerHTML = "unformatted";
@@ -57,6 +59,7 @@ dojo.provide("paste.layer");
                 }
             );
             dojo.style("footer", "visibility", "visible");
+            dojo.subscribe("pastebin-selectChild", paste, "updateStatus");
         },
 
         findParentForm: function(elementNode) {
@@ -69,7 +72,23 @@ dojo.provide("paste.layer");
         setStatusFromMetadata: function() {
             var metadata = dojo.byId("metadata");
             var footer = dijit.byId("footer");
-            footer.setContent(metadata);
-        }
+            footer.setContent("<p>" + metadata.innerHTML + "</p>");
+        },
+
+        updateStatus: function(tab) {
+            var id = tab.domNode.id;
+            if (-1 != paste.activeStatusTabs.indexOf(id)) {
+                dojo.xhrGet({
+                    url: "/paste/active-data-count/format/ajax",
+                    handleAs: "text",
+                    load: function(count) {
+                        var footer = dijit.byId("footer");
+                        footer.setContent('<p>' + count + " active pastes</p>");
+                    }
+                });
+            } else {
+                paste.setStatusFromMetadata();
+            }
+        },
     });
 })();
