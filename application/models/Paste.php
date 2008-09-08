@@ -50,7 +50,7 @@ class Paste
             $values = $values[$belongTo];
         }
 
-        return $this->_getTable()->insert($values);
+        return $this->getTable()->insert($values);
     }
 
     /**
@@ -64,7 +64,7 @@ class Paste
      */
     public function get($id)
     {
-        $table  = $this->_getTable();
+        $table  = $this->getTable();
         $select = $table->select();
         $select->where('id = ?', $id)
                ->where('expires IS NULL OR expires = "" OR expires > ?', date('Y-m-d H:i:s'));
@@ -90,14 +90,19 @@ class Paste
      * 
      * @return array
      */
-    public function fetchActive()
+    public function fetchActive(array $criteria = null)
     {
-        $table   = $this->_getTable();
+        $table   = $this->getTable();
         $adapter = $table->getAdapter();
         $select  = $adapter->select();
         $select->from('paste', array('id', 'type', 'summary', 'user', 'created', 'expires'))
-               ->where('expires IS NULL OR expires = "" OR expires > ?', date('Y-m-d H:i:s'))
-               ->order('created DESC');
+               ->where('expires IS NULL OR expires = "" OR expires > ?', date('Y-m-d H:i:s'));
+
+        if (null !== $criteria) {
+            $this->_refineSelection($select, $criteria);
+        } else {
+            $select->order('created DESC');
+        }
 
         return $adapter->fetchAll($select);
     }
@@ -109,7 +114,7 @@ class Paste
      */
     public function fetchActiveCount()
     {
-        $table   = $this->_getTable();
+        $table   = $this->getTable();
         $adapter = $table->getAdapter();
         $select  = $adapter->select();
         $select->from('paste', array('count' => 'COUNT(*)'))
@@ -138,7 +143,7 @@ class Paste
      * 
      * @return Paste_Table
      */
-    protected function _getTable()
+    public function getTable()
     {
         if (null === $this->_table) {
             require_once dirname(__FILE__) . '/DbTable/Paste.php';
@@ -155,11 +160,52 @@ class Paste
      */
     protected function _getChildren($id)
     {
-        $adapter = $this->_getTable()->getAdapter();
+        $adapter = $this->getTable()->getAdapter();
         $select  = $adapter->select();
         $select->from('paste', array('id'))
                ->where('parent = ?', $id)
                ->where('expires IS NULL OR expires = "" OR expires > ?', date('Y-m-d H:i:s'));
         return $adapter->fetchCol($select);
+    }
+
+    /**
+     * Refine the active pastes selection based on criteria provided
+     *
+     * Allows setting a limit to the number of records returend
+     * 
+     * @param  Zend_Db_Select $select 
+     * @param  array $criteria 
+     * @return void
+     */
+    protected function _refineSelection(Zend_Db_Select $select, array $criteria)
+    {
+        if (array_key_exists('start', $criteria) 
+            && ($criteria['start'] == intval($criteria['start']))
+        ) {
+            if (array_key_exists('count', $criteria) 
+                && ($criteria['count'] == intval($criteria['count']))
+            ) {
+                $select->limit($criteria['count'], $criteria['start']);
+            }
+        }
+
+        $sorted = false;
+        if (array_key_exists('sort', $criteria)) {
+            $sort = $criteria['sort'];
+            $dir  = 'ASC';
+            if ('-' == substr($sort, 0, 1)) {
+                $sort = substr($sort, 1);
+                $dir  = 'DESC';
+            }
+
+            $fields = $this->getTable()->info('cols');
+            if (in_array($sort, $fields)) {
+                $select->order("$sort $dir");
+                $sorted = true;
+            }
+        }
+        if (!$sorted) {
+            $select->order('created DESC');
+        }
     }
 }

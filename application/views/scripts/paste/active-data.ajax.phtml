@@ -1,1 +1,6 @@
-<?= $this->data->toJson() ?>
+<? 
+$data = $this->data->toArray();
+$data['numRows'] = $this->count;
+echo Zend_Json::encode($data);
+return;
+// <?= $this->data->toJson() ?>

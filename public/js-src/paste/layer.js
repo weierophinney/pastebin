@@ -10,7 +10,8 @@ dojo.provide("paste.layer");
     dojo.require("dijit.form.Button");
     dojo.require("dijit.form.Form");
     dojo.require("dojox.grid.Grid");
-    dojo.require("dojo.data.ItemFileReadStore");
+    dojo.require("dojox.data.QueryReadStore");
+    dojo.require("dojox.grid._data.model");
     dojo.require("dojo.parser");
     dojo.addOnLoad(function() {
         paste.upgrade(); 

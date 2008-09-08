@@ -191,8 +191,9 @@ class PasteController extends Zend_Controller_Action
     {
         $this->_helper->layout->disableLayout(true);
         $model = $this->getModel();
-        $dojoData = new Zend_Dojo_Data('id', $model->fetchActive(), 'id');
+        $dojoData = new Zend_Dojo_Data('id', $model->fetchActive($this->getRequest()->getQuery()), 'id');
         $this->view->data = $dojoData;
+        $this->view->count = $model->fetchActiveCount();
     }
 
     /**

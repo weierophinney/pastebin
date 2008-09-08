@@ -186,7 +186,7 @@ class PasteTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(10, $count);
     }
 
-    public function testFetchActiveShouldRetrieveAllActivePastes()
+    public function testFetchActiveShouldRetrieveAllActivePastesByDefault()
     {
         $data   = $this->getData();
         $ids    = array();
@@ -199,6 +199,24 @@ class PasteTest extends PHPUnit_Framework_TestCase
             $test[] = $paste['id'];
         }
         $this->assertSame($ids, $test);
+    }
+
+    /**
+     * @group fetch
+     */
+    public function testFetchingActivePastesShouldAllowFetchingAPageAtATime()
+    {
+        $data   = $this->getData();
+        $ids    = array();
+        for ($i = 0; $i < 100; ++$i) {
+            $ids[] = $this->model->add($data);
+        }
+        $active = $this->model->fetchActive(array('start' => 10, 'count' => 10));
+        $test   = array();
+        foreach ($active as $paste) {
+            $test[] = $paste['id'];
+        }
+        $this->assertEquals(10, count($test));
     }
 }
 
