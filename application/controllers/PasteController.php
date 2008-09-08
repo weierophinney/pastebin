@@ -190,6 +190,10 @@ class PasteController extends Zend_Controller_Action
      */
     public function activeDataAction()
     {
+        if ('ajax' != $this->_helper->contextSwitch->getCurrentContext()) {
+            $this->_helper->redirector('index');
+        }
+
         $this->_helper->layout->disableLayout(true);
         $model = $this->getModel();
         $dojoData = new Zend_Dojo_Data('id', $model->fetchActive($this->getRequest()->getQuery()), 'id');
@@ -204,6 +208,10 @@ class PasteController extends Zend_Controller_Action
      */
     public function activeDataCountAction()
     {
+        if ('ajax' != $this->_helper->contextSwitch->getCurrentContext()) {
+            $this->_helper->redirector('index');
+        }
+
         $model = $this->getModel();
         $this->view->count = $model->fetchActiveCount();
     }
