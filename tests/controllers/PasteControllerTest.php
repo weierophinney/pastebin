@@ -49,7 +49,7 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
     public function bootstrapPaste()
     {
         include dirname(__FILE__) . '/../../scripts/loadTestDb.php';
-        $this->frontController->registerPlugin(new My_Plugin_Initialize(dirname(__FILE__) . '/../../', 'testing'));
+        $this->frontController->registerPlugin(new My_Plugin_Initialize('testing'));
     }
 
     public function getData()
@@ -265,7 +265,7 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
         for ($i = 0; $i < 5; ++$i) {
             $ids[] = $model->add($data);
         }
-        $this->dispatch('/paste/active-data');
+        $this->dispatch('/paste/active-data/format/ajax');
         $content = $this->response->getBody();
         $test = Zend_Json::decode($content);
         $this->assertTrue(is_array($test), var_export($test, 1));

@@ -49,7 +49,7 @@ class ErrorControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
     public function bootstrapError()
     {
         include dirname(__FILE__) . '/../../scripts/loadTestDb.php';
-        $this->frontController->registerPlugin(new My_Plugin_Initialize(dirname(__FILE__) . '/../../', 'testing'));
+        $this->frontController->registerPlugin(new My_Plugin_Initialize('testing'));
     }
 
     public function testErrorControllerTrapsMissingActionsAs404s()

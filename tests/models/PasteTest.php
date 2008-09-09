@@ -196,9 +196,8 @@ class PasteTest extends PHPUnit_Framework_TestCase
         $active = $this->model->fetchActive();
         $test   = array();
         foreach ($active as $paste) {
-            $test[] = $paste['id'];
+            $this->assertTrue(in_array($paste['id'], $ids));
         }
-        $this->assertSame($ids, $test);
     }
 
     /**

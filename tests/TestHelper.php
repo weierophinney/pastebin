@@ -15,6 +15,11 @@ error_reporting( E_ALL | E_STRICT );
 date_default_timezone_set('GMT');
 
 /*
+ * Testing environment
+ */
+define('APPLICATION_ENV', 'testing');
+
+/*
  * Determine the root, library, tests, and models directories
  */
 $root        = realpath(dirname(__FILE__) . '/../');
@@ -53,15 +58,6 @@ if (defined('TESTS_GENERATE_REPORT') && TESTS_GENERATE_REPORT === true &&
     PHPUnit_Util_Filter::addDirectoryToWhitelist($models);
     PHPUnit_Util_Filter::addDirectoryToWhitelist($controllers);
 }
-
-
-/**
- * Setup default DB adapter
-$db = Zend_Db::factory('pdo_sqlite', array(
-    'dbname' => $root . '/data/db/bugs.db',
-));
-Zend_Db_Table_Abstract::setDefaultAdapter($db);
- */
 
 /**
  * Store application root in registry
