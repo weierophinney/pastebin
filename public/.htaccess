@@ -1,9 +1,26 @@
-php_value date.timezone "America/New_York"
+# PHP values we need to set
+# - timezone should be set
+# - need short open tags for view scripts
+php_value date.timezone "UTC"
 php_value short_open_tag 1
 
+# Rewrite Rules
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} -s [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^.*$ - [NC,L]
 RewriteRule ^.*$ /index.php [NC,L]
+
+# Expires/ETags
+# You'll want to turn off the ExpiresActive setting when actively developing.
+# In production, however, these settings follow the Y!Slow guidelines.
+ExpiresActive On
+ExpiresByType text/css "access plus 1 month"
+ExpiresByType application/x-javascript "access plus 1 month"
+ExpiresByType image/png "access plus 1 month"
+ExpiresByType image/gif "access plus 1 month"
+FileETag none
+
+# Gzip CSS and JS by default
+AddOutputFilterByType DEFLATE text/css application/x-javascript
