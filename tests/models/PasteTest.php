@@ -1,5 +1,5 @@
 <?php
-// Call models_PasteTest::main() if this source file is executed directly.
+// Call PasteTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "PasteTest::main");
 }
@@ -242,7 +242,7 @@ class PasteTest extends PHPUnit_Framework_TestCase
     }
 }
 
-// Call models_PasteTest::main() if this source file is executed directly.
+// Call PasteTest::main() if this source file is executed directly.
 if (PHPUnit_MAIN_METHOD == "PasteTest::main") {
     PasteTest::main();
 }
