@@ -32,7 +32,8 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
      */
     public function setUp()
     {
-        $this->bootstrap = array($this, 'bootstrapPaste');
+        include dirname(__FILE__) . '/../../scripts/loadTestDb.php';
+        $this->bootstrap = Zend_Registry::get('testBootstrap');
         return parent::setUp();
     }
 
@@ -44,12 +45,6 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
      */
     public function tearDown()
     {
-    }
-
-    public function bootstrapPaste()
-    {
-        include dirname(__FILE__) . '/../../scripts/loadTestDb.php';
-        $this->frontController->registerPlugin(new My_Plugin_Initialize('testing'));
     }
 
     public function getData()
@@ -134,10 +129,27 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
         $this->assertEquals(1, $test - $count);
     }
 
+    public function testSavePasteShouldRerenderFormWhenDataIsInvalid()
+    {
+        $data = $this->getData();
+        $data['pasteform']['type'] = 'bogus';
+        $this->request->setPost($data)
+                      ->setMethod('POST');
+        $this->dispatch('/paste/save');
+        $this->assertNotRedirect();
+        $this->assertQuery('#pasteform');
+    }
+
     public function testDisplayPasteShouldDisplayErrorMessageWhenNotFound()
     {
         $this->dispatch('/paste/display/id/bogus');
         $this->assertQuery('#paste p.error');
+    }
+
+    public function testDisplayShouldRedirectToSplashPageWhenNoIdentifierPresent()
+    {
+        $this->dispatch('/paste/display');
+        $this->assertRedirectTo('/paste');
     }
 
     public function testDisplayPasteShouldDisplayPasteDetailsWhenFound()
@@ -275,6 +287,19 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
             $this->assertTrue(array_key_exists('id', $item));
             $this->assertTrue(in_array($item['id'], $ids));
         }
+    }
+
+    public function testActiveDataCountActionShouldReturnSimplyACount()
+    {
+        $data  = $this->getData();
+        $model = new Paste();
+        $ids   = array();
+        for ($i = 0; $i < 5; ++$i) {
+            $ids[] = $model->add($data);
+        }
+        $this->dispatch('/paste/active-data-count/format/ajax');
+        $content = $this->response->getBody();
+        $this->assertEquals(5, $content);
     }
 }
 

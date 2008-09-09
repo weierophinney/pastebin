@@ -63,6 +63,7 @@ if (defined('TESTS_GENERATE_REPORT') && TESTS_GENERATE_REPORT === true &&
  * Store application root in registry
  */
 Zend_Registry::set('testRoot', $root);
+Zend_Registry::set('testBootstrap', $root . '/application/bootstrap.php');
 
 /*
  * Unset global variables that are no longer needed.

@@ -32,7 +32,8 @@ class ErrorControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
      */
     public function setUp()
     {
-        $this->bootstrap = array($this, 'bootstrapError');
+        include dirname(__FILE__) . '/../../scripts/loadTestDb.php';
+        $this->bootstrap = Zend_Registry::get('testBootstrap');
         return parent::setUp();
     }
 
@@ -44,12 +45,6 @@ class ErrorControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
      */
     public function tearDown()
     {
-    }
-
-    public function bootstrapError()
-    {
-        include dirname(__FILE__) . '/../../scripts/loadTestDb.php';
-        $this->frontController->registerPlugin(new My_Plugin_Initialize('testing'));
     }
 
     public function testErrorControllerTrapsMissingActionsAs404s()

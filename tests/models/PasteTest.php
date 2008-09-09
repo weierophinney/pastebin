@@ -217,6 +217,29 @@ class PasteTest extends PHPUnit_Framework_TestCase
         }
         $this->assertEquals(10, count($test));
     }
+
+    /**
+     * @group fetch
+     */
+    public function testFetchingActivePastesShouldAllowSorting()
+    {
+        $data   = $this->getData();
+        $users  = array();
+        $ids    = array();
+        for ($i = 0; $i < 100; ++$i) {
+            $iData          = $data;
+            $iData['user'] .= $i;
+            $ids[]          = $this->model->add($iData);
+            $users[]        = $iData['user'];
+        }
+        $active = $this->model->fetchActive(array('sort' => '-user'));
+        $test   = array();
+        foreach ($active as $paste) {
+            $test[] = $paste['user'];
+        }
+        rsort($users);
+        $this->assertEquals($users, $test);
+    }
 }
 
 // Call models_PasteTest::main() if this source file is executed directly.
