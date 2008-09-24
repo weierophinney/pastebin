@@ -49,7 +49,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function initConfig()
     {
-        $this->config = new Zend_Config_Ini(APPLICATION_PATH . '/application/config/paste.ini', $this->env);
+        $this->config = new Zend_Config_Ini(APPLICATION_PATH . '/config/paste.ini', $this->env);
         Zend_Registry::set('config', $this->config);
         return $this;
     }

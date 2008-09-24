@@ -3,6 +3,9 @@
 # - need short open tags for view scripts
 php_value date.timezone "UTC"
 php_value short_open_tag 1
+php_value error_reporting 8191
+php_flag  display_errors Off
+php_flag  display_startup_errors Off
 
 # Rewrite Rules
 RewriteEngine On
