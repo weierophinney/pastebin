@@ -1,4 +1,16 @@
-<?  $this->contentPane()->captureStart('new-paste', array('title' => 'New Paste', 'class' => 'tab', 'href' => '/paste/new/format/ajax', 'parseOnLoad' => true)) ?>
+<?  $this->contentPane()->captureStart('new-paste', array(
+    'title'       => 'New Paste',
+    'class'       => 'tab',
+    'href'        => $this->url(
+        array(
+            'controller' => 'paste',
+            'action'     => 'new',
+            'format'     => 'ajax',
+        ),
+        'default',
+        true
+    ),
+    'parseOnLoad' => true)) ?>
 <script type="dojo/connect" event="onLoad">
     dojo.connect(dojo.byId('pasteform'), 'onsubmit', function () {
         dojo.byId('pasteform-code').value = dijit.byId('pasteform-codeEditor').getValue(false);

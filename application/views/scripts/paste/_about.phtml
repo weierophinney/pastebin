@@ -18,6 +18,13 @@
 </p>
 
 <p class="new-paste">
-    <a href="/paste/new">Create a new paste.</a>
+    <a href="<?= $this->url(
+        array(
+            'controller' => 'paste',
+            'action'     => 'new',
+        ),
+        'default',
+        true
+    ) ?>">Create a new paste.</a>
 </p>
 <?= $this->contentPane()->captureEnd('about') ?>

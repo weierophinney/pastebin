@@ -1,4 +1,17 @@
-<?  $this->contentPane()->captureStart('followup', array('title' => 'Followup', 'class' => 'tab', 'href' => '/paste/followup/id/' . $this->id . '/format/ajax', 'parseOnLoad' => true)) ?>
+<?  $this->contentPane()->captureStart('followup', array(
+    'title'       => 'Followup', 
+    'class'       => 'tab', 
+    'href'        => $this->url(
+        array(
+            'controller' => 'paste',
+            'action'     => 'followup',
+            'id'         => $this->id,
+            'format'     => 'ajax',
+        ),
+        'default',
+        true
+    ), 
+    'parseOnLoad' => true)) ?>
 <script type="dojo/connect" event="onLoad">
     dojo.connect(dojo.byId('followupform'), 'onsubmit', function () {
         dojo.byId('followupform-code').value = dijit.byId('followupform-codeEditor').getValue(false);

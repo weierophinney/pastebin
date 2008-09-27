@@ -236,8 +236,16 @@ class PasteController extends Zend_Controller_Action
      */
     public function getForm()
     {
-        $form = $this->getModel()->getForm();
-        $form->setAction('/paste/save')
+        $form   = $this->getModel()->getForm();
+        $action = $this->view->url(
+            array(
+                'controller' => 'paste',
+                'action'     => 'save',
+            ),
+            'default',
+            true
+        );
+        $form->setAction($action)
              ->setMethod('post');
         return $form;
     }
@@ -250,7 +258,16 @@ class PasteController extends Zend_Controller_Action
      */
     public function getFollowupForm($id)
     {
-        $form = $this->getForm();
+        $form   = $this->getForm();
+        $action = $this->view->url(
+            array(
+                'controller' => 'paste',
+                'action'     => 'save-followup',
+                'id'         => $id,
+            ),
+            'default',
+            true
+        );
         $form->addElement('hidden', 'parent', array(
                  'required' => true,
                  'validators' => array(
@@ -259,7 +276,7 @@ class PasteController extends Zend_Controller_Action
              ))
              ->setName('followupform')
              ->setElementsBelongTo('followupform')
-             ->setAction('/paste/save-followup/id/' . $id);
+             ->setAction($action);
         $form->save->setDijitParam('onClick', 'paste.main.followupPasteButton');
         return $form;
     }

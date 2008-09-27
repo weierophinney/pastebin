@@ -1,7 +1,28 @@
 <ul id="paste-nav">
     <? if (!isset($this->message)): ?>
-    <li><a href="/paste/followup/id/<?= $this->id ?>">Followup</a></li>
+    <li><a href="<?= $this->url(
+        array(
+            'controller' => 'paste',
+            'action'     => 'followup',
+            'id'         => $this->id,
+        ),
+        'default',
+        true
+    )?>">Followup</a></li>
     <? endif ?>
-    <li><a href="/paste/new">New Paste</a></li>
-    <li><a href="/paste">About</a></li>
+    <li><a href="<?= $this->url(
+        array(
+            'controller' => 'paste',
+            'action'     => 'new',
+        ),
+        'default',
+        true
+    ) ?>">New Paste</a></li>
+    <li><a href="<?= $this->url(
+        array(
+            'controller' => 'paste',
+        ),
+        'default',
+        true
+    ) ?>">About</a></li>
 </ul>

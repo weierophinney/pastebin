@@ -2,5 +2,17 @@
 <?  $this->tabContainer()->captureStart('pastebin', array('class' => 'paste-tab')) ?>
 <?= $this->render('paste/_about.phtml') ?>
 <?= $this->render('paste/_new-paste.phtml') ?>
-<?= $this->contentPane('active', '', array('title' => 'Active Pastes', 'class' => 'tab', 'href' => '/paste/active/format/ajax', 'parseOnLoad' => true)) ?>
+<?= $this->contentPane('active', '', array(
+    'title'       => 'Active Pastes',
+    'class'       => 'tab',
+    'href'        => $this->url(
+        array(
+            'controller' => 'paste',
+            'action'     => 'active',
+            'format'     => 'ajax',
+        ),
+        'default',
+        true
+    ),
+    'parseOnLoad' => true)) ?>
 <?= $this->tabContainer()->captureEnd('pastebin') ?>

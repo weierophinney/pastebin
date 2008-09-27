@@ -4,5 +4,17 @@
 <?  $this->contentPane()->captureStart('new-paste', array('title' => 'New Paste', 'class' => 'tab', 'selected' => true)) ?>
 <?= $this->form ?>
 <?= $this->contentPane()->captureEnd('new-paste') ?>
-<?= $this->contentPane('active', '', array('title' => 'Active Pastes', 'class' => 'tab', 'href' => '/paste/active/format/ajax', 'parseOnLoad' => true)) ?>
+<?= $this->contentPane('active', '', array(
+    'title'       => 'Active Pastes',
+    'class'       => 'tab',
+    'href'        => $this->url(
+        array(
+            'controller' => 'paste',
+            'action'     => 'active',
+            'format'     => 'ajax',
+        ),
+        'default',
+        true
+    ),
+    'parseOnLoad' => true)) ?>
 <?= $this->tabContainer()->captureEnd('pastebin') ?>
