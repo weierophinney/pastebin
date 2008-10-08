@@ -33,7 +33,7 @@ if (file_exists($config->db->cxn->params->dbname)) {
 $db = Zend_Db::factory($config->db->cxn);
 Zend_Db_Table_Abstract::setDefaultAdapter($db);
 
-$statements = include $config->appPath . '/data/pasteSchema.php';
+$statements = include $config->appPath . '/../data/pasteSchema.php';
 
 foreach ($statements as $statement) {
     $db->query($statement);

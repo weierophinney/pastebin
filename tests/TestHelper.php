@@ -10,6 +10,11 @@ ob_start();
 error_reporting( E_ALL | E_STRICT );
 
 /*
+ * Maximize memory limit
+ */
+ini_set('memory_limit', -1);
+
+/*
  * Set default timezone
  */
 date_default_timezone_set('GMT');
