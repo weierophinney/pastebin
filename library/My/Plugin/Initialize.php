@@ -130,7 +130,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         $view->addHelperPath('My/View/Helper/', 'My_View_Helper');
 
         Zend_Dojo::enableView($view);
-        $view->doctype('XHTML1_TRANSITIONAL');
+        $view->doctype('XHTML1_STRICT');
         $view->headTitle('Pastebin');
         $view->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=utf-8');
         $view->dojo()->setDjConfigOption('usePlainJson', true)

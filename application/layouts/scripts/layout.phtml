@@ -5,7 +5,8 @@ if (Zend_Controller_Front::getInstance()->getRequest()->getParam('nojs', false))
     $content = preg_replace('#href="([^"]*)"#s', 'href="$1?nojs=true"', $content);
 }
 ?>
-<html>
+<?= $this->doctype() ?>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <?= $this->headTitle() ?> 
     <?= $this->headMeta() ?> 
