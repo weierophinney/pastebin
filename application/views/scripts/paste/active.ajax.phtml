@@ -2,7 +2,7 @@
 Zend_Dojo_View_Helper_Dojo::setUseDeclarative(); 
 $this->dojo()->addStylesheet($this->baseUrl() . '/js/dojox/grid/_grid/tundraGrid.css')
              ->requireModule('dojox.data.QueryReadStore')
-             ->requireModule('dojox.grid.Grid');
+             ->requireModule('dojox.grid.DataGrid');
 ?>
 <span dojoType="dojox.data.QueryReadStore" jsId="activeStore"
     url="<?= $this->url(
@@ -14,13 +14,12 @@ $this->dojo()->addStylesheet($this->baseUrl() . '/js/dojox/grid/_grid/tundraGrid
         'default',
         true
     ) ?>"></span>
-<span dojoType="dojox.grid.data.DojoData" jsId="activeModel"
-    store="activeStore" rowsPerPage="30"></span>
-<table id="activePastes" dojoType="dojox.grid.Grid" model="activeModel"
+<table id="activePastes" dojoType="dojox.grid.DataGrid" store="activeStore"
+    jsId="activeGrid" rowsPerPage="30" selectionMode="single" 
     clientSort="false" query="{ id: '*' }" delayScroll="true">
-    <script type="dojo/method" event="onSelected" args="inRowIndex">
-var row = dijit.byId("activePastes").model.getRow(inRowIndex);
-location.href = "<?= $this->baseUrl() ?>/paste/display/id/" + row.id;
+    <script type="dojo/method" event="onClick" args="evt">
+var row = activeGrid.selection.getFirstSelected();
+location.href = "<?= $this->baseUrl() ?>/paste/display/id/" + row.i.id;
     </script>
     <thead>
         <tr>

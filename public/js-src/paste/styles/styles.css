@@ -1,5 +1,6 @@
 @import "../../dijit/themes/tundra/tundra.css";
-@import "../../dojox/grid/_grid/tundraGrid.css";
+@import "../../dojox/grid/resources/Grid.css";
+@import "../../dojox/grid/resources/tundraGrid.css";
 @import "highlight/highlight.css";
 @import "highlight/autumn.css";
 

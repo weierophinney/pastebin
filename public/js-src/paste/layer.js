@@ -9,9 +9,9 @@ dojo.provide("paste.layer");
     dojo.require("dijit.form.SimpleTextarea");
     dojo.require("dijit.form.Button");
     dojo.require("dijit.form.Form");
-    dojo.require("dojox.grid.Grid");
+    dojo.require("dojox.grid.DataGrid");
     dojo.require("dojox.data.QueryReadStore");
-    dojo.require("dojox.grid._data.model");
+    /* dojo.require("dojox.grid._data.model"); */
     dojo.require("dojo.parser");
     dojo.addOnLoad(function() {
         paste.upgrade(); 
@@ -72,7 +72,7 @@ dojo.provide("paste.layer");
         setStatusFromMetadata: function() {
             var metadata = dojo.byId("metadata");
             var footer = dijit.byId("footer");
-            footer.setContent("<p>" + metadata.innerHTML + "</p>");
+            footer.attr('content', "<p>" + metadata.innerHTML + "</p>");
         },
 
         updateStatus: function(tab) {
@@ -83,7 +83,7 @@ dojo.provide("paste.layer");
                     handleAs: "text",
                     load: function(count) {
                         var footer = dijit.byId("footer");
-                        footer.setContent('<p>' + count + " active pastes</p>");
+                        footer.attr('content', '<p>' + count + " active pastes</p>");
                     }
                 });
             } else {
