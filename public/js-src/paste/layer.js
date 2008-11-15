@@ -13,6 +13,12 @@ dojo.provide("paste.layer");
     dojo.require("dojox.data.QueryReadStore");
     /* dojo.require("dojox.grid._data.model"); */
     dojo.require("dojo.parser");
+    dojo.require("dojox.highlight.languages.html");
+    dojo.require("dojox.highlight.languages.xml");
+    dojo.require("paste.highlight.php");
+    dojo.require("dojox.highlight.languages.python");
+    dojo.require("dojox.highlight.languages._www");
+    dojo.require("paste.TabHandler");
     dojo.addOnLoad(function() {
         paste.upgrade(); 
     });

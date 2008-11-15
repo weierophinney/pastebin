@@ -1,0 +1,2 @@
+- Add ability to post new/followup without page reload
+- Add dojo.history/dojo.location awareness for bookmarking/forward/back

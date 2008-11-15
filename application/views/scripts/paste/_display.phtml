@@ -52,24 +52,4 @@
 <? endif ?>
 <?
     $this->dojo()->addOnLoad('paste.setStatusFromMetadata');
-    if ('text' == $this->paste['type']) {
-        return;
-    }
-    switch ($this->paste['type']) {
-        case 'html':
-            $this->dojo()->requireModule('dojox.highlight.languages.html');
-            break;
-        case 'xml':
-            $this->dojo()->requireModule('dojox.highlight.languages.xml');
-            break;
-        case 'php':
-            $this->dojo()->requireModule('paste.highlight.php');
-            break;
-        case 'python':
-            $this->dojo()->requireModule('dojox.highlight.languages.python');
-            break;
-        default:
-            $this->dojo()->requireModule('dojox.highlight.languages._www');
-            break;
-    }
     $this->dojo()->addOnLoad('paste.formattedShow');

@@ -27,14 +27,16 @@ class PasteController extends Zend_Controller_Action
         $contextSwitch = $this->_helper->contextSwitch;
         if (!$contextSwitch->hasContext('ajax')) {
             $contextSwitch->addContext('ajax', array('suffix' => 'ajax'))
-                        ->addActionContext('new', 'ajax')
-                        ->addActionContext('followup', 'ajax')
-                        ->addActionContext('display', 'ajax')
-                        ->addActionContext('active', 'ajax')
-                        ->addActionContext('active-data', 'ajax')
-                        ->addActionContext('active-data-count', 'ajax')
-                        ->initContext();
+                          ->addActionContext('new', 'ajax')
+                          ->addActionContext('followup', 'ajax')
+                          ->addActionContext('display', 'ajax')
+                          ->addActionContext('active', 'ajax')
+                          ->addActionContext('active-data', 'ajax')
+                          ->addActionContext('active-data-count', 'ajax')
+                          ->initContext();
         }
+
+        $this->view->dojo()->addJavascript('var tabs = new paste.TabHandler("' . $request->getBaseUrl() . '");');
 
         $message = array(
             'Current request information',
