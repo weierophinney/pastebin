@@ -59,11 +59,16 @@ dojo.declare("paste.TabHandler", null, {
             },
             dojo.doc.createElement('div')
         );
+        dojo.connect(this.followupTab, "onLoad", paste, "prepareFollowupForm");
 
         // attach tabs to tab container
         this.getPasteContainer().addChild(this.pasteTab);
         this.getPasteContainer().addChild(this.followupTab);
         this.pasteTab.startup();
         this.followupTab.startup();
+    },
+
+    resetNewPasteTab: function() {
+        dijit.byId("new-paste").attr("href", this.baseUrl + "/paste/new/format/ajax");
     },
 });

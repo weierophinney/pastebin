@@ -133,8 +133,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         $view->doctype('XHTML1_STRICT');
         $view->headTitle('Pastebin');
         $view->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=utf-8');
-        $view->dojo()->setDjConfigOption('usePlainJson', true)
-                     ->setDjConfigOption('isDebug', $this->config->view->dojo->isDebug)
+        $view->dojo()->setDjConfigOption('isDebug', $this->config->view->dojo->isDebug)
                      ->setLocalPath('/js/dojo/dojo.js')
                      ->addLayer('/js/paste/layer.js')
                      ->registerModulePath('../paste', 'paste')

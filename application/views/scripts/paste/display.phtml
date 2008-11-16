@@ -18,6 +18,8 @@
 <?  $this->contentPane()->captureStart('paste', array('title' => $this->title, 'class' => 'tab', 'selected' => true)) ?>
     <?= $this->render('paste/_nav.phtml') ?>
     <?= $this->render('paste/_display.phtml') ?>
+    <? $this->dojo()->addOnLoad('paste.setStatusFromMetadata');
+       $this->dojo()->addOnLoad('paste.formattedShow'); ?>
 <?= $this->contentPane()->captureEnd('paste') ?>
 <? if (!isset($this->message)): ?>
 <?= $this->render('paste/_followup-paste.phtml') ?>

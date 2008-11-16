@@ -21,6 +21,7 @@ dojo.provide("paste.layer");
     dojo.require("paste.TabHandler");
     dojo.addOnLoad(function() {
         paste.upgrade(); 
+        dojo.connect(dijit.byId("new-paste"), "onLoad", paste, "prepareNewPasteForm");
     });
 
     dojo.mixin(paste, {
@@ -95,6 +96,68 @@ dojo.provide("paste.layer");
             } else {
                 paste.setStatusFromMetadata();
             }
+        },
+
+        _processForm: function(pasteform) {
+            if (!pasteform.isValid()) {
+                return;
+            }
+
+            dojo.xhrPost({
+                url:   pasteform.attr("url") + "/format/ajax",
+                form:  pasteform,
+                load:  function(data) {
+                    if (data.success) {
+                        tabs.loadPasteTabs(data.success);
+                        tabs.resetNewPasteTab();
+                    } else {
+                        // display errors...
+                    }
+                },
+                error: function(data) {
+                    // display errors
+                },
+            });
+        },
+
+        processNewForm: function(e) {
+            e.preventDefault();
+            var form = dijit.byId("pasteform");
+            return paste._processForm(form);
+        },
+
+        processFollowupForm: function(e) {
+            e.preventDefault();
+            var form = dijit.byId("followupform");
+            return paste._processForm(form);
+        },    
+
+        _prepareForm: function(form) {
+            var url  = dojo.attr(form, "action");
+
+            var widget = dijit.byId(dojo.attr(form, "id"));
+
+            dojo.attr(form, "action", "#");
+            dojo.attr(form, "method", "");
+            dojo.attr(form, "url", url);
+
+            widget.attr("action", "#");
+            widget.attr("method", "");
+            widget.attr("url", url);
+        },
+
+        prepareNewPasteForm: function() {
+            var pasteform = dojo.byId("pasteform");
+            paste._prepareForm(pasteform);
+            dojo.connect(pasteform, "onsubmit", paste, "processNewForm");
+            dojo.connect(dijit.byId(dojo.attr(pasteform, "id")), "onSubmit", paste, "processNewForm");
+        },
+
+        prepareFollowupForm: function() {
+            var followupform = dojo.byId("followupform");
+            paste._prepareForm(followupform);
+            dojo.connect(followupform, "onsubmit", paste, "processFollowupForm");
+            dojo.connect(dijit.byId(dojo.attr(followupform, "id")), "onSubmit", paste, "processFollowupForm");
         },
     });
 })();

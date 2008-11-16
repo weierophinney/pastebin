@@ -22,6 +22,7 @@ class Form_Paste extends Zend_Dojo_Form
     public function init()
     {
         $this->addPrefixPath('My_Form_Element', 'My/Form/Element/', 'element');
+        $this->addPrefixPath('My_Form_Decorator', 'My/Form/Decorator/', 'decorator');
 
         $expiries = array(
             ''                => 'No expiration',

@@ -2,7 +2,7 @@
 <?  $this->tabContainer()->captureStart('pastebin', array('class' => 'paste-tab')) ?>
 <?= $this->render('paste/_about.phtml') ?>
 <?  $this->contentPane()->captureStart('new-paste', array('title' => 'New Paste', 'class' => 'tab', 'selected' => true)) ?>
-<?= $this->form ?>
+<?= $this->form; ?>
 <?= $this->contentPane()->captureEnd('new-paste') ?>
 <?= $this->contentPane('active', '', array(
     'title'       => 'Active Pastes',
