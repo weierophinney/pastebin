@@ -1,6 +1,7 @@
 dojo.provide("paste.layer");
 
 (function() {
+    dojo.require("dojo.back");
     dojo.require("dijit.layout.ContentPane");
     dojo.require("dijit.layout.BorderContainer");
     dojo.require("dijit.layout.TabContainer");
@@ -21,13 +22,75 @@ dojo.provide("paste.layer");
     dojo.require("dojox.dtl.Context");
     dojo.require("dijit.Dialog");
     dojo.require("paste.TabHandler");
+
     dojo.addOnLoad(function() {
         paste.upgrade(); 
         dojo.connect(dijit.byId("new-paste"), "onLoad", paste, "prepareNewPasteForm");
     });
 
+    dojo.addOnLoad(function() {
+        // setup back button handling
+        dojo.back.setInitialState({
+            handle: paste.urlChangeHandler,
+        });
+
+        // set the tab based on any URL at load-time
+        paste.urlChangeHandler();
+    
+        // update the URL hash each time the tab changes
+        dojo.connect(dijit.byId("pastebin"), "selectChild", paste.urlUpdateHandler);
+    });
+
     dojo.mixin(paste, {
         activeStatusTabs: ["about", "active", "new-paste"],
+
+        urlChangeHandler: function() {
+            if (window.location.hash) {
+                var hash = window.location.hash.slice(1);   // strip leading "#"
+                if (hash.match(/^(new-paste|about|active)$/i)) {
+                    var tab = dijit.byId(hash.toLowerCase());
+                    dijit.byId("pastebin").selectChild(tab);
+                } else if (hash.match(/^[a-z0-9]{13}$/i)) {
+                    tabs.loadPasteTabs(hash.toLowerCase());
+                } else if (hash.match(/^followup-([a-z0-9]{13})$/i)) {
+                    var followupRegex = new RegExp(/^followup-([a-z0-9]{13})$/);
+                    var matches       = followupRegex.exec(hash.toLowerCase());
+                    tabs.loadFollowupTab(matches[1], false);
+                }
+            } else {
+                var tab = dijit.byId("about");
+                dijit.byId("pastebin").selectChild(tab);
+            }
+        },
+
+        urlUpdateHandler: function(tab) {
+            // update the URL hash to the current tab
+            var id = dijit.byId("pastebin").selectedChildWidget.id;
+            if (id.match(/^(new-paste|about|active)$/i)) {
+                dojo.back.addToHistory({
+                    handle:    paste.urlChangeHandler,
+                    changeUrl: id,
+                });
+            } else if ("paste" == id) {
+                var pastetab = dijit.byId(id);
+                var pasteid  = pastetab.controlButton.attr("label");
+                dojo.back.addToHistory({
+                    handle:    paste.urlChangeHandler,
+                    changeUrl: pasteid,
+                });
+            } else if ("followup" == id) {
+                var followuptab = dijit.byId(id);
+                var label       = followuptab.controlButton.attr("label");
+                var labelRegex  = new RegExp(/Followup: ([a-z0-9]{13})/);
+                var matches     = labelRegex.exec(label);
+                dojo.back.addToHistory({
+                    handle:    paste.urlChangeHandler,
+                    changeUrl: "followup-" + matches[1],
+                });
+            } else {
+                console.log("selecting " + id + " did not update url!");
+            }
+        },
 
         errorTemplate: "<dl class=\"error\">{% for item in items %}<dt>{{ item.label }}</dt>{% for message in item.messages %}<dd>{{ message }}</dd>{% endfor %}{% endfor %}</dl>",
 
@@ -139,6 +202,7 @@ dojo.provide("paste.layer");
                     });
                     dojo.body().appendChild(dialog.domNode);
                     dialog.startup();
+                    dialog.show();
                 },
             });
         },

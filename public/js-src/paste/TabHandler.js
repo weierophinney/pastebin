@@ -21,7 +21,7 @@ dojo.declare("paste.TabHandler", null, {
         return dijit.byId("pastebin");
     },
 
-    loadPasteTabs: function(pasteId) {
+    _loadTabs: function(pasteId) {
         if (this.pasteTab == null) {
             this.createPasteTabs(pasteId);
         }
@@ -33,8 +33,18 @@ dojo.declare("paste.TabHandler", null, {
         // Reset followup tab href and title
         this.followupTab.attr("href", this.getFollowupUrl(pasteId));
         this.followupTab.controlButton.attr("label", "Followup: " + pasteId);
+    },
 
+    loadPasteTabs: function(pasteId) {
+        this._loadTabs(pasteId);
         this.getPasteContainer().selectChild(this.pasteTab);
+        paste.urlUpdateHandler(this.pasteTab);
+    },
+
+    loadFollowupTab: function(pasteId) {
+        this._loadTabs(pasteId);
+        this.getPasteContainer().selectChild(this.followupTab);
+        paste.urlUpdateHandler(this.followupTab);
     },
 
     createPasteTabs: function(pasteId, baseUrl) {
@@ -49,6 +59,7 @@ dojo.declare("paste.TabHandler", null, {
         );
         dojo.connect(this.pasteTab, "onLoad", paste.formattedShow);
         dojo.connect(this.pasteTab, "onLoad", paste.setStatusFromMetadata);
+        dojo.connect(this.pasteTab, "onLoad", paste.urlUpdateHandler);
 
         // create tab that remotes to followup for pasteid
         this.followupTab = new dijit.layout.ContentPane(
@@ -60,11 +71,15 @@ dojo.declare("paste.TabHandler", null, {
             dojo.doc.createElement('div')
         );
         dojo.connect(this.followupTab, "onLoad", paste, "prepareFollowupForm");
+        dojo.connect(this.followupTab, "onLoad", paste.urlUpdateHandler);
 
         // attach tabs to tab container
         this.getPasteContainer().addChild(this.pasteTab);
         this.getPasteContainer().addChild(this.followupTab);
         this.pasteTab.startup();
         this.followupTab.startup();
+
+        // Ensure selectChild continues to work for other tabs
+        dojo.connect(this.getPasteContainer(), "selectChild", paste.urlUpdateHandler);
     },
 });
