@@ -67,8 +67,4 @@ dojo.declare("paste.TabHandler", null, {
         this.pasteTab.startup();
         this.followupTab.startup();
     },
-
-    resetNewPasteTab: function() {
-        dijit.byId("new-paste").attr("href", this.baseUrl + "/paste/new/format/ajax");
-    },
 });

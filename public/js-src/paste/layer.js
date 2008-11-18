@@ -106,7 +106,6 @@ dojo.provide("paste.layer");
                 load:     function(data) {
                     if (data.success) {
                         tabs.loadPasteTabs(data.success);
-                        tabs.resetNewPasteTab();
                     } else if (data.error) {
                         // display errors...
                         var errorMarkup = paste.createErrorDiv(data.messages);
