@@ -76,6 +76,9 @@ class Form_Paste extends Zend_Dojo_Form
             'required'    => false,
             'ignore'      => true,
             'label'       => 'Save',
+            'dijitParams' => array(
+                'label' => 'Save',
+            ),
         ));
 
         $this->addElement('hidden', 'parent', array(

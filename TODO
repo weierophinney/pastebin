@@ -1,12 +1,9 @@
-- Add ability to post new/followup without page reload
-  - Determine how to intercept form submission
-  - Perform XHR request
-    - Have different view for AJAX form requests
-      - return {success: $id} on success
-      - return {error: $messages} on failure
-  - Determine how to insert error messages on validation failure
 - Add dojo.history/dojo.location awareness for bookmarking/forward/back
   - Add handler for hash; focus appropriate tab based on presence
 - Refactor to allow easy usage without JS
   - Use Paginator for active view
-  - Use different view logic for non-js views
+  - No ajax in MVC
+  - JSON-RPC for all ajax stuff
+    - "content" namespace: about, forms, grid markup
+    - "data" namespace: individual pastes, grid data
+    - determine how to do templating

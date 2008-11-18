@@ -1,4 +1,4 @@
-<?  $this->contentPane()->captureStart('followup', array(
+<?=  $this->contentPane('followup', '', array(
     'title'       => 'Followup', 
     'class'       => 'tab', 
     'href'        => $this->url(
@@ -12,10 +12,4 @@
         true
     ), 
     'parseOnLoad' => true)) ?>
-<script type="dojo/connect" event="onLoad">
-    dojo.connect(dojo.byId('followupform'), 'onsubmit', function () {
-        dojo.byId('followupform-code').value = dijit.byId('followupform-codeEditor').getValue(false);
-    });
-</script>
-<?= $this->contentPane()->captureEnd('followup') ?>
 

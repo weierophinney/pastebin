@@ -18,6 +18,8 @@ dojo.provide("paste.layer");
     dojo.require("paste.highlight.php");
     dojo.require("dojox.highlight.languages.python");
     dojo.require("dojox.highlight.languages._www");
+    dojo.require("dojox.dtl.Context");
+    dojo.require("dijit.Dialog");
     dojo.require("paste.TabHandler");
     dojo.addOnLoad(function() {
         paste.upgrade(); 
@@ -27,19 +29,7 @@ dojo.provide("paste.layer");
     dojo.mixin(paste, {
         activeStatusTabs: ["about", "active", "new-paste"],
 
-        newPasteButton:  function() {
-            var form = dijit.byId("pasteform");
-            if (form.isValid()) {
-                form.submit(); 
-            }
-        },
-
-        followupPasteButton: function() {
-            var form = dijit.byId("followupform");
-            if (form.isValid()) {
-                form.submit(); 
-            }
-        },
+        errorTemplate: "<dl class=\"error\">{% for item in items %}<dt>{{ item.label }}</dt>{% for message in item.messages %}<dd>{{ message }}</dd>{% endfor %}{% endfor %}</dl>",
 
         unformattedShow: function() {
             dojo.toggleClass("pastecode", "highlight", false);
@@ -98,24 +88,58 @@ dojo.provide("paste.layer");
             }
         },
 
+        createErrorDiv: function(errors) {
+            var template = new dojox.dtl.Template(paste.errorTemplate);
+            var html     = template.render(new dojox.dtl.Context({items: errors }));
+            return html;
+        },
+
         _processForm: function(pasteform) {
             if (!pasteform.isValid()) {
                 return;
             }
 
             dojo.xhrPost({
-                url:   pasteform.attr("url") + "/format/ajax",
-                form:  pasteform,
-                load:  function(data) {
+                url:      dojo.attr(pasteform.domNode, "url") + "/format/ajax",
+                form:     pasteform.domNode,
+                handleAs: "json",
+                load:     function(data) {
                     if (data.success) {
                         tabs.loadPasteTabs(data.success);
                         tabs.resetNewPasteTab();
-                    } else {
+                    } else if (data.error) {
                         // display errors...
+                        var errorMarkup = paste.createErrorDiv(data.messages);
+                        var requestForm;
+                        if (data.request.pasteform) {
+                            requestForm = "pasteform";
+                        } else {
+                            requestForm = "followupform";
+                        }
+                        var dialog = new dijit.Dialog({
+                            title: "An Error Occurred",
+                            content: errorMarkup,
+                        });
+                        dojo.body().appendChild(dialog.domNode);
+                        dialog.startup();
+                        dialog.show();
                     }
                 },
-                error: function(data) {
+                error:    function(data) {
                     // display errors
+                    var errors = [
+                        {
+                            label: "General Transport Error: ", 
+                            messages: ["A general error occurred; please try again later."],
+                        },
+                    ];
+                    var errorMarkup = paste.createErrorDiv(errors);
+                    var dialog = new dijit.Dialog({
+                        title: "An Error Occurred",
+                        content: errorMarkup,
+                    });
+                    dojo.body().appendChild(dialog.domNode);
+                    dialog.startup();
                 },
             });
         },
@@ -134,30 +158,21 @@ dojo.provide("paste.layer");
 
         _prepareForm: function(form) {
             var url  = dojo.attr(form, "action");
-
-            var widget = dijit.byId(dojo.attr(form, "id"));
-
             dojo.attr(form, "action", "#");
             dojo.attr(form, "method", "");
             dojo.attr(form, "url", url);
-
-            widget.attr("action", "#");
-            widget.attr("method", "");
-            widget.attr("url", url);
         },
 
         prepareNewPasteForm: function() {
             var pasteform = dojo.byId("pasteform");
             paste._prepareForm(pasteform);
             dojo.connect(pasteform, "onsubmit", paste, "processNewForm");
-            dojo.connect(dijit.byId(dojo.attr(pasteform, "id")), "onSubmit", paste, "processNewForm");
         },
 
         prepareFollowupForm: function() {
             var followupform = dojo.byId("followupform");
             paste._prepareForm(followupform);
             dojo.connect(followupform, "onsubmit", paste, "processFollowupForm");
-            dojo.connect(dijit.byId(dojo.attr(followupform, "id")), "onSubmit", paste, "processFollowupForm");
         },
     });
 })();

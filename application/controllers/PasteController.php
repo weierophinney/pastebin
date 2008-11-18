@@ -33,6 +33,8 @@ class PasteController extends Zend_Controller_Action
                           ->addActionContext('active', 'ajax')
                           ->addActionContext('active-data', 'ajax')
                           ->addActionContext('active-data-count', 'ajax')
+                          ->addActionContext('save', 'ajax')
+                          ->addActionContext('save-followup', 'ajax')
                           ->initContext();
         }
 
@@ -84,7 +86,18 @@ class PasteController extends Zend_Controller_Action
         $model = $this->getModel();
         if (false === ($id = $model->add($request->getPost()))) {
             $this->view->form = $model->getForm();
+            if ('ajax' == $this->_helper->contextSwitch->getCurrentContext()) {
+                $this->view->response = $this->getResponse();
+                $this->view->request  = $request->getPost();
+                return;
+            }
             return $this->render('new');
+        }
+
+        if ('ajax' == $this->_helper->contextSwitch->getCurrentContext()) {
+            $this->view->response = $this->getResponse();
+            $this->view->id = $id;
+            return;
         }
 
         $this->_helper->redirector('display', null, null, array('id' => $id));
@@ -166,6 +179,11 @@ class PasteController extends Zend_Controller_Action
         $form = $this->getFollowupForm($parentId);
         if (!$form->isValid($request->getPost($form->getElementsBelongTo()))) {
             $this->view->form  = $form;
+            if ('ajax' == $this->_helper->contextSwitch->getCurrentContext()) {
+                $this->view->response = $this->getResponse();
+                $this->view->request  = $request->getPost();
+                return $this->render('save');
+            }
             return $this->render('followup');
         }
 
@@ -173,6 +191,13 @@ class PasteController extends Zend_Controller_Action
         $data  = $data[$form->getElementsBelongTo()];
         $model = $this->getModel();
         $id    = $model->add($data);
+
+        if ('ajax' == $this->_helper->contextSwitch->getCurrentContext()) {
+            $this->view->response = $this->getResponse();
+            $this->view->id = $id;
+            return $this->render('save');
+        }
+
         $this->_helper->redirector('display', null, null, array('id' => $id));
     }
 
@@ -279,7 +304,6 @@ class PasteController extends Zend_Controller_Action
              ->setName('followupform')
              ->setElementsBelongTo('followupform')
              ->setAction($action);
-        $form->save->setDijitParam('onClick', 'paste.main.followupPasteButton');
         return $form;
     }
 }
