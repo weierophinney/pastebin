@@ -49,26 +49,22 @@ dojo.declare("paste.TabHandler", null, {
 
     createPasteTabs: function(pasteId, baseUrl) {
         // create tab that remotes to pasteid
-        this.pasteTab = new dijit.layout.ContentPane(
-            {
-                id:          "paste",
-                class:       "tab",
+        this.pasteTab = new dijit.layout.ContentPane({
+                id: "paste",
                 parseOnLoad: true,
             },
-            dojo.doc.createElement('div')
+            dojo.doc.createElement("div")
         );
         dojo.connect(this.pasteTab, "onLoad", paste.formattedShow);
         dojo.connect(this.pasteTab, "onLoad", paste.setStatusFromMetadata);
         dojo.connect(this.pasteTab, "onLoad", paste.urlUpdateHandler);
 
         // create tab that remotes to followup for pasteid
-        this.followupTab = new dijit.layout.ContentPane(
-            {
-                id:          "followup",
-                class:       "tab",
+        this.followupTab = new dijit.layout.ContentPane({
+                id: "followup",
                 parseOnLoad: true,
             },
-            dojo.doc.createElement('div')
+            dojo.doc.createElement("div")
         );
         dojo.connect(this.followupTab, "onLoad", paste, "prepareFollowupForm");
         dojo.connect(this.followupTab, "onLoad", paste.urlUpdateHandler);
@@ -81,5 +77,5 @@ dojo.declare("paste.TabHandler", null, {
 
         // Ensure selectChild continues to work for other tabs
         dojo.connect(this.getPasteContainer(), "selectChild", paste.urlUpdateHandler);
-    },
+    }
 });
