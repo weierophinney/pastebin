@@ -1,5 +1,6 @@
 dojo.provide("paste.TabHandler");
 
+dojo.require("paste.layer");
 dojo.require("dijit.layout.ContentPane");
 
 dojo.declare("paste.TabHandler", null, {

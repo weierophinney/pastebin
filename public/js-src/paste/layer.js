@@ -12,7 +12,6 @@ dojo.provide("paste.layer");
     dojo.require("dijit.form.Form");
     dojo.require("dojox.grid.DataGrid");
     dojo.require("dojox.data.QueryReadStore");
-    /* dojo.require("dojox.grid._data.model"); */
     dojo.require("dojo.parser");
     dojo.require("dojox.highlight.languages.html");
     dojo.require("dojox.highlight.languages.xml");
@@ -41,8 +40,19 @@ dojo.provide("paste.layer");
         dojo.connect(dijit.byId("pastebin"), "selectChild", paste.urlUpdateHandler);
     });
 
+    var path      = window.location.pathname;
+    var pathRegex = new RegExp(/^(.*?)\/paste/);
+    var matches   = pathRegex.exec(path);
+    var baseUrl   = "";
+    if ((null != matches) && (1 < matches.length)) {
+        baseUrl = matches[1];
+    }
+    var tabs = new paste.TabHandler(baseUrl);
+
     dojo.mixin(paste, {
         activeStatusTabs: ["about", "active", "new-paste"],
+
+        tabs: tabs,
 
         urlChangeHandler: function() {
             if (window.location.hash) {
@@ -51,11 +61,11 @@ dojo.provide("paste.layer");
                     var tab = dijit.byId(hash.toLowerCase());
                     dijit.byId("pastebin").selectChild(tab);
                 } else if (hash.match(/^[a-z0-9]{13}$/i)) {
-                    tabs.loadPasteTabs(hash.toLowerCase());
+                    paste.tabs.loadPasteTabs(hash.toLowerCase());
                 } else if (hash.match(/^followup-([a-z0-9]{13})$/i)) {
                     var followupRegex = new RegExp(/^followup-([a-z0-9]{13})$/);
                     var matches       = followupRegex.exec(hash.toLowerCase());
-                    tabs.loadFollowupTab(matches[1], false);
+                    paste.tabs.loadFollowupTab(matches[1], false);
                 }
             } else {
                 var tab = dijit.byId("about");
@@ -168,7 +178,7 @@ dojo.provide("paste.layer");
                 handleAs: "json",
                 load:     function(data) {
                     if (data.success) {
-                        tabs.loadPasteTabs(data.success);
+                        paste.tabs.loadPasteTabs(data.success);
                     } else if (data.error) {
                         // display errors...
                         var errorMarkup = paste.createErrorDiv(data.messages);

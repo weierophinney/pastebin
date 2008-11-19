@@ -38,8 +38,6 @@ class PasteController extends Zend_Controller_Action
                           ->initContext();
         }
 
-        $this->view->dojo()->addJavascript('var tabs = new paste.TabHandler("' . $request->getBaseUrl() . '");');
-
         $message = array(
             'Current request information',
             array(

@@ -19,7 +19,7 @@ $this->dojo()->addStylesheet($this->baseUrl() . '/js/dojox/grid/_grid/tundraGrid
     clientSort="false" query="{ id: '*' }" delayScroll="true">
     <script type="dojo/method" event="onClick" args="evt">
 var row = activeGrid.selection.getFirstSelected();
-tabs.loadPasteTabs(row.i.id);
+paste.tabs.loadPasteTabs(row.i.id);
     </script>
     <thead>
         <tr>
