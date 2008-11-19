@@ -118,3 +118,12 @@ div#pastecode {
     background-color: #FFFFF1;
 }
 
+dl.error {
+    background-color: #FFA4A4;
+    border: 1px solid #FF0000;
+    padding: 0.5em;
+}
+
+dl.error dt {
+    font-weight: bold;
+}

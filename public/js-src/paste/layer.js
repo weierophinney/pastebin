@@ -75,7 +75,7 @@ dojo.provide("paste.layer");
 
         urlUpdateHandler: function(tab) {
             // update the URL hash to the current tab
-            var id = dijit.byId("pastebin").selectedChildWidget.id;
+            var id = tab.attr("id");
             if (id.match(/^(new-paste|about|active)$/i)) {
                 dojo.back.addToHistory({
                     handle:    paste.urlChangeHandler,
@@ -102,7 +102,7 @@ dojo.provide("paste.layer");
             }
         },
 
-        errorTemplate: "<dl class=\"error\">{% for item in items %}<dt>{{ item.label }}</dt>{% for message in item.messages %}<dd>{{ message }}</dd>{% endfor %}{% endfor %}</dl>",
+        errorTemplate: "<h4>There were one or more errors processing the form:</h4><dl class=\"error\">{% for item in items %}<dt>{{ item.label }}</dt>{% for message in item.messages %}<dd>{{ message }}</dd>{% endfor %}{% endfor %}</dl>",
 
         unformattedShow: function() {
             dojo.toggleClass("pastecode", "highlight", false);
@@ -182,19 +182,28 @@ dojo.provide("paste.layer");
                     } else if (data.error) {
                         // display errors...
                         var errorMarkup = paste.createErrorDiv(data.messages);
-                        var requestForm;
+                        var currentTab;
+                        var currentForm;
                         if (data.request.pasteform) {
-                            requestForm = "pasteform";
+                            currentTab  = dijit.byId("new-paste");
+                            currentForm = dijit.byId("pasteform");
                         } else {
-                            requestForm = "followupform";
+                            currentTab  = dijit.byId("followup");
+                            currentForm = dijitojo.byId("followupform");
                         }
-                        var dialog = new dijit.Dialog({
-                            title: "An Error Occurred",
-                            content: errorMarkup,
+                        var errorContainer = dojo.doc.createElement("div");
+                        var errorId        = currentTab.attr("id") + "-errors";
+                        dojo.attr(errorContainer, "id", errorId);
+                        errorContainer.innerHTML = errorMarkup;
+                        dojo.place(errorContainer, currentTab.domNode, "first");
+
+                        var focus = false;
+                        dojo.forEach(currentForm.getDescendants(), function(widget) {
+                            if (!focus) {
+                                widget.domNode.focus();
+                                focus = true;
+                            }
                         });
-                        dojo.body().appendChild(dialog.domNode);
-                        dialog.startup();
-                        dialog.show();
                     }
                 },
                 error:    function(data) {
