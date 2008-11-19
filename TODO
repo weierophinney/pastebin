@@ -1,3 +1,6 @@
+- Add handling for links
+  - Currently, child/parent/permalinks point to /paste/view/id/....; either
+    modify to use bookmarks, or add some magic to detect and redirect
 - Refactor to allow easy usage without JS
   - Use Paginator for active view
   - No ajax in MVC
