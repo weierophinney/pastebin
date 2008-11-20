@@ -1,3 +1,4 @@
-<?  $this->contentPane()->captureStart('about', array('title' => 'About', 'class' => 'tab')) ?>
-<?= $this->render('paste/content/about.phtml');
-<?= $this->contentPane()->captureEnd('about') ?>
+<?  
+$this->contentPane()->captureStart('about', array('title' => 'About', 'class' => 'tab'));
+echo $this->render('paste/content/about.phtml');
+echo $this->contentPane()->captureEnd('about');

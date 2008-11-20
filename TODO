@@ -1,4 +1,3 @@
-- Default url change should *not* switch to about tab
 - Better link/view generation
   - Pass reset flag to url() view helper to ensure only passed values are
     included in URL (currently receiving /format/ argument)

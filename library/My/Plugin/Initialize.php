@@ -124,7 +124,6 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     public function initView($doLayout = true)
     {
         $view = new Zend_View;
-        $view = $layout->getView();
         $view->addHelperPath('My/View/Helper/', 'My_View_Helper');
 
         Zend_Dojo::enableView($view);

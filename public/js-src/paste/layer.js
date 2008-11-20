@@ -27,7 +27,7 @@ dojo.provide("paste.layer");
         // Progressive enhancement of app
         paste.upgrade(); 
 
-        // create paste.tabs object with base URL derived from current location
+        // Derive base URL and create paste.tabs object
         var path      = window.location.pathname;
         var pathRegex = new RegExp(/^(.*?)\/paste/);
         var matches   = pathRegex.exec(path);
@@ -35,7 +35,8 @@ dojo.provide("paste.layer");
         if ((null != matches) && (1 < matches.length)) {
             baseUrl = matches[1];
         }
-        paste.tabs = new paste.TabHandler(baseUrl);
+        paste.baseUrl = baseUrl;
+        paste.tabs    = new paste.TabHandler(baseUrl);
 
         // Connect loading of new-paste tab to prepare new-paste form
         dojo.connect(dijit.byId("new-paste"), "onLoad", paste, "prepareNewPasteForm");

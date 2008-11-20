@@ -77,9 +77,6 @@ dojo.declare("paste.TabHandler", null, {
                 var matches       = followupRegex.exec(hash.toLowerCase());
                 this.loadFollowupTab(matches[1], false);
             }
-        } else {
-            var tab = dijit.byId("about");
-            dijit.byId("pastebin").selectChild(tab);
         }
     },
 
