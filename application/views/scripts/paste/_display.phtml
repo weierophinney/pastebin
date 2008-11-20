@@ -6,7 +6,7 @@
         <? if ('text' != $this->paste['type']): ?>
         (<a id="format-toggle" href="#" onClick="paste.unformattedShow();">unformatted</a>)
         <? endif ?>
-        <span class="permalink">[<a href="<?= $this->url(array('id' => $this->paste['id'])) ?>">Permalink</a>]</span>
+        <span class="permalink">[<a href="<?= $this->baseUrl() ?>/paste/display/id/<?= $this->paste['id'] ?>">Permalink</a>]</span>
     </h3>
     <div id="pastecode" class="highlight">
         <pre><code class="<?= $this->paste['type'] ?>"><?= $this->escape($this->paste['code']) ?></code></pre>
@@ -22,30 +22,14 @@
     </p>
     <? if (!empty($this->paste['parent'])): ?>
     <p class="parent">
-        <a href="<?= $this->url(
-            array(
-                'controller' => 'paste',
-                'action'     => 'display',
-                'id'         => $this->paste['parent'],
-            ),
-            'default',
-            true
-        ) ?>">Parent paste (<?= $this->paste['parent'] ?>)</a>
+    <a href="<?= $this->baseUrl() ?>/paste/display/id/<?= $this->paste['parent'] ?>">Parent paste (<?= $this->paste['parent'] ?>)</a>
     </p>
     <? endif ?>
     <? if (!empty($this->paste['children'])): ?>
     <p class="children">Child pastes:</p>
     <ul class="children">
     <? foreach ($this->paste['children'] as $child): ?>
-        <li><a href="<?= $this->url(
-            array(
-                'controller' => 'paste',
-                'action'     => 'display',
-                'id'         => $child,
-            ),
-            'default',
-            true
-        ) ?>"><?= $child ?></a></li>
+    <li><a href="<?= $this->baseUrl() ?>/paste/display/id/<?= $child ?>"><?= $child ?></a></li>
     <? endforeach ?>
     </ul>
     <? endif ?>

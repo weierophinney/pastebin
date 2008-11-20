@@ -5,14 +5,6 @@
 <?= $this->contentPane('active', '', array(
     'title'       => 'Active Pastes',
     'class'       => 'tab',
-    'href'        => $this->url(
-        array(
-            'controller' => 'paste',
-            'action'     => 'active',
-            'format'     => 'ajax',
-        ),
-        'default',
-        true
-    ),
+    'href'        => $this->baseUrl() . '/paste/active/format/ajax',
     'parseOnLoad' => true)) ?>
 <?= $this->tabContainer()->captureEnd('pastebin') ?>

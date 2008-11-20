@@ -1,6 +1,4 @@
 - Better link/view generation
-  - Pass reset flag to url() view helper to ensure only passed values are
-    included in URL (currently receiving /format/ argument)
   - MVC should setup tabs with content only for the currently selected tab. Tab
     handler should detect the current tab and update the URL accordingly.
   - Use Paginator for active view

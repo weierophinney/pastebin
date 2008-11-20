@@ -5,15 +5,7 @@ $this->dojo()->addStylesheet($this->baseUrl() . '/js/dojox/grid/_grid/tundraGrid
              ->requireModule('dojox.grid.DataGrid');
 ?>
 <span dojoType="dojox.data.QueryReadStore" jsId="activeStore"
-    url="<?= $this->url(
-        array(
-            'controller' => 'paste',
-            'action'     => 'active-data',
-            'format'     => 'ajax',
-        ),
-        'default',
-        true
-    ) ?>"></span>
+    url="<?= $this->baseUrl() ?>/paste/active-data/format/ajax"></span>
 <table id="activePastes" dojoType="dojox.grid.DataGrid" store="activeStore"
     jsId="activeGrid" rowsPerPage="30" selectionMode="single" 
     clientSort="false" query="{ id: '*' }" delayScroll="true">

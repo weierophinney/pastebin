@@ -1,15 +1,7 @@
 <?= $this->contentPane('new-paste', '', array(
-    'title'       => 'New Paste',
-    'class'       => 'tab',
-    'href'        => $this->url(
-        array(
-            'controller' => 'paste',
-            'action'     => 'new',
-            'format'     => 'ajax',
-        ),
-        'default',
-        true
-    ),
+    'title'         => 'New Paste',
+    'class'         => 'tab',
+    'href'          => $this->baseUrl() . '/paste/new/format/ajax',
     'parseOnLoad'   => true,
     'refreshOnShow' => true)) ?>
 

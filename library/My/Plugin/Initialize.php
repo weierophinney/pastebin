@@ -127,6 +127,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         $view->addHelperPath('My/View/Helper/', 'My_View_Helper');
 
         Zend_Dojo::enableView($view);
+        $view->baseUrl = rtrim($this->getRequest()->getBaseUrl(), '/');
         $view->doctype('XHTML1_STRICT');
         $view->headTitle('Pastebin');
         $view->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=utf-8');
