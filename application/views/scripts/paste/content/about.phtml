@@ -1,0 +1,29 @@
+<h3>Welcome</h3>
+
+<p>
+    This is a public pastebin. To quote <a href="http://pastebin.ca/">Pastebin</a>, 
+    a pastebin "is a public place to paste things (primarily configurations and
+    source code), but it is really open to pretty much any text format. The idea is
+    to paste large items here when talking online to someone, or even when holding
+    a phone conversation to paste the little things that are hard to explain."
+</p>
+
+<p>
+    All pastes are public, so you are encouraged not to post anything of a
+    sensitive nature. However, this particular implementation does not aggregate or
+    list posts, and all posts receive a random unique identifier, which should help
+    to preserve a certain amount of anonymity. By default, pastes expire in 1 hour,
+    though you may configure the interval and/or disable expiration as desired.
+</p>
+
+<p class="new-paste">
+    <a href="<?= $this->url(
+        array(
+            'controller' => 'paste',
+            'action'     => 'new',
+        ),
+        'default',
+        true
+    ) ?>">Create a new paste.</a>
+</p>
+

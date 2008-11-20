@@ -24,7 +24,6 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     {
         $this->env   = $env;
         $this->initConfig();
-        $this->front = Zend_Controller_Front::getInstance();
     }
 
     /**
@@ -35,6 +34,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function routeStartup(Zend_Controller_Request_Abstract $request)
     {
+        $this->front = Zend_Controller_Front::getInstance();
         $this->initControllers()
              ->initLog()
              ->initCache()
@@ -118,14 +118,12 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     /**
      * Initialize view and layouts
      * 
+     * @param  bool $doLayout
      * @return My_Plugin_Initialize
      */
-    public function initView()
+    public function initView($doLayout = true)
     {
-        $layout = Zend_Layout::startMvc(array(
-            'layoutPath' => $this->config->appPath . '/layouts/scripts'
-        ));
-
+        $view = new Zend_View;
         $view = $layout->getView();
         $view->addHelperPath('My/View/Helper/', 'My_View_Helper');
 
@@ -140,6 +138,16 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
                      ->registerModulePath('../paste', 'paste')
                      ->addStylesheetModule('paste.styles')
                      ->disable();
+
+        Zend_Registry::set('view', $view);
+
+        if ($doLayout) {
+            $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
+            $viewRenderer->setView($view);
+            $layout = Zend_Layout::startMvc(array(
+                'layoutPath' => $this->config->appPath . '/layouts/scripts'
+            ));
+        }
 
         return $this;
     }

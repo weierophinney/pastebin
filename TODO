@@ -1,10 +1,25 @@
-- Add handling for links
-  - Currently, child/parent/permalinks point to /paste/view/id/....; either
-    modify to use bookmarks, or add some magic to detect and redirect
-- Refactor to allow easy usage without JS
+- Default url change should *not* switch to about tab
+- Better link/view generation
+  - Pass reset flag to url() view helper to ensure only passed values are
+    included in URL (currently receiving /format/ argument)
+  - MVC should setup tabs with content only for the currently selected tab. Tab
+    handler should detect the current tab and update the URL accordingly.
   - Use Paginator for active view
+- Refactor to allow easy usage without JS
   - No ajax in MVC
-  - JSON-RPC for all ajax stuff
-    - "content" namespace: about, forms, grid markup
-    - "data" namespace: individual pastes, grid data
-    - determine how to do templating
+  - API directory
+    - versioned (v1, v2, etc)
+    - bootstrap
+      - sets up env constants
+      - instantiates initialization plugin
+      - uses HTTP request to get baseUrl
+    - endpoints
+      - /active -> active.php
+        Endpoint for QueryReadStore.
+      - /jsonrpc -> jsonrpc.php
+        Endpoint for submitting pastes and followups (JSON-RPC)
+      - /xmlrpc -> xmlrpc.php
+        Endpoint for submitting pastes and followups (XML-RPC)
+      - /about.html, /active-grid.html, /new-paste.html, paste-<id>.html, followup-<id>.html -> /content.php
+        If HTML file does not exist, then it creates it via the Paste_Content
+        model and writes to disk.
