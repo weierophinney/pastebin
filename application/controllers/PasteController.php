@@ -123,7 +123,7 @@ class PasteController extends Zend_Controller_Action
 
         $form = $this->getFollowupForm($parentId);
         if (!$form->isValid($request->getPost($form->getElementsBelongTo()))) {
-            $this->view->model = $model;
+            $this->view->model = $this->getModel();
             $this->view->id    = $parentId;
             return $this->render('followup');
         }

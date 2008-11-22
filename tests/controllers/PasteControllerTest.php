@@ -268,39 +268,6 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
         $this->dispatch('/paste/active');
         $this->assertQuery('#activePastes');
     }
-
-    public function testActiveDataShouldReturnJsonFormattedData()
-    {
-        $data  = $this->getData();
-        $model = new Paste();
-        $ids   = array();
-        for ($i = 0; $i < 5; ++$i) {
-            $ids[] = $model->add($data);
-        }
-        $this->dispatch('/paste/active-data/format/ajax');
-        $content = $this->response->getBody();
-        $test = Zend_Json::decode($content);
-        $this->assertTrue(is_array($test), var_export($test, 1));
-        $this->assertTrue(array_key_exists('items', $test), var_export($test, 1));
-        foreach ($test['items'] as $item) {
-            $this->assertTrue(is_array($item), var_export($item, 1));
-            $this->assertTrue(array_key_exists('id', $item));
-            $this->assertTrue(in_array($item['id'], $ids));
-        }
-    }
-
-    public function testActiveDataCountActionShouldReturnSimplyACount()
-    {
-        $data  = $this->getData();
-        $model = new Paste();
-        $ids   = array();
-        for ($i = 0; $i < 5; ++$i) {
-            $ids[] = $model->add($data);
-        }
-        $this->dispatch('/paste/active-data-count/format/ajax');
-        $content = $this->response->getBody();
-        $this->assertEquals(5, $content);
-    }
 }
 
 // Call PasteControllerTest::main() if this source file is executed directly.
