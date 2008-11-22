@@ -41,6 +41,7 @@ dojo.declare("paste.TabHandler", null, {
             this.followupTab.startup();
         }
         dojo.connect(this.followupTab, "onLoad", paste.prepareFollowupForm);
+        dojo.connect(this.followupTab.controlButton, "onClick", this.followupTab, "refresh");
 
         // Ensure selectChild continues to work for other tabs
         dojo.connect(this.getPasteContainer(), "selectChild", this, "urlUpdateHandler");

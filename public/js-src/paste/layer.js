@@ -53,5 +53,7 @@ dojo.provide("paste.layer");
     
         // update the URL hash each time the tab changes
         dojo.connect(dijit.byId("pastebin"), "selectChild", paste.tabs, "urlUpdateHandler");
+        dojo.connect(dijit.byId("new-paste").controlButton, "onClick", dijit.byId("new-paste"), "refresh");
+        dojo.connect(dijit.byId("active").controlButton, "onClick", dijit.byId("active"), "refresh");
     });
 })();
