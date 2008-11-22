@@ -1,19 +1,10 @@
-<?  $this->dojo()->enable() ?>
-<?  $this->tabContainer()->captureStart('pastebin', array('class' => 'paste-tab')) ?>
+<?  
+$this->dojo()->enable();
+$this->current = 'display';
+$this->tabContainer()->captureStart('pastebin', array('class' => 'paste-tab')) ?>
 <?= $this->render('paste/_about.phtml') ?>
 <?= $this->render('paste/_new-paste.phtml') ?>
-<?= $this->contentPane('active', '', array(
-    'title'       => 'Active Pastes', 
-    'class'       => 'tab', 
-    'href'        => $this->baseUrl() . '/paste/active/format/ajax',
-    'parseOnLoad' => true)) ?>
-<?  $this->contentPane()->captureStart('paste', array('title' => $this->title, 'class' => 'tab', 'selected' => true)) ?>
-    <?= $this->render('paste/_nav.phtml') ?>
-    <?= $this->render('paste/_display.phtml') ?>
-    <? $this->dojo()->addOnLoad('paste.setStatusFromMetadata');
-       $this->dojo()->addOnLoad('paste.formattedShow'); ?>
-<?= $this->contentPane()->captureEnd('paste') ?>
-<? if (!isset($this->message)): ?>
-<?= $this->render('paste/_followup-paste.phtml') ?>
-<? endif ?>
+<?= $this->render('paste/_active.phtml') ?>
+<?= $this->render('paste/_display.phtml') ?>
+<?= $this->render('paste/_followup.phtml') ?>
 <?= $this->tabContainer()->captureEnd('pastebin') ?>

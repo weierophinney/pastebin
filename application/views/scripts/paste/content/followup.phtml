@@ -1,0 +1,30 @@
+<? 
+if (!$paste = $this->model->get($this->id)) {
+    ?>
+    <h2>Not Found</h2>
+    <p>Paste not found</p>
+    <?
+    return;
+}
+
+$followupKeys = array(
+    'code'    => null,
+    'type'    => null,
+    'summary' => null,
+);
+$followup = array_intersect_key($paste, $followupKeys);
+$followup['parent'] = $this->id;
+
+$form  = $this->model->getForm();
+$form->setAction($this->baseUrl() . '/paste/save-followup/id/' . $this->id)
+     ->setMethod('post')
+     ->setName('followupform')
+     ->setElementsBelongTo('followupform')
+     ->addElement('hidden', 'parent', array(
+           'required' => true,
+           'validators' => array(
+               new Zend_Validate_Identical($this->id),
+           ),
+       ))
+     ->setDefaults($followup);
+echo $form;

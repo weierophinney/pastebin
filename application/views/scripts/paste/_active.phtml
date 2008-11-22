@@ -1,0 +1,15 @@
+<? 
+$dijitParams = array(
+    'title'         => 'Active Pastes',
+    'class'         => 'tab',
+    'href'          => $this->baseUrl() . '/api/v1/active-grid.html',
+    'parseOnLoad'   => true,
+);
+$content = '';
+if ('active' == $this->current) {
+    unset($dijitParams['href']);
+    $dijitParams['selected'] = true;
+    $content = $this->render('paste/content/active-grid.phtml');
+}
+
+echo $this->contentPane('active', $content, $dijitParams);

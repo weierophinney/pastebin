@@ -23,21 +23,6 @@ class PasteController extends Zend_Controller_Action
     {
         $request = $this->getRequest();
 
-        Zend_Dojo_View_Helper_Dojo::setUseDeclarative();
-        $contextSwitch = $this->_helper->contextSwitch;
-        if (!$contextSwitch->hasContext('ajax')) {
-            $contextSwitch->addContext('ajax', array('suffix' => 'ajax'))
-                          ->addActionContext('new', 'ajax')
-                          ->addActionContext('followup', 'ajax')
-                          ->addActionContext('display', 'ajax')
-                          ->addActionContext('active', 'ajax')
-                          ->addActionContext('active-data', 'ajax')
-                          ->addActionContext('active-data-count', 'ajax')
-                          ->addActionContext('save', 'ajax')
-                          ->addActionContext('save-followup', 'ajax')
-                          ->initContext();
-        }
-
         $message = array(
             'Current request information',
             array(
@@ -65,8 +50,7 @@ class PasteController extends Zend_Controller_Action
      */
     public function newAction()
     {
-        $form = $this->getForm();
-        $this->view->form = $form;
+        $this->view->model = $this->getModel();
     }
 
     /**
@@ -83,19 +67,8 @@ class PasteController extends Zend_Controller_Action
 
         $model = $this->getModel();
         if (false === ($id = $model->add($request->getPost()))) {
-            $this->view->form = $model->getForm();
-            if ('ajax' == $this->_helper->contextSwitch->getCurrentContext()) {
-                $this->view->response = $this->getResponse();
-                $this->view->request  = $request->getPost();
-                return;
-            }
+            $this->view->model = $model;
             return $this->render('new');
-        }
-
-        if ('ajax' == $this->_helper->contextSwitch->getCurrentContext()) {
-            $this->view->response = $this->getResponse();
-            $this->view->id = $id;
-            return;
         }
 
         $this->_helper->redirector('display', null, null, array('id' => $id));
@@ -112,16 +85,9 @@ class PasteController extends Zend_Controller_Action
             return $this->_helper->redirector('index');
         }
 
-        $model = $this->getModel();
-        if (!$paste = $model->get($id)) {$view = Zend_Layout::getMvcInstance()->getView();
-            $this->view->title   = 'Not Found';
-            $this->view->message = "Paste not found";
-            return;
-        }
-
+        $this->view->model = $this->getModel();
         $this->view->id    = $id;
         $this->view->title = $id;
-        $this->view->paste = $paste;
     }
 
     /**
@@ -135,27 +101,8 @@ class PasteController extends Zend_Controller_Action
             return $this->_helper->redirector('index');
         }
 
-        $model = $this->getModel();
-        if (!$paste = $model->get($id)) {
-            $this->view->title   = 'Not Found';
-            $this->view->message = "Paste not found";
-            return;
-        }
-        $this->view->id = $id;
-
-        $followupKeys = array(
-            'code'    => null,
-            'type'    => null,
-            'summary' => null,
-        );
-        $followup = array_intersect_key($paste, $followupKeys);
-        $followup['parent'] = $id;
-
-        $form = $this->getFollowupForm($id);
-        $form->setDefaults($followup);
-
-        $this->view->title = 'Followup: ' . $id;
-        $this->view->form  = $form;
+        $this->view->model = $this->getModel();
+        $this->view->id    = $id;
     }
 
     /**
@@ -176,12 +123,8 @@ class PasteController extends Zend_Controller_Action
 
         $form = $this->getFollowupForm($parentId);
         if (!$form->isValid($request->getPost($form->getElementsBelongTo()))) {
-            $this->view->form  = $form;
-            if ('ajax' == $this->_helper->contextSwitch->getCurrentContext()) {
-                $this->view->response = $this->getResponse();
-                $this->view->request  = $request->getPost();
-                return $this->render('save');
-            }
+            $this->view->model = $model;
+            $this->view->id    = $parentId;
             return $this->render('followup');
         }
 
@@ -189,12 +132,6 @@ class PasteController extends Zend_Controller_Action
         $data  = $data[$form->getElementsBelongTo()];
         $model = $this->getModel();
         $id    = $model->add($data);
-
-        if ('ajax' == $this->_helper->contextSwitch->getCurrentContext()) {
-            $this->view->response = $this->getResponse();
-            $this->view->id = $id;
-            return $this->render('save');
-        }
 
         $this->_helper->redirector('display', null, null, array('id' => $id));
     }
@@ -206,39 +143,6 @@ class PasteController extends Zend_Controller_Action
      */
     public function activeAction()
     {
-    }
-
-    /**
-     * Retrieve data representing active pastes
-     * 
-     * @return void
-     */
-    public function activeDataAction()
-    {
-        if ('ajax' != $this->_helper->contextSwitch->getCurrentContext()) {
-            $this->_helper->redirector('index');
-        }
-
-        $this->_helper->layout->disableLayout(true);
-        $model = $this->getModel();
-        $dojoData = new Zend_Dojo_Data('id', $model->fetchActive($this->getRequest()->getQuery()), 'id');
-        $this->view->data = $dojoData;
-        $this->view->count = $model->fetchActiveCount();
-    }
-
-    /**
-     * Return count of active pastes
-     * 
-     * @return void
-     */
-    public function activeDataCountAction()
-    {
-        if ('ajax' != $this->_helper->contextSwitch->getCurrentContext()) {
-            $this->_helper->redirector('index');
-        }
-
-        $model = $this->getModel();
-        $this->view->count = $model->fetchActiveCount();
     }
 
     /**

@@ -1,7 +1,15 @@
-<?= $this->contentPane('new-paste', '', array(
+<? 
+$dijitParams = array(
     'title'         => 'New Paste',
     'class'         => 'tab',
-    'href'          => $this->baseUrl() . '/paste/new/format/ajax',
+    'href'          => $this->baseUrl() . '/api/v1/new-paste.html',
     'parseOnLoad'   => true,
-    'refreshOnShow' => true)) ?>
+);
+$content = '';
+if ('new-paste' == $this->current) {
+    unset($dijitParams['href']);
+    $dijitParams['selected'] = true;
+    $content = $this->render('paste/content/new-paste.phtml');
+}
 
+echo $this->contentPane('new-paste', $content, $dijitParams);

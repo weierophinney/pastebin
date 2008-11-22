@@ -24,7 +24,7 @@ class Zend_View_Helper_BaseUrl extends Zend_View_Helper_Abstract
     public function baseUrl()
     {
         if (null === $this->_baseUrl) {
-            if ($this->view->baseUrl) {
+            if (isset($this->view->baseUrl)) {
                 $this->_baseUrl = $this->view->baseUrl;
             } else {
                 $request = Zend_Controller_Front::getInstance()->getRequest();

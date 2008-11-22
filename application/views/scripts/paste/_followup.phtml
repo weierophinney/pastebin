@@ -1,0 +1,17 @@
+<?
+$dijitParams = array(
+    'title'         => 'Followup: ' . $this->id, 
+    'class'         => 'tab', 
+    'href'          => $this->baseUrl() . '/api/v1/followup-' . $this->id . '.html',
+    'parseOnLoad'   => true,
+    'refreshOnShow' => true
+);
+$content = '';
+if ('followup' == $this->current) {
+    unset($dijitParams['href']);
+    $dijitParams['selected'] = true;
+    $content = $this->render('paste/content/followup.phtml')
+             . $this->render('paste/_nav.phtml');
+}
+
+echo $this->contentPane('followup', $content, $dijitParams);

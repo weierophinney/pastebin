@@ -1,11 +1,5 @@
-<? 
-Zend_Dojo_View_Helper_Dojo::setUseDeclarative(); 
-$this->dojo()->addStylesheet($this->baseUrl() . '/js/dojox/grid/_grid/tundraGrid.css')
-             ->requireModule('dojox.data.QueryReadStore')
-             ->requireModule('dojox.grid.DataGrid');
-?>
 <span dojoType="dojox.data.QueryReadStore" jsId="activeStore"
-    url="<?= $this->baseUrl() ?>/paste/active-data/format/ajax"></span>
+    url="<?= $this->baseUrl() ?>/api/v1/active"></span>
 <table id="activePastes" dojoType="dojox.grid.DataGrid" store="activeStore"
     jsId="activeGrid" rowsPerPage="30" selectionMode="single" 
     clientSort="false" query="{ id: '*' }" delayScroll="true">

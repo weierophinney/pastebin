@@ -29,7 +29,7 @@ class Paste
     /**
      * Add a paste
      * 
-     * @param  array $data 
+     * @param  array|struct $data 
      * @return string
      */
     public function add(array $data)

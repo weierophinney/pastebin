@@ -77,14 +77,12 @@ dojo.provide("paste._base");
     paste.updateStatus = function(tab) {
         var id = tab.domNode.id;
         if (-1 != paste.activeStatusTabs.indexOf(id)) {
-            dojo.xhrGet({
-                url:      "/paste/active-data-count/format/ajax",
-                handleAs: "text",
-                load:     function(count) {
+            var service = paste._getService();
+            service.fetchActiveCount()
+                .addCallback(function(count){
                     var footer = dijit.byId("footer");
                     footer.attr('content', '<p>' + count + " active pastes</p>");
-                },
-            });
+                });
         } else {
             paste.setStatusFromMetadata();
         }
@@ -100,6 +98,15 @@ dojo.provide("paste._base");
         dojo.subscribe("pastebin-selectChild", paste, "updateStatus");
     };
 
+    paste._getService = function() {
+        if (!paste._service) {
+            paste._service = new dojox.rpc.Service(paste.baseUrl + "/api/v1/jsonrpc.smd", {
+                envelope:"JSON-RPC-2.0",
+            });
+        }
+        return paste._service;
+    };
+
     paste._prepareForm = function(form) {
         var url  = dojo.attr(form, "action");
         dojo.attr(form, "action", "#");
@@ -107,29 +114,62 @@ dojo.provide("paste._base");
         dojo.attr(form, "url", url);
     };
 
+    paste._prepareFormElements = function(formNode) {
+        // summary:
+        //     For forms using array notation, we need to create a nested
+        //     object. This code does so, using the form's ID. It only looks one
+        //     level deep currently.'
+        var formName  = formNode.id;
+        var values   = dojo.formToObject(formNode);
+
+        if (!formName) {
+            return values;
+        }
+
+        var subRegexp = new RegExp(/\[(.*?)\]/);
+        var keys      = {};
+        dojo.forEach(formNode.elements, function(element) {
+            var name       = element.name;
+            if (matches = subRegexp.exec(name)) {
+                keys[name] = matches[1];
+            }
+        });
+        var mapped   = {};
+        for (var name in values) {
+            if (keys[name]) {
+                var shortName     = keys[name];
+                mapped[shortName] = values[name];
+            } else {
+                mapped[name] = values[name];
+            }
+        }
+        var ret = {};
+        ret[formName] = mapped;
+        return ret;
+    };
+
     paste._processForm = function(pasteform) {
-        dojo.xhrPost({
-            url:      dojo.attr(pasteform.domNode, "url") + "/format/ajax",
-            form:     pasteform.domNode,
-            handleAs: "json",
-            load:     function(data) {
+        var service = paste._getService();
+
+        var values = paste._prepareFormElements(pasteform.domNode);
+        console.log(values);
+
+        service.add(values)
+            .addCallback(function(data) {
                 if (data.success) {
                     paste.tabs.loadPasteTabs(data.success);
                 } else if (data.error) {
-                    // display errors...
-                    var errorMarkup = paste.createErrorDialog(data.messages);
+                    paste.createErrorDialog(data.messages);
                 }
-            },
-            error:    function(data) {
-                // display errors
+            })
+            .addErrback(function(data){
                 var errors = [
                     {
                         label:    "General Transport Error: ", 
                         messages: ["A general error occurred; please try again later."],
                     },
                 ];
-                var errorMarkup = paste.createErrorDialog(errors);
-            },
-        });
+                paste.createErrorDialog(errors);
+            });
     };
 })();

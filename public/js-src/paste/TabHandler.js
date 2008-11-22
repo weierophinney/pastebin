@@ -12,36 +12,42 @@ dojo.declare("paste.TabHandler", null, {
 
     createPasteTabs: function(pasteId, baseUrl) {
         // create tab that remotes to pasteid
-        this.pasteTab = new dijit.layout.ContentPane({
-                id: "paste",
-                parseOnLoad: true,
-            },
-            dojo.doc.createElement("div")
-        );
+        if (dijit.byId("paste")) {
+            this.pasteTab = dijit.byId("paste");
+        } else {
+            this.pasteTab = new dijit.layout.ContentPane({
+                    id: "paste",
+                    parseOnLoad: true,
+                },
+                dojo.doc.createElement("div")
+            );
+            this.getPasteContainer().addChild(this.pasteTab);
+            this.pasteTab.startup();
+        }
         dojo.connect(this.pasteTab, "onLoad", paste.formattedShow);
         dojo.connect(this.pasteTab, "onLoad", paste.setStatusFromMetadata);
 
         // create tab that remotes to followup for pasteid
-        this.followupTab = new dijit.layout.ContentPane({
-                id: "followup",
-                parseOnLoad: true,
-            },
-            dojo.doc.createElement("div")
-        );
+        if (dijit.byId("followup")) {
+            this.followupTab = dijit.byId("followup");
+        } else {
+            this.followupTab = new dijit.layout.ContentPane({
+                    id: "followup",
+                    parseOnLoad: true,
+                },
+                dojo.doc.createElement("div")
+            );
+            this.getPasteContainer().addChild(this.followupTab);
+            this.followupTab.startup();
+        }
         dojo.connect(this.followupTab, "onLoad", paste.prepareFollowupForm);
-
-        // attach tabs to tab container
-        this.getPasteContainer().addChild(this.pasteTab);
-        this.getPasteContainer().addChild(this.followupTab);
-        this.pasteTab.startup();
-        this.followupTab.startup();
 
         // Ensure selectChild continues to work for other tabs
         dojo.connect(this.getPasteContainer(), "selectChild", this, "urlUpdateHandler");
     },
 
     getFollowupUrl: function(pasteId) {
-        return this.baseUrl + "/paste/followup/id/" + pasteId + "/format/ajax";
+        return this.baseUrl + "/api/v1/followup-" + pasteId + ".html";
     },
 
     getPasteContainer: function() {
@@ -49,7 +55,7 @@ dojo.declare("paste.TabHandler", null, {
     },
 
     getPasteUrl: function(pasteId) {
-        return this.baseUrl + "/paste/display/id/" + pasteId + "/format/ajax";
+        return this.baseUrl + "/api/v1/paste-" + pasteId + ".html";
     },
 
     loadFollowupTab: function(pasteId) {
@@ -70,6 +76,9 @@ dojo.declare("paste.TabHandler", null, {
             if (hash.match(/^(new-paste|about|active)$/i)) {
                 var tab = dijit.byId(hash.toLowerCase());
                 dijit.byId("pastebin").selectChild(tab);
+                if (hash != "about") {
+                    dijit.byId("pastebin").selectedStackWidget.refresh();
+                }
             } else if (hash.match(/^[a-z0-9]{13}$/i)) {
                 this.loadPasteTabs(hash.toLowerCase());
             } else if (hash.match(/^followup-([a-z0-9]{13})$/i)) {

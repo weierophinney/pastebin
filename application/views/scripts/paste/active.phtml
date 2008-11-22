@@ -1,10 +1,8 @@
-<? Zend_Dojo_View_Helper_Dojo::setUseDeclarative();
-   $this->dojo()->enable(); ?>
-<?  $this->tabContainer()->captureStart('pastebin', array('class' => 'paste-tab')) ?>
+<?
+$this->dojo()->enable(); 
+$this->current = 'active';
+$this->tabContainer()->captureStart('pastebin', array('class' => 'paste-tab')) ?>
 <?= $this->render('paste/_about.phtml') ?>
 <?= $this->render('paste/_new-paste.phtml') ?>
-<?  $this->contentPane()->captureStart('active', array('title' => 'Active Pastes', 'selected' => true), array('class' => 'tab')) ?>
-    <h2>Active Pastes</h2>
-    <?= $this->render('paste/active.ajax.phtml') ?>
-<?= $this->contentPane()->captureEnd('active') ?>
+<?= $this->render('paste/_active.phtml') ?>
 <?= $this->tabContainer()->captureEnd('pastebin') ?>

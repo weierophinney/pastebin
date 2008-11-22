@@ -22,6 +22,8 @@ dojo.provide("paste.layer");
     dojo.require("dojox.highlight.languages.python");
     dojo.require("dojox.highlight.languages._www");
     dojo.require("dojox.highlight.languages.xml");
+    dojo.require("dojox.rpc.Service");
+    dojo.require("dojox.rpc.JsonRPC");
 
     dojo.addOnLoad(function() {
         // Progressive enhancement of app

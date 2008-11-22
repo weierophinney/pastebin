@@ -1,10 +1,8 @@
-<?  $this->dojo()->enable() ?>
-<?  $this->tabContainer()->captureStart('pastebin', array('class' => 'paste-tab')) ?>
+<?  
+$this->dojo()->enable(); 
+$this->current = 'about';
+$this->tabContainer()->captureStart('pastebin', array('class' => 'paste-tab')) ?>
 <?= $this->render('paste/_about.phtml') ?>
 <?= $this->render('paste/_new-paste.phtml') ?>
-<?= $this->contentPane('active', '', array(
-    'title'       => 'Active Pastes',
-    'class'       => 'tab',
-    'href'        => $this->baseUrl() . '/paste/active/format/ajax',
-    'parseOnLoad' => true)) ?>
+<?= $this->render('paste/_active.phtml') ?>
 <?= $this->tabContainer()->captureEnd('pastebin') ?>
