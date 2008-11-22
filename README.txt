@@ -34,7 +34,16 @@ INSTALLATION
 
     chmod -R a+rwX <packagedir>/application/data
 
-6. Create a vhost that points its DocumentRoot to the public
+6. Make the directory public/api/v1 world writeable; this can be
+   accomplished on *nix systems using:
+
+    chmod a+rwX <packagedir>/public/api/v1
+
+   This will only affect you when you set the application environment to
+   "production", at which time artifacts will be written to the
+   directory.
+
+7. Create a vhost that points its DocumentRoot to the public
    subdirectory. As an example:
 
     <VirtualHost *>
@@ -56,7 +65,7 @@ INSTALLATION
 
     127.0.1.1 paste.local
 
-7. Finally, simply fire your browser to:
+8. Finally, simply fire your browser to:
 
     http://paste.local/
 
@@ -70,6 +79,7 @@ This application shows off the following Dojo features:
     * dojox.highlight
     * A variety of dijits: ValidationTextBox, SimpleTextarea,
       and FilteringSelect
+    * JSON-RPC
 
 ZF specific features include:
 
@@ -77,6 +87,8 @@ ZF specific features include:
       ContentPane, etc.)
     * Zend_Dojo_Form (form and form elements)
     * Zend_Dojo_Data (used to populate the grid)
+    * Zend_Json_Server (used to process forms and update statusbar
+      metadata)
 
 CUSTOM DOJO BUILDS
 =======================================================================
