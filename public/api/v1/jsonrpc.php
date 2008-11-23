@@ -17,7 +17,7 @@ if ($request->isGet()) {
 
     // Cache the SMD
     if (('production' == APPLICATION_ENV) && is_writeable(dirname(__FILE__))) {
-        file_put_contents(dirname(__FILE__) . '/jsonrpc.smd', $smd);
+        file_put_contents(dirname(__FILE__) . '/content/jsonrpc.smd', $smd);
     }
 
     // Return the SMD to the client

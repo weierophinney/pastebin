@@ -34,10 +34,10 @@ INSTALLATION
 
     chmod -R a+rwX <packagedir>/application/data
 
-6. Make the directory public/api/v1 world writeable; this can be
+6. Make the directory public/api/v1/content world writeable; this can be
    accomplished on *nix systems using:
 
-    chmod a+rwX <packagedir>/public/api/v1
+    chmod a+rwX <packagedir>/public/api/v1/content
 
    This will only affect you when you set the application environment to
    "production", at which time artifacts will be written to the

@@ -1,7 +1,7 @@
 <?php
 defined('APPLICATION_PATH') 
     or define('APPLICATION_PATH', realpath(dirname(__FILE__)));
-defined('APPLICATION_ENV') or define('APPLICATION_ENV', 'development');
+defined('APPLICATION_ENV') or define('APPLICATION_ENV', 'production');
 
 if (defined('BOOTSTRAP')) {
     require_once 'Zend/Loader.php';

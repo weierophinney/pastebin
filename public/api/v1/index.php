@@ -1,19 +1,23 @@
 <?php
 require_once dirname(__FILE__) . '/bootstrap.php';
 
+$log = new Zend_Log(new Zend_Log_Writer_Stream('/tmp/api.log'));
+
 $plugin  = Zend_Registry::get('init');
 $request = $plugin->getRequest();
 $file    = $request->getPathInfo();
 $matches = false;
 
-if (!in_array($file, array('/about.html', '/active-grid.html', '/new-paste.html'))
+if (!in_array($file, array('/content/about.html', '/content/active-grid.html', '/content/new-paste.html'))
     && !preg_match('#/(paste|followup)-([a-z0-9]{13})\.html$#i', $file, $matches)
 ) {
     header('HTTP/1.0 501 Not Implemented');
     echo "<h1>501 - Not Implemented</h1>";
     echo "<p>Page requested: " . htmlentities($file) . "</p>";
+    $log->info("Failed to answer request for $file");
     exit;
 }
+$log->info("Answering request for $file");
 
 $plugin->initView()
        ->initDb();
@@ -36,11 +40,14 @@ if ($matches) {
             break;
     }
 } else {
-    $viewScript = 'paste/content' . str_replace('.html', '.phtml', $file);
+    $viewScript = 'paste' . str_replace('.html', '.phtml', $file);
 }
 
 $content = $view->render($viewScript);
-if (('production' == APPLICATION_ENV) && is_writeable(dirname(__FILE__))) {
-    file_put_contents(dirname(__FILE__) . $file, $content);
+$fileName = realpath(dirname(__FILE__)) . $file;
+$log->info("Preparting to write to $fileName");
+if (('production' == APPLICATION_ENV) && is_writeable(dirname($fileName))) {
+    file_put_contents($fileName, $content);
+    $log->info("Wrote to $fileName");
 }
 echo $content;
