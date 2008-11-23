@@ -1,8 +1,6 @@
 <?php
 require_once dirname(__FILE__) . '/bootstrap.php';
 
-$log = new Zend_Log(new Zend_Log_Writer_Stream('/tmp/api.log'));
-
 $plugin  = Zend_Registry::get('init');
 $request = $plugin->getRequest();
 $file    = $request->getPathInfo();
@@ -17,7 +15,6 @@ if (!in_array($file, array('/content/about.html', '/content/active-grid.html', '
     $log->info("Failed to answer request for $file");
     exit;
 }
-$log->info("Answering request for $file");
 
 $plugin->initView()
        ->initDb();
@@ -45,9 +42,7 @@ if ($matches) {
 
 $content = $view->render($viewScript);
 $fileName = realpath(dirname(__FILE__)) . $file;
-$log->info("Preparting to write to $fileName");
 if (('production' == APPLICATION_ENV) && is_writeable(dirname($fileName))) {
     file_put_contents($fileName, $content);
-    $log->info("Wrote to $fileName");
 }
 echo $content;
