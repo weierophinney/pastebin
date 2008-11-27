@@ -1,7 +1,7 @@
 <?php
 defined('APPLICATION_PATH') 
     or define('APPLICATION_PATH', realpath(dirname(__FILE__)));
-defined('APPLICATION_ENV') or define('APPLICATION_ENV', 'production');
+defined('APPLICATION_ENV') or define('APPLICATION_ENV', 'development');
 
 if (defined('BOOTSTRAP')) {
     require_once 'Zend/Loader.php';
@@ -9,5 +9,4 @@ if (defined('BOOTSTRAP')) {
 }
 
 $front = Zend_Controller_Front::getInstance();
-$front->registerPlugin(new My_Plugin_Initialize(APPLICATION_ENV))
-      ->addControllerDirectory(APPLICATION_PATH . '/controllers');
+$front->registerPlugin(new My_Plugin_Initialize(APPLICATION_ENV));
