@@ -5,7 +5,7 @@ require_once 'Zend/Controller/Action.php';
  * ErrorController 
  * 
  * @uses      Zend_Controller_Action
- * @package   Paste
+ * @package   Spindle
  * @license   New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version   $Id: $
  */

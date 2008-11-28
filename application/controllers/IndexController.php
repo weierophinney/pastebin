@@ -3,7 +3,7 @@
  * IndexController 
  * 
  * @uses      Zend_Controller_Action
- * @package   Paste
+ * @package   Spindle
  * @license   New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version   $Id: $
  */
@@ -16,6 +16,6 @@ class IndexController extends Zend_Controller_Action
      */
     public function indexAction()
     {
-        $this->_helper->redirector('index', 'paste');
+        $this->_helper->redirector('index', 'paste', 'spindle');
     }
 }
