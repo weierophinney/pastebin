@@ -16,6 +16,7 @@ RewriteRule ^.*$ - [NC,L]
 RewriteRule ^active-grid.html  index.php   [L]
 RewriteRule ^active            active.php  [L,QSA]
 RewriteRule ^jsonrpc           jsonrpc.php [L]
+RewriteRule ^content/jsonrpc   jsonrpc.php [L]
 RewriteRule ^xmlrpc            xmlrpc.php  [L]
 RewriteRule ^.*$ index.php [NC,L]
 

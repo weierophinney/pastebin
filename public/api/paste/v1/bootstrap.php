@@ -1,6 +1,6 @@
 <?php
 defined('APPLICATION_PATH') 
-    or define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../../../application'));
+    or define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../../../../application'));
 defined('APPLICATION_ENV') or define('APPLICATION_ENV', 'development');
 $paths     = array(
     APPLICATION_PATH . '/models',
@@ -14,7 +14,7 @@ Zend_Loader::registerAutoload();
 $plugin  = new My_Plugin_Initialize(APPLICATION_ENV);
 $request = new Zend_Controller_Request_Http();
 $baseUrl = $request->getBaseUrl();
-$baseUrl = substr($baseUrl, 0, strpos($baseUrl, '/api/v1/'));
+$baseUrl = substr($baseUrl, 0, strpos($baseUrl, '/api/paste/v1/'));
 
 $plugin->setRequest($request);
 Zend_Registry::set('init', $plugin);

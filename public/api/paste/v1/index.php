@@ -12,7 +12,6 @@ if (!in_array($file, array('/content/about.html', '/content/active-grid.html', '
     header('HTTP/1.0 501 Not Implemented');
     echo "<h1>501 - Not Implemented</h1>";
     echo "<p>Page requested: " . htmlentities($file) . "</p>";
-    $log->info("Failed to answer request for $file");
     exit;
 }
 

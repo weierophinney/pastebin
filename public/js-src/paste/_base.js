@@ -100,7 +100,7 @@ dojo.provide("paste._base");
 
     paste._getService = function() {
         if (!paste._service) {
-            paste._service = new dojox.rpc.Service(paste.baseUrl + "/api/v1/content/jsonrpc.smd", {
+            paste._service = new dojox.rpc.Service(paste.baseUrl + "/api/paste/v1/content/jsonrpc.smd", {
                 envelope:"JSON-RPC-2.0",
             });
         }
