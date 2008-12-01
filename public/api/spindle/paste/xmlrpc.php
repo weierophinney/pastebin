@@ -11,6 +11,11 @@ if ($request->isGet()) {
 
 $plugin->initDb();
 
+$loader   = new My_Controller_Helper_ResourceLoader;
+$loader->initModule('spindle');
+
+$paste = $loader->getService('Paste');
+
 $server = new Zend_XmlRpc_Server();
-$server->setClass('Paste_Service');
+$server->setClass($paste);
 echo $server->handle();

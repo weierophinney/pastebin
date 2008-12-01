@@ -17,10 +17,14 @@ if (!in_array($file, array('/content/about.html', '/content/active-grid.html', '
 
 $plugin->initView()
        ->initDb();
-$model = new Paste();
+$loader = new My_Controller_Helper_ResourceLoader;
+$loader->initModule('spindle');
+
+$model = $loader->getModel('Paste');
 $view  = Zend_Registry::get('view');
 
 $view->addBasePath(APPLICATION_PATH . '/views');
+$view->addBasePath(APPLICATION_PATH . '/modules/spindle/views');
 $view->baseUrl = Zend_Registry::get('baseUrl');
 $view->model   = $model;
 

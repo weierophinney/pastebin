@@ -36,6 +36,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     {
         $this->front = Zend_Controller_Front::getInstance();
         $this->initControllers()
+             ->initHelpers()
              ->initLog()
              ->initCache()
              ->initDb()
@@ -49,7 +50,27 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function initConfig()
     {
-        $this->config = new Zend_Config_Ini(APPLICATION_PATH . '/config/paste.ini', $this->env);
+        $configMaster = new Zend_Config_Ini(APPLICATION_PATH . '/config/site.ini', $this->env);
+        $configMaster = $configMaster->toArray();
+
+        $ri      = new DirectoryIterator(APPLICATION_PATH . '/modules');
+        $modules = array();
+        foreach ($ri as $file) {
+            if (!$file->isDir() || $file->isDot()) {
+                continue;
+            }
+            $modules[$file->getFileName()] = $file->getRealPath();
+        }
+
+        foreach ($modules as $module => $path) {
+            $configPath = $path . '/config/' . $module . '.ini';
+            if (file_exists($configPath)) {
+                $config = new Zend_Config_Ini($configPath, $this->env);
+                $configMaster = array_merge($configMaster, $config);
+            }
+        }
+
+        $this->config = new Zend_Config($configMaster);
         Zend_Registry::set('config', $this->config);
         return $this;
     }
@@ -62,6 +83,18 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     public function initControllers()
     {
         $this->front->setControllerDirectory($this->config->appPath . '/controllers', 'default');
+        $this->front->addModuleDirectory($this->config->appPath . '/modules');
+        return $this;
+    }
+
+    /**
+     * Initialize action helpers
+     * 
+     * @return My_Plugin_Initialize
+     */
+    public function initHelpers()
+    {
+        Zend_Controller_Action_HelperBroker::addHelper(new My_Controller_Helper_ResourceLoader());
         return $this;
     }
 
@@ -125,6 +158,8 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     {
         $view = new Zend_View;
         $view->addHelperPath('My/View/Helper/', 'My_View_Helper');
+        $view->addHelperPath(APPLICATION_PATH . '/views/helpers', 'Zend_View_Helper');
+        $view->addHelperPath(APPLICATION_PATH . '/modules/spindle/views/helpers', 'Spindle_View_Helper');
 
         Zend_Dojo::enableView($view);
         Zend_Dojo_View_Helper_Dojo::setUseDeclarative(true);

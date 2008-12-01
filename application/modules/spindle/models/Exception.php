@@ -2,11 +2,12 @@
 /**
  * Exception for model classes
  * 
- * @uses      Exception
- * @package   Paste
- * @license   New BSD {@link http://framework.zend.com/license/new-bsd}
- * @version   $Id: $
+ * @uses       Exception
+ * @package    Spindle
+ * @subpackage Model
+ * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
+ * @version    $Id: $
  */
-class Model_Exception extends Exception
+class Spindle_Model_Exception extends Exception
 {
 }

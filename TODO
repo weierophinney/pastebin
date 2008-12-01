@@ -1,16 +1,9 @@
 - Creation of Spindle module
-  - Create ResourceLoader for models
-    - Rename all Model classes with Spindle_ prefix
-  - Rename Spindle view helpers
   - Add module support to Initialize pluign
-    - recurse through module directories to retrieve and load configuration
-    - configuration for each module should be loaded into registry under
-      "<module>_config"
     - configuration should namespace caches
     - identify resource initialization that would differ based on current module
   - create base controller for Spindle module
     - Should initialize DB and cache resources based on current module
-  - update JS and API resources to refer to appropriate locations
   - update layout to include navigation bar showing menu tree of Spindle apps
   - update site configuration to remove paste-specific configuration
   - update paste configuration to remove general site configuration
@@ -21,3 +14,11 @@
     - If available, redirect to JS-enabled version
     - Add detection in active-grid action to use Zend_Paginator if JS is
       disabled
+  - Plugin system for Paste model
+    - allow registering plugins statically and/or per instance
+    - surrounding add() call
+      - Allowing such things as: 
+        - sending updates to an IRC channel
+        - sending updates to Growl or growl-like notifiers
+        - triggering caching
+        - triggering indexing

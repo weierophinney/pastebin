@@ -14,7 +14,7 @@ Zend_Loader::registerAutoload();
 $plugin  = new My_Plugin_Initialize(APPLICATION_ENV);
 $request = new Zend_Controller_Request_Http();
 $baseUrl = $request->getBaseUrl();
-$baseUrl = substr($baseUrl, 0, strpos($baseUrl, '/api/paste/v1/'));
+$baseUrl = substr($baseUrl, 0, strpos($baseUrl, '/api/spindle/paste/'));
 
 $plugin->setRequest($request);
 Zend_Registry::set('init', $plugin);

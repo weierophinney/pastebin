@@ -2,11 +2,12 @@
 /**
  * Pastebin model
  * 
- * @package   Paste
- * @license   New BSD {@link http://framework.zend.com/license/new-bsd}
- * @version   $Id: $
+ * @package    Spindle
+ * @subpackage Model
+ * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
+ * @version    $Id: $
  */
-class Paste
+class Spindle_Model_Paste
 {
     /**
      * Table fields
@@ -25,6 +26,82 @@ class Paste
      * @var Zend_Db_Table_Abstract
      */
     protected $_table;
+
+    /**
+     * @var array Class methods
+     */
+    protected $_classMethods;
+
+    /**
+     * @var My_Controller_Helper_ResourceLoader
+     */
+    protected $_resourceLoader;
+
+    /**
+     * Constructor
+     * 
+     * @param  array|Zend_Config|null $options 
+     * @return void
+     */
+    public function __construct($options = null)
+    {
+        if ($options instanceof Zend_Config) {
+            $options = $options->toArray();
+        }
+
+        if (is_array($options)) {
+            $this->setOptions($options);
+        }
+    }
+
+    /**
+     * Set options using setter methods
+     * 
+     * @param  array $options 
+     * @return Spindle_Model_Paste
+     */
+    public function setOptions(array $options)
+    {
+        if (null === $this->_classMethods) {
+            $this->_classMethods = get_class_methods($this);
+        }
+        foreach ($options as $key => $value) {
+            $method = 'set' . ucfirst($key);
+            if (in_array($method, $this->_classMethods)) {
+                $this->$method($value);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * Set resource loader
+     * 
+     * @param  object $loader 
+     * @return Spindle_Model_DbTable_Paste
+     */
+    public function setResourceLoader($loader)
+    {
+        if (!is_object($loader)) {
+            throw new Exception('Invalid resource loader provided to ' . __CLASS__);
+        }
+        $this->_resourceLoader = $loader;
+        return $this;
+    }
+
+    /**
+     * Retrieve resource loader
+     * 
+     * @return object
+     */
+    public function getResourceLoader()
+    {
+        if (null === $this->_resourceLoader) {
+            $this->_resourceLoader = new My_Controller_Helper_ResourceLoader;
+            $this->_resourceLoader->initModule('spindle');
+        }
+        return $this->_resourceLoader;
+    }
 
     /**
      * Add a paste
@@ -132,8 +209,7 @@ class Paste
     public function getForm()
     {
         if (null === $this->_form) {
-            require_once dirname(__FILE__) . '/Form/Paste.php';
-            $this->_form = new Form_Paste();
+            $this->_form = $this->getResourceLoader()->getForm('Paste');
         }
         return $this->_form;
     }
@@ -146,8 +222,7 @@ class Paste
     public function getTable()
     {
         if (null === $this->_table) {
-            require_once dirname(__FILE__) . '/DbTable/Paste.php';
-            $this->_table = new DbTable_Paste();
+            $this->_table = $this->getResourceLoader()->getDbtable('Paste');
         }
         return $this->_table;
     }

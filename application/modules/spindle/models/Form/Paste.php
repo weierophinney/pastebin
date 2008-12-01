@@ -2,12 +2,13 @@
 /**
  * New pastebin form
  * 
- * @uses    Zend_Dojo_Form
- * @package Paste
- * @license New BSD {@link http://framework.zend.com/license/new-bsd}
- * @version $Id: $
+ * @uses       Zend_Dojo_Form
+ * @package    Spindle
+ * @subpackage Model
+ * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
+ * @version    $Id: $
  */
-class Form_Paste extends Zend_Dojo_Form
+class Spindle_Model_Form_Paste extends Zend_Dojo_Form
 {
     /**
      * @var array Programming languages with syntax highlighting

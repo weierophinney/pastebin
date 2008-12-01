@@ -31,7 +31,7 @@ dojo.provide("paste.layer");
 
         // Derive base URL and create paste.tabs object
         var path      = window.location.pathname;
-        var pathRegex = new RegExp(/^(.*?)\/paste/);
+        var pathRegex = new RegExp(/^(.*?)\/spindle\/paste/);
         var matches   = pathRegex.exec(path);
         var baseUrl   = "";
         if ((null != matches) && (1 < matches.length)) {

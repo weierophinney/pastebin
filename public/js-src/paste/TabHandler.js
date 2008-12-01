@@ -48,7 +48,7 @@ dojo.declare("paste.TabHandler", null, {
     },
 
     getFollowupUrl: function(pasteId) {
-        return this.baseUrl + "/api/paste/v1/content/followup-" + pasteId + ".html";
+        return this.baseUrl + "/api/spindle/paste/content/followup-" + pasteId + ".html";
     },
 
     getPasteContainer: function() {
@@ -56,7 +56,7 @@ dojo.declare("paste.TabHandler", null, {
     },
 
     getPasteUrl: function(pasteId) {
-        return this.baseUrl + "/api/paste/v1/content/paste-" + pasteId + ".html";
+        return this.baseUrl + "/api/spindle/paste/content/paste-" + pasteId + ".html";
     },
 
     loadFollowupTab: function(pasteId) {

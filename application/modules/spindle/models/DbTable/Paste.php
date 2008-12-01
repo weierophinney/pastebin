@@ -2,12 +2,13 @@
 /**
  * Table data gateway for paste table
  * 
- * @uses    Zend_Db_Table_Abstract
- * @package Paste
- * @license New BSD {@link http://framework.zend.com/license/new-bsd}
- * @version $Id: $
+ * @uses       Zend_Db_Table_Abstract
+ * @package    Spindle
+ * @subpackage Model
+ * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
+ * @version    $Id: $
  */
-class DbTable_Paste extends Zend_Db_Table_Abstract
+class Spindle_Model_DbTable_Paste extends Zend_Db_Table_Abstract
 {
     /**
      * @var string Table name
@@ -77,7 +78,7 @@ class DbTable_Paste extends Zend_Db_Table_Abstract
     public function update(array $data, $where)
     {
         require_once dirname(__FILE__) . '/../Exception.php';
-        throw new Model_Exception('Pastebin does not allow updates');
+        throw new Spindle_Model_Exception('Pastebin does not allow updates');
     }
 
     /**
@@ -90,6 +91,6 @@ class DbTable_Paste extends Zend_Db_Table_Abstract
     public function delete($where)
     {
         require_once dirname(__FILE__) . '/../Exception.php';
-        throw new Model_Exception('Pastebin does not allow deletes');
+        throw new Spindle_Model_Exception('Pastebin does not allow deletes');
     }
 }

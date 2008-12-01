@@ -1,10 +1,15 @@
 <?php
-class Paste_Service
+class Spindle_Model_Service_Paste
 {
     /**
      * @var Paste
      */
     protected $_paste;
+
+    /**
+     * @var My_Controller_Helper_ResourceLoader
+     */
+    protected $_resourceLoader;
 
     /**
      * Constructor
@@ -59,7 +64,8 @@ class Paste_Service
         }
         foreach ($info as $name => $errors) {
             if (!isset($form->{$name})) {
-                throw new Exception('Invalid element: ' . $name);
+                require_once dirname(__FILE__) . '/../Exception.php';
+                throw new Spindle_Model_Exception('Invalid element: ' . $name);
             }
             $label = $form->$name->getLabel();
             $messages[] = array(
@@ -144,8 +150,22 @@ class Paste_Service
     protected function _getPaste()
     {
         if (null === $this->_paste) {
-            $this->_paste = new Paste;
+            $this->_paste = $this->_getResourceLoader()->getModel('paste');
         }
         return $this->_paste;
+    }
+
+    /**
+     * Retrieve resource loader
+     * 
+     * @return object
+     */
+    protected function _getResourceLoader()
+    {
+        if (null === $this->_resourceLoader) {
+            $this->_resourceLoader = new My_Controller_Helper_ResourceLoader;
+            $this->_resourceLoader->initModule('spindle');
+        }
+        return $this->_resourceLoader;
     }
 }

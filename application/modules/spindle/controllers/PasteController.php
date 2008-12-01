@@ -2,12 +2,13 @@
 /**
  * Pastebin application
  * 
- * @uses      Zend_Controller_Action
- * @package   Paste
- * @license   New BSD {@link http://framework.zend.com/license/new-bsd}
- * @version   $Id: $
+ * @uses       Zend_Controller_Action
+ * @package    Spindle
+ * @subpackage Controller
+ * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
+ * @version    $Id: $
  */
-class PasteController extends Zend_Controller_Action
+class Spindle_PasteController extends Zend_Controller_Action
 {
     /**
      * @var Paste
@@ -153,7 +154,7 @@ class PasteController extends Zend_Controller_Action
     public function getModel()
     {
         if (null === $this->_model) {
-            $this->_model = new Paste();
+            $this->_model = $this->_helper->resourceLoader->getModel('Paste');
         }
         return $this->_model;
     }
