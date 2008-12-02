@@ -165,12 +165,10 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         Zend_Dojo_View_Helper_Dojo::setUseDeclarative(true);
         $view->baseUrl = rtrim($this->getRequest()->getBaseUrl(), '/');
         $view->doctype('XHTML1_STRICT');
-        $view->headTitle('Pastebin');
+        $view->headTitle()->setSeparator(' - ')->append('Spindle');
         $view->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=utf-8');
-        $view->dojo()->setDjConfigOption('preventBackButtonFix', false)
-                     ->setDjConfigOption('isDebug', $this->config->view->dojo->isDebug)
+        $view->dojo()->setDjConfigOption('isDebug', $this->config->view->dojo->isDebug)
                      ->setLocalPath('/js/dojo/dojo.js')
-                     ->addLayer('/js/paste/layer.js')
                      ->registerModulePath('../paste', 'paste')
                      ->addStylesheetModule('paste.styles')
                      ->disable();

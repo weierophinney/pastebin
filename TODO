@@ -1,5 +1,15 @@
-- Creation of Spindle module
-  - update layout to include navigation bar showing menu tree of Spindle apps
+- Add "spindle" dojo layer
+  - move base functionality (baseUrl, etc) into spindle layer
+  - create "themes" submodule
+    - site theme
+  - Add ability to update page title (hook this in pastebin module)
+  - load only spindle layer by default
+  - load paste layer *additionally* for pastebin stuff
+    - separate CSS
+- Update layout
+  - By default, show nothing in status bar
+  - Paste module should update statusbar
+    - via js?
 - Import bugapp into Spindle module
 - Paste application changes
   - Update views to pull from cache when available, or write to it when not
