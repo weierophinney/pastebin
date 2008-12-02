@@ -19,7 +19,7 @@ if (!class_exists('Zend_Registry', false) || !Zend_Registry::isRegistered('confi
         Zend_Loader::registerAutoload();
     }
 
-    $config = new Zend_Config_Ini(APPLICATION_PATH . '/config/paste.ini', 'testing');
+    $config = new Zend_Config_Ini(APPLICATION_PATH . '/config/site.ini', 'testing');
     Zend_Registry::set('config', $config);
     unset($base, $path, $config);
 }

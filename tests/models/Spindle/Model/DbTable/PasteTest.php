@@ -1,20 +1,22 @@
 <?php
-// Call DbTable_PasteTest::main() if this source file is executed directly.
+// Call Spindle_Model_DbTable_PasteTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
-    define("PHPUnit_MAIN_METHOD", "DbTable_PasteTest::main");
+    define("PHPUnit_MAIN_METHOD", "Spindle_Model_DbTable_PasteTest::main");
 }
 
-require_once dirname(__FILE__) . '/../../TestHelper.php';
+require_once dirname(__FILE__) . '/../../../../TestHelper.php';
 
-/** DbTable_Paste */
-require_once 'DbTable/Paste.php';
+/** Spindle_Model_DbTable_Paste */
+require_once APPLICATION_PATH . '/modules/spindle/models/DbTable/Paste.php';
 
 /**
- * Test class for DbTable_Paste.
+ * Test class for Spindle_Model_DbTable_Paste.
  *
+ * @group Spindle
+ * @group Paste
  * @group Models
  */
-class DbTable_PasteTest extends PHPUnit_Framework_TestCase 
+class Spindle_Model_DbTable_PasteTest extends PHPUnit_Framework_TestCase 
 {
     /**
      * Runs the test methods of this class.
@@ -23,7 +25,7 @@ class DbTable_PasteTest extends PHPUnit_Framework_TestCase
      */
     public static function main()
     {
-        $suite  = new PHPUnit_Framework_TestSuite("DbTable_PasteTest");
+        $suite  = new PHPUnit_Framework_TestSuite("Spindle_Model_DbTable_PasteTest");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
     }
 
@@ -35,8 +37,8 @@ class DbTable_PasteTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        include dirname(__FILE__) . '/../../../scripts/loadTestDb.php';
-        $this->table = new DbTable_Paste();
+        include dirname(__FILE__) . '/../../../../../scripts/loadTestDb.php';
+        $this->table = new Spindle_Model_DbTable_Paste();
     }
 
     /**
@@ -103,7 +105,7 @@ class DbTable_PasteTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Model_Exception
+     * @expectedException Spindle_Model_Exception
      */
     public function testTableShouldNotAllowUpdates()
     {
@@ -114,7 +116,7 @@ class DbTable_PasteTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Model_Exception
+     * @expectedException Spindle_Model_Exception
      */
     public function testTableShouldNotAllowDeletes()
     {
@@ -152,7 +154,7 @@ class DbTable_PasteTest extends PHPUnit_Framework_TestCase
     }
 }
 
-// Call DbTable_PasteTest::main() if this source file is executed directly.
-if (PHPUnit_MAIN_METHOD == "DbTable_PasteTest::main") {
-    DbTable_PasteTest::main();
+// Call Spindle_Model_DbTable_PasteTest::main() if this source file is executed directly.
+if (PHPUnit_MAIN_METHOD == "Spindle_Model_DbTable_PasteTest::main") {
+    Spindle_Model_DbTable_PasteTest::main();
 }

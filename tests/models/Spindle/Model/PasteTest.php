@@ -1,20 +1,21 @@
 <?php
-// Call PasteTest::main() if this source file is executed directly.
+// Call Spindle_Model_PasteTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
-    define("PHPUnit_MAIN_METHOD", "PasteTest::main");
+    define("PHPUnit_MAIN_METHOD", "Spindle_Model_PasteTest::main");
 }
 
-require_once dirname(__FILE__) . '/../TestHelper.php';
+require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
-/** Paste */
-require_once 'Paste.php';
+require_once APPLICATION_PATH . '/modules/spindle/models/Paste.php';
 
 /**
  * Test class for Paste.
  *
+ * @group Spindle
+ * @group Paste
  * @group Models
  */
-class PasteTest extends PHPUnit_Framework_TestCase 
+class Spindle_Model_PasteTest extends PHPUnit_Framework_TestCase 
 {
     /**
      * Runs the test methods of this class.
@@ -23,7 +24,7 @@ class PasteTest extends PHPUnit_Framework_TestCase
      */
     public static function main()
     {
-        $suite  = new PHPUnit_Framework_TestSuite("PasteTest");
+        $suite  = new PHPUnit_Framework_TestSuite("Spindle_Model_PasteTest");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
     }
 
@@ -35,8 +36,8 @@ class PasteTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        include dirname(__FILE__) . '/../../scripts/loadTestDb.php';
-        $this->model = new Paste();
+        include dirname(__FILE__) . '/../../../../scripts/loadTestDb.php';
+        $this->model = new Spindle_Model_Paste();
     }
 
     /**
@@ -242,7 +243,7 @@ class PasteTest extends PHPUnit_Framework_TestCase
     }
 }
 
-// Call PasteTest::main() if this source file is executed directly.
-if (PHPUnit_MAIN_METHOD == "PasteTest::main") {
-    PasteTest::main();
+// Call Spindle_Model_PasteTest::main() if this source file is executed directly.
+if (PHPUnit_MAIN_METHOD == "Spindle_Model_PasteTest::main") {
+    Spindle_Model_PasteTest::main();
 }

@@ -22,6 +22,8 @@ date_default_timezone_set('GMT');
 /*
  * Testing environment
  */
+defined('APPLICATION_PATH') 
+    or define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../application'));
 define('APPLICATION_ENV', 'testing');
 
 /*

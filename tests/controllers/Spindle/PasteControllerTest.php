@@ -1,17 +1,21 @@
 <?php
-// Call PasteControllerTest::main() if this source file is executed directly.
+// Call Spindle_PasteControllerTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
-    define("PHPUnit_MAIN_METHOD", "PasteControllerTest::main");
+    define("PHPUnit_MAIN_METHOD", "Spindle_PasteControllerTest::main");
 }
 
-require_once dirname(__FILE__) . '/../TestHelper.php';
+require_once dirname(__FILE__) . '/../../TestHelper.php';
+
+require_once APPLICATION_PATH . '/modules/spindle/models/Paste.php';
 
 /**
- * Test class for Paste.
+ * Test class for Spindle_PasteController
  *
+ * @group Spindle
+ * @group Paste
  * @group Controllers
  */
-class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
+class Spindle_PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
 {
     /**
      * Runs the test methods of this class.
@@ -20,7 +24,7 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
      */
     public static function main()
     {
-        $suite  = new PHPUnit_Framework_TestSuite("PasteControllerTest");
+        $suite  = new PHPUnit_Framework_TestSuite("Spindle_PasteControllerTest");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
     }
 
@@ -32,7 +36,7 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
      */
     public function setUp()
     {
-        include dirname(__FILE__) . '/../../scripts/loadTestDb.php';
+        include dirname(__FILE__) . '/../../../scripts/loadTestDb.php';
         $this->bootstrap = Zend_Registry::get('testBootstrap');
         return parent::setUp();
     }
@@ -62,58 +66,58 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
 
     public function testIndexPageShouldContainButtonToCreateNewPaste()
     {
-        $this->dispatch('/paste');
+        $this->dispatch('/spindle/paste');
         $this->assertNotRedirect();
         $this->assertQuery('.new-paste a');
     }
 
     public function testNewPastePageShouldProvideLanguageSelection()
     {
-        $this->dispatch('/paste/new');
+        $this->dispatch('/spindle/paste/new');
         $this->assertNotRedirect();
         $this->assertQuery('#pasteform-type', $this->response->getBody());
     }
 
     public function testNewPastePageShouldProvideUserFillin()
     {
-        $this->dispatch('/paste/new');
+        $this->dispatch('/spindle/paste/new');
         $this->assertNotRedirect();
         $this->assertQuery('#pasteform-user');
     }
 
     public function testNewPastePageShouldProvideSummaryFillin()
     {
-        $this->dispatch('/paste/new');
+        $this->dispatch('/spindle/paste/new');
         $this->assertNotRedirect();
         $this->assertQuery('#pasteform-summary', $this->response->getBody());
     }
 
     public function testNewPastePageShouldProvideCodeFillin()
     {
-        $this->dispatch('/paste/new');
+        $this->dispatch('/spindle/paste/new');
         $this->assertNotRedirect();
         $this->assertQuery('#pasteform-code');
     }
 
     public function testNewPastePageShouldProvideExpirationSelection()
     {
-        $this->dispatch('/paste/new');
+        $this->dispatch('/spindle/paste/new');
         $this->assertNotRedirect();
         $this->assertQuery('#pasteform-expires');
     }
 
     public function testSavePasteShouldRedirectToNewPasteFormWhenNonPostRequestDetected()
     {
-        $this->dispatch('/paste/save');
-        $this->assertRedirectTo('/paste/new');
+        $this->dispatch('/spindle/paste/save');
+        $this->assertRedirectTo('/spindle/paste/new');
     }
 
     public function testSavePasteShouldRedirectToPasteDisplayWhenSuccessful()
     {
         $this->request->setPost($this->getData())
                       ->setMethod('POST');
-        $this->dispatch('/paste/save');
-        $this->assertRedirectRegex('#^/paste(.*?)/[a-z0-9]{13}$#i', var_export($this->response->getBody(), 1));
+        $this->dispatch('/spindle/paste/save');
+        $this->assertRedirectRegex('#^/spindle/paste(.*?)/[a-z0-9]{13}$#i', var_export($this->response->getBody(), 1));
     }
 
     public function testSavePasteShouldCreateNewPaste()
@@ -124,7 +128,7 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
 
         $this->request->setPost($this->getData())
                       ->setMethod('POST');
-        $this->dispatch('/paste/save');
+        $this->dispatch('/spindle/paste/save');
         $test = $db->fetchOne($select);
         $this->assertEquals(1, $test - $count);
     }
@@ -135,30 +139,30 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
         $data['pasteform']['type'] = 'bogus';
         $this->request->setPost($data)
                       ->setMethod('POST');
-        $this->dispatch('/paste/save');
+        $this->dispatch('/spindle/paste/save');
         $this->assertNotRedirect();
         $this->assertQuery('#pasteform');
     }
 
     public function testDisplayPasteShouldDisplayErrorMessageWhenNotFound()
     {
-        $this->dispatch('/paste/display/id/bogus');
+        $this->dispatch('/spindle/paste/display/id/bogus');
         $this->assertQuery('#paste p.error');
     }
 
     public function testDisplayShouldRedirectToSplashPageWhenNoIdentifierPresent()
     {
-        $this->dispatch('/paste/display');
-        $this->assertRedirectTo('/paste');
+        $this->dispatch('/spindle/paste/display');
+        $this->assertRedirectTo('/spindle/paste');
     }
 
     public function testDisplayPasteShouldDisplayPasteDetailsWhenFound()
     {
         $data  = $this->getData();
-        $paste = new Paste();
+        $paste = new Spindle_Model_Paste();
         $id    = $paste->add($data['pasteform']);
 
-        $this->dispatch('/paste/display/id/' . $id);
+        $this->dispatch('/spindle/paste/display/id/' . $id);
         $this->assertNotQuery('p.error');
         $this->assertQueryContentContains('#pastecode code', htmlentities($data['pasteform']['code']), $this->response->getBody());
         $this->assertQueryContentContains('#metadata', $data['pasteform']['user']);
@@ -168,13 +172,13 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
     {
         $data = $this->getData();
         $parentData = $data = $childData = $data['pasteform'];
-        $paste    = new Paste();
+        $paste    = new Spindle_Model_Paste();
         $parentId = $paste->add($parentData);
         $data['parent'] = $parentId;
         $id       = $paste->add($data);
         $childData['parent'] = $id;
         $childId  = $paste->add($childData);
-        $this->dispatch('/paste/display/id/' . $id);
+        $this->dispatch('/spindle/paste/display/id/' . $id);
         $this->assertNotQuery('#paste p.error');
         $this->assertQueryContentContains('#paste p.parent a', $parentId, $this->response->getBody());
         $this->assertQuery('#paste ul.children');
@@ -193,7 +197,7 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
 
         $this->resetResponse();
 
-        $this->dispatch('/paste/followup/id/' . $paste);
+        $this->dispatch('/spindle/paste/followup/id/' . $paste);
         $this->assertNotRedirect();
         $this->assertNotController('error');
         $this->assertQuery('#followupform');
@@ -201,20 +205,20 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
 
     public function testInvalidPasteIdProvidedToFollowupShouldIndicateNotFound()
     {
-        $this->dispatch('/paste/followup/id/bogus');
+        $this->dispatch('/spindle/paste/followup/id/bogus');
         $this->assertQueryContentContains('#followup p', 'Paste not found', $this->response->getBody());
     }
 
     public function testMissingPasteIdProvidedToFollowupShouldRedirectToLanding()
     {
-        $this->dispatch('/paste/followup');
-        $this->assertRedirectTo('/paste');
+        $this->dispatch('/spindle/paste/followup');
+        $this->assertRedirectTo('/spindle/paste');
     }
 
     public function testSavingFollowupShouldRedirectToNewPastePageWhenNotSubmittedViaPost()
     {
-        $this->dispatch('/paste/save-followup');
-        $this->assertRedirectTo('/paste/new');
+        $this->dispatch('/spindle/paste/save-followup');
+        $this->assertRedirectTo('/spindle/paste/new');
     }
 
     public function testSavingFollowupShouldRedirectToPasteLandingPageWhenNoIdPresent()
@@ -222,15 +226,15 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
         $data = $this->getData();
         $this->request->setPost($data)
                       ->setMethod('post');
-        $this->dispatch('/paste/save-followup');
-        $this->assertRedirectTo('/paste');
+        $this->dispatch('/spindle/paste/save-followup');
+        $this->assertRedirectTo('/spindle/paste');
     }
 
     public function testSavingFollowupShouldRedisplayFormWhenValuesAreInvalid()
     {
         $data  = $this->getData();
         $data  = $data['pasteform'];
-        $model = new Paste();
+        $model = new Spindle_Model_Paste();
         $id    = $model->add($data);
 
         $data['parent'] = $id;
@@ -240,7 +244,7 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
         $this->request->setPost($data)
                       ->setMethod('post');
 
-        $this->dispatch('/paste/save-followup/id/' . $id);
+        $this->dispatch('/spindle/paste/save-followup/id/' . $id);
         $this->assertNotRedirect(var_export($this->response->getHeaders(), 1));
         $this->assertQuery('#followupform', $this->response->getBody());
     }
@@ -249,7 +253,7 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
     {
         $data  = $this->getData();
         $data  = $data['pasteform'];
-        $model = new Paste();
+        $model = new Spindle_Model_Paste();
         $id    = $model->add($data);
         $data['parent'] = $id;
 
@@ -258,19 +262,19 @@ class PasteControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
         $this->request->setPost($data)
                       ->setMethod('post');
 
-        $this->dispatch('/paste/save-followup/id/' . $id);
+        $this->dispatch('/spindle/paste/save-followup/id/' . $id);
         $this->assertRedirect(var_export($this->response->getBody(), 1));
-        $this->assertRedirectRegex('#/paste/display/id/[a-z0-9]{13}$#', var_export($this->response->getHeaders(), 1));
+        $this->assertRedirectRegex('#/spindle/paste/display/id/[a-z0-9]{13}$#', var_export($this->response->getHeaders(), 1));
     }
 
     public function testActivePastesActionShouldDisplayGrid()
     {
-        $this->dispatch('/paste/active');
+        $this->dispatch('/spindle/paste/active');
         $this->assertQuery('#activePastes');
     }
 }
 
-// Call PasteControllerTest::main() if this source file is executed directly.
-if (PHPUnit_MAIN_METHOD == "PasteControllerTest::main") {
-    PasteControllerTest::main();
+// Call Spindle_PasteControllerTest::main() if this source file is executed directly.
+if (PHPUnit_MAIN_METHOD == "Spindle_PasteControllerTest::main") {
+    Spindle_PasteControllerTest::main();
 }

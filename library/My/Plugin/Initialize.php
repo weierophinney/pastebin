@@ -66,7 +66,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
             $configPath = $path . '/config/' . $module . '.ini';
             if (file_exists($configPath)) {
                 $config = new Zend_Config_Ini($configPath, $this->env);
-                $configMaster = array_merge($configMaster, $config);
+                $configMaster = array_merge($configMaster, $config->toArray());
             }
         }
 
