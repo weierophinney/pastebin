@@ -37,7 +37,7 @@ class Spindle_PasteController extends Zend_Controller_Action
         $this->view->headTitle()->prepend('Pastebin');
         $this->view->dojo()->setDjConfigOption('preventBackButtonFix', false)
                            ->registerModulePath('../paste', 'paste')
-                           ->addStylesheetModule('paste.styles')
+                           ->addStylesheetModule('paste.themes.paste')
                            ->requireModule('paste.main');
     }
 
