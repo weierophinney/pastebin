@@ -1,6 +1,8 @@
-dojo.provide("paste.layer");
+dojo.provide("paste.main");
 
 (function() {
+    dojo.require("spindle.main");
+
     dojo.require("paste._base");
     dojo.require("paste.highlight.php");
     dojo.require("paste.TabHandler");
@@ -10,11 +12,8 @@ dojo.provide("paste.layer");
     dojo.require("dijit.form.Form");
     dojo.require("dijit.form.SimpleTextarea");
     dojo.require("dijit.form.ValidationTextBox");
-    dojo.require("dijit.layout.BorderContainer");
-    dojo.require("dijit.layout.ContentPane");
     dojo.require("dijit.layout.TabContainer");
     dojo.require("dojo.back");
-    dojo.require("dojo.parser");
     dojo.require("dojox.data.QueryReadStore");
     dojo.require("dojox.dtl.Context");
     dojo.require("dojox.grid.DataGrid");

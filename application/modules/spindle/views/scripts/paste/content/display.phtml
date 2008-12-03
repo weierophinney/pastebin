@@ -8,7 +8,7 @@
     <? if ('text' != $paste['type']): ?>
     (<a id="format-toggle" href="#" onClick="paste.unformattedShow();">unformatted</a>)
     <? endif ?>
-    <span class="permalink">[<a href="<?= $this->baseUrl() ?>/paste/display/id/<?= $paste['id'] ?>">Permalink</a>]</span>
+    <span class="permalink">[<a href="<?= $this->baseUrl() ?>/spindle/paste/display/id/<?= $paste['id'] ?>">Permalink</a>]</span>
 </h3>
 <div id="pastecode" class="highlight">
     <pre><code class="<?= $paste['type'] ?>"><?= $this->escape($paste['code']) ?></code></pre>
@@ -24,14 +24,14 @@
 </p>
 <? if (!empty($paste['parent'])): ?>
     <p class="parent">
-    <a href="<?= $this->baseUrl() ?>/paste/display/id/<?= $paste['parent'] ?>">Parent paste (<?= $paste['parent'] ?>)</a>
+    <a href="<?= $this->baseUrl() ?>/spindle/paste/display/id/<?= $paste['parent'] ?>">Parent paste (<?= $paste['parent'] ?>)</a>
     </p>
 <? endif ?>
 <? if (!empty($paste['children'])): ?>
     <p class="children">Child pastes:</p>
     <ul class="children">
     <? foreach ($paste['children'] as $child): ?>
-        <li><a href="<?= $this->baseUrl() ?>/paste/display/id/<?= $child ?>"><?= $child ?></a></li>
+        <li><a href="<?= $this->baseUrl() ?>/spindle/paste/display/id/<?= $child ?>"><?= $child ?></a></li>
     <? endforeach ?>
     </ul>
 <? endif ?>

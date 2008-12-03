@@ -16,7 +16,7 @@ $followup = array_intersect_key($paste, $followupKeys);
 $followup['parent'] = $this->id;
 
 $form  = $this->model->getForm();
-$form->setAction($this->baseUrl() . '/paste/save-followup/id/' . $this->id)
+$form->setAction($this->baseUrl() . '/spindle/paste/save-followup/id/' . $this->id)
      ->setMethod('post')
      ->setName('followupform')
      ->setElementsBelongTo('followupform')

@@ -169,8 +169,9 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         $view->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=utf-8');
         $view->dojo()->setDjConfigOption('isDebug', $this->config->view->dojo->isDebug)
                      ->setLocalPath('/js/dojo/dojo.js')
-                     ->registerModulePath('../paste', 'paste')
-                     ->addStylesheetModule('paste.styles')
+                     ->registerModulePath('../spindle', 'spindle')
+                     ->addStylesheetModule('spindle.themes.spindle')
+                     ->requireModule('spindle.main')
                      ->disable();
 
         Zend_Registry::set('view', $view);

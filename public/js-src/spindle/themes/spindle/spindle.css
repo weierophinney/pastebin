@@ -1,0 +1,65 @@
+@import "../../../dijit/themes/tundra/tundra.css";
+
+body, html {
+    width:  100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#layout {
+    width:  100%;
+    height: 100%;
+}
+
+#navPane {
+    width: 200px;
+}
+
+#headline {
+    height: 2.5em;
+    background-color: #CCCCCC;
+}
+
+#headline h1 {
+    font-height: 1.2em;
+    margin: 0;
+    padding: 0 0 0 0.5em;
+}
+
+#headline a {
+    text-decoration: none;
+    color: black;
+}
+
+#headline a:hover {
+    text-decoration: underline;
+}
+
+#navPane {
+    width: 225px;
+    margin-left: 1em;
+    margin-top: 1em;
+    padding-left: 1em;
+}
+
+#footer {
+    visibility: collapse;
+    height: 1.5em;
+    background-color: #CCCCCC;
+}
+
+#footer p {
+    margin: 0;
+    padding: 0 0 0 0.5em;
+}
+
+dl.error {
+    background-color: #FFA4A4;
+    border: 1px solid #FF0000;
+    padding: 0.5em;
+}
+
+dl.error dt {
+    font-weight: bold;
+}
