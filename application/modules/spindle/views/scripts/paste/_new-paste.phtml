@@ -5,11 +5,15 @@ $dijitParams = array(
     'href'          => $this->baseUrl() . '/api/spindle/paste/content/new-paste.html',
     'parseOnLoad'   => true,
 );
+
 $content = '';
 if ('new-paste' == $this->current) {
     unset($dijitParams['href']);
     $dijitParams['selected'] = true;
-    $content = $this->render('paste/content/new-paste.phtml');
+    if (!$content = $this->cache()->load('new-paste.html')) {
+        $content = $this->render('paste/content/new-paste.phtml');
+        $this->cache()->save('new-paste.html', $content);
+    }
 }
 
 echo $this->contentPane('new-paste', $content, $dijitParams);

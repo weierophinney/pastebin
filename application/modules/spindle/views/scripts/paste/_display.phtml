@@ -9,7 +9,11 @@ $content = '';
 if ('display' == $this->current) {
     unset($dijitParams['href']);
     $dijitParams['selected'] = true;
-    $content = $this->render('paste/content/display.phtml')
-             . $this->render('paste/_nav.phtml');
+    $script = 'paste-' . $this->id . '.html';
+    if (!$content = $this->cache()->load($script)) {
+        $content = $this->render('paste/content/display.phtml')
+                 . $this->render('paste/_nav.phtml');
+        $this->cache()->save($script, $content);
+    }
 }
 echo $this->contentPane('paste', $content, $dijitParams);

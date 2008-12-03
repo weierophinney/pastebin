@@ -9,6 +9,9 @@ $content = '';
 if ('about' == $this->current) {
     unset($dijitParams['href'], $dijitParams['parseOnLoad']);
     $dijitParams['selected'] = true;
-    $content = $this->render('paste/content/about.phtml');
+    if (!$content = $this->cache()->load('about.html')) {
+        $content = $this->render('paste/content/about.phtml');
+        $this->cache()->save('about.html', $content);
+    }
 }
 echo $this->contentPane('about', $content, $dijitParams);

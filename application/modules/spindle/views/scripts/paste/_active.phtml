@@ -9,7 +9,10 @@ $content = '';
 if ('active' == $this->current) {
     unset($dijitParams['href']);
     $dijitParams['selected'] = true;
-    $content = $this->render('paste/content/active-grid.phtml');
+    if (!$content = $this->cache()->load('active-grid.html')) {
+        $content = $this->render('paste/content/active-grid.phtml');
+        $this->cache()->save('active-grid.html', $content);
+    }
 }
 
 echo $this->contentPane('active', $content, $dijitParams);

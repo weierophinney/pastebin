@@ -1,8 +1,4 @@
-- spindle layer
-  - Add ability to update page title (hook this in pastebin module)
-- Import bugapp into Spindle module
 - Paste application changes
-  - Update views to pull from cache when available, or write to it when not
   - Add JS detection
     - If available, redirect to JS-enabled version
     - Add detection in active-grid action to use Zend_Paginator if JS is
@@ -15,3 +11,8 @@
         - sending updates to Growl or growl-like notifiers
         - triggering caching
         - triggering indexing
+- spindle layer
+  - Add ability to update page title (hook this in pastebin module)
+- Import bugapp into Spindle module
+- Navbar
+  - links should load main content frame dynamically, w/o page refresh
