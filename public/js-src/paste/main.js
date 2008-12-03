@@ -42,6 +42,9 @@ dojo.provide("paste.main");
 
         // set the tab based on any URL at load-time
         paste.tabs.urlChangeHandler();
+
+        // update the status bar
+        paste.updateStatus(dijit.byId("pastebin").selectedChildWidget);
     
         // update the URL hash each time the tab changes
         dojo.connect(dijit.byId("pastebin"), "selectChild", paste.tabs, "urlUpdateHandler");
