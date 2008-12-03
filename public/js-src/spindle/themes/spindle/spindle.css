@@ -1,4 +1,5 @@
 @import "../../../dijit/themes/tundra/tundra.css";
+@import "../../../dojox/layout/resources/ExpandoPane.css";
 
 body, html {
     width:  100%;
@@ -14,6 +15,28 @@ body, html {
 
 #navPane {
     width: 200px;
+    border: 1px solid #ccc;
+    background: #fff;
+}
+
+#navPane .dojoxExpandoTitle {
+    border: none;
+}
+
+#navPane ul.menu {
+    list-style-type: none;
+    padding: 0;
+    margin: 0.5em 0 0 0.5em;
+}
+
+#navPane ul.menu a {
+    color: #000;
+    text-decoration: none;
+    background-color: inherit;
+}
+
+#navPane ul.menu a:hover {
+    background-color: #cfcfcf;
 }
 
 #headline {

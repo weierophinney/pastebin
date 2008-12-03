@@ -1,6 +1,13 @@
-<?  $this->contentPane()->captureStart('navPane', array('region' => 'right'))?>
-<h4>Applications</h4>
-<ul>
-    <li><a href="/spindle/paste">Pastebin</a></li>
-</ul>
-<?= $this->contentPane()->captureEnd('navPane') ?>
+<div dojoType="dojox.layout.ExpandoPane" region="right" 
+    id="navPane" title="Applications" splitter="true" 
+    duration="125" maxWidth="200">
+    <div dojoType="dijit.layout.AccordionContainer" duration="250">
+        <div dojoType="dijit.layout.AccordionPane" title="Pastebin">
+            <ul class="menu">
+                <li><a href="/spindle/paste">About</a></li>
+                <li><a href="/spindle/paste/new">New Paste</a></li>
+                <li><a href="/spindle/paste/active">Current Pastes</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

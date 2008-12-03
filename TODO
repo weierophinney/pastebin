@@ -1,10 +1,5 @@
-- Add "spindle" dojo layer
+- spindle layer
   - Add ability to update page title (hook this in pastebin module)
-- Update layout
-  - Sidebar changes
-    - define as ExpandoPane?
-      - would allow collapsing
-    - Use menu or tree widget
 - Import bugapp into Spindle module
 - Paste application changes
   - Update views to pull from cache when available, or write to it when not
