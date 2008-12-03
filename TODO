@@ -1,5 +1,4 @@
 - Add "spindle" dojo layer
-  - move base functionality (baseUrl, etc) into spindle layer
   - Add ability to update page title (hook this in pastebin module)
 - Update layout
   - By default, show nothing in status bar

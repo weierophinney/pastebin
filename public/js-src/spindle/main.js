@@ -4,4 +4,14 @@ dojo.provide("spindle.main");
     dojo.require("dijit.layout.BorderContainer");
     dojo.require("dijit.layout.ContentPane");
     dojo.require("dojo.parser");
+
+    // Derive base URL
+    var path      = window.location.pathname;
+    var pathRegex = new RegExp(/^(.*?)\/spindle\/paste/);
+    var matches   = pathRegex.exec(path);
+    var baseUrl   = "";
+    if ((null != matches) && (1 < matches.length)) {
+        baseUrl = matches[1];
+    }
+    spindle.baseUrl = baseUrl;
 })();
