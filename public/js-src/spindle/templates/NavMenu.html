@@ -1,0 +1,20 @@
+<div class="dojoxExpandoPane" dojoAttachEvent="ondblclick:toggle" >
+	<div dojoAttachPoint="titleWrapper" class="dojoxExpandoTitle">
+		<div class="dojoxExpandoIcon" dojoAttachPoint="iconNode" dojoAttachEvent="onclick:toggle"><span class="a11yNode">X</span></div>			
+		<span class="dojoxExpandoTitleNode" dojoAttachPoint="titleNode">${title}</span>
+	</div>
+	<div class="dojoxExpandoWrapper" dojoAttachPoint="cwrapper" dojoAttachEvent="ondblclick:_trap">
+        <div class="dojoxExpandoContent" dojoAttachPoint="containerNode">
+            <div dojoType="dijit.layout.AccordionContainer" duration="250">
+                <div dojoType="dijit.layout.AccordionPane" title="Pastebin">
+                    <ul class="menu">
+                        <li><a onClick="dijit.byId('pastebin').selectChild(dijit.byId('about'));">About</a></li>
+                        <li><a onClick="dijit.byId('pastebin').selectChild(dijit.byId('new-paste'));">New Paste</a></li>
+                        <li><a onClick="dijit.byId('pastebin').selectChild(dijit.byId('active'));">Current Pastes</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+	</div>
+</div>
+
