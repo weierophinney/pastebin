@@ -1,13 +1,18 @@
 <?php
+
+/** Spindle_Model_Model */
+require_once dirname(__FILE__) . '/Model.php';
+
 /**
  * Pastebin model
  * 
+ * @uses       Spindle_Model_Model
  * @package    Spindle
  * @subpackage Model
  * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version    $Id: $
  */
-class Spindle_Model_Paste
+class Spindle_Model_Paste extends Spindle_Model_Model
 {
     /**
      * Table fields
@@ -28,79 +33,23 @@ class Spindle_Model_Paste
     protected $_table;
 
     /**
-     * @var array Class methods
-     */
-    protected $_classMethods;
-
-    /**
-     * @var My_Controller_Helper_ResourceLoader
-     */
-    protected $_resourceLoader;
-
-    /**
      * Constructor
      * 
-     * @param  array|Zend_Config|null $options 
+     * @param mixed $options 
      * @return void
      */
     public function __construct($options = null)
     {
+        $this->addHook('preAdd')
+             ->addHook('postAdd');
+
         if ($options instanceof Zend_Config) {
             $options = $options->toArray();
         }
-
         if (is_array($options)) {
             $this->setOptions($options);
         }
-    }
 
-    /**
-     * Set options using setter methods
-     * 
-     * @param  array $options 
-     * @return Spindle_Model_Paste
-     */
-    public function setOptions(array $options)
-    {
-        if (null === $this->_classMethods) {
-            $this->_classMethods = get_class_methods($this);
-        }
-        foreach ($options as $key => $value) {
-            $method = 'set' . ucfirst($key);
-            if (in_array($method, $this->_classMethods)) {
-                $this->$method($value);
-            }
-        }
-        return $this;
-    }
-
-    /**
-     * Set resource loader
-     * 
-     * @param  object $loader 
-     * @return Spindle_Model_DbTable_Paste
-     */
-    public function setResourceLoader($loader)
-    {
-        if (!is_object($loader)) {
-            throw new Exception('Invalid resource loader provided to ' . __CLASS__);
-        }
-        $this->_resourceLoader = $loader;
-        return $this;
-    }
-
-    /**
-     * Retrieve resource loader
-     * 
-     * @return object
-     */
-    public function getResourceLoader()
-    {
-        if (null === $this->_resourceLoader) {
-            $this->_resourceLoader = new My_Controller_Helper_ResourceLoader;
-            $this->_resourceLoader->initModule('spindle');
-        }
-        return $this->_resourceLoader;
     }
 
     /**
@@ -111,6 +60,7 @@ class Spindle_Model_Paste
      */
     public function add(array $data)
     {
+        $this->callHook('preAdd', array($data));
         $form     = $this->getForm();
 
         $belongTo = $form->getElementsBelongTo();
@@ -127,7 +77,11 @@ class Spindle_Model_Paste
             $values = $values[$belongTo];
         }
 
-        return $this->getTable()->insert($values);
+        $id = $this->getTable()->insert($values);
+
+        $this->callHook('postAdd', array($id));
+
+        return $id;
     }
 
     /**

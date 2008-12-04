@@ -11,6 +11,8 @@ require_once APPLICATION_PATH . '/modules/spindle/models/Paste.php';
 /**
  * Test class for Paste.
  *
+ * @todo  Test registering/manipulating plugins (need plugins, first)
+ *
  * @group Spindle
  * @group Paste
  * @group Models
@@ -240,6 +242,34 @@ class Spindle_Model_PasteTest extends PHPUnit_Framework_TestCase
         }
         rsort($users);
         $this->assertEquals($users, $test);
+    }
+
+    /**
+     * @group hooks
+     */
+    public function testPasteModelShouldDefinePreAndPostAddHooks()
+    {
+        $this->assertTrue($this->model->hasHook('preAdd'));
+        $this->assertTrue($this->model->hasHook('postAdd'));
+    }
+
+    /**
+     * @group hooks
+     */
+    public function testModelShouldAllowOverwritingHooks()
+    {
+        $hooks = array('preNothing', 'postNothing');
+        $this->model->setHooks($hooks);
+        $this->assertSame($hooks, $this->model->getHooks());
+    }
+
+    /**
+     * @group hooks
+     */
+    public function testModelShouldAllowRemovingInvididualHooks()
+    {
+        $this->model->removeHook('postAdd');
+        $this->assertFalse($this->model->hasHook('postAdd'));
     }
 }
 

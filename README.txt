@@ -18,12 +18,12 @@ INSTALLATION
    installation (1.6.0RC1 or later, or current trunk) to library/Zend/
    -- this is done to keep the tarball size down.
 
-   Alternately, you can grab current trunk or the 1.6 release branch
+   Alternately, you can grab current trunk or the 1.7 release branch
    from SVN using:
 
      svn co http://framework.zend.com/svn/framework/standard/trunk/library/Zend
 
-     svn co http://framework.zend.com/svn/framework/standard/branches/release-1.6/library/Zend
+     svn co http://framework.zend.com/svn/framework/standard/branches/release-1.7/library/Zend
 
 4. If you are on Windows, rename the public/js-src directory to
    public/js; on *nix, verify that public/js is a symlink to
@@ -34,10 +34,10 @@ INSTALLATION
 
     chmod -R a+rwX <packagedir>/application/data
 
-6. Make the directory public/api/paste/v1/content world writeable; this can be
-   accomplished on *nix systems using:
+6. Make the directory public/api/spindle/paste/content world writeable; this can
+   be accomplished on *nix systems using:
 
-    chmod a+rwX <packagedir>/public/api/paste/v1/content
+    chmod a+rwX <packagedir>/public/api/spindle/paste/content
 
    This will only affect you when you set the application environment to
    "production", at which time artifacts will be written to the
@@ -75,10 +75,14 @@ This application shows off the following Dojo features:
 
     * BorderContainer
     * TabContainer
+    * ExpandoPane
+    * AccordionContainer
     * dojox.Grid
     * dojox.highlight
+    * dojo.back
     * A variety of dijits: ValidationTextBox, SimpleTextarea,
       and FilteringSelect
+    * dojo.xhr
     * JSON-RPC
 
 ZF specific features include:
@@ -95,7 +99,7 @@ CUSTOM DOJO BUILDS
 For the adventurous, I have provided a profile for creating a custom
 Dojo build for the pastebin application. You will need to copy the
 public/js-src/paste directory and contents to your Dojo source
-installation, and then use the misc/paste.profile.js build profile to
+installation, and then use the misc/spindle.profile.js build profile to
 create the build. Further instructions are in misc/README.txt.
 
 
