@@ -1,6 +1,7 @@
 dojo.provide("spindle.main");
 
 (function() {
+    dojo.require("spindle._base");
     dojo.require("spindle.NavMenu");
     dojo.require("dijit.layout.BorderContainer");
     dojo.require("dijit.layout.ContentPane");

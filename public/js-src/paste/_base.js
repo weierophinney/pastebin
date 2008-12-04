@@ -67,6 +67,10 @@ dojo.provide("paste._base");
         footer.attr('content', "<p>" + metadata.innerHTML + "</p>");
     };
 
+    paste.setTitle = function(title) {
+        spindle.setTitle(title + ' - Pastebin');
+    };
+
     paste.unformattedShow = function() {
         dojo.toggleClass("pastecode", "highlight", false);
         var linkNode = dojo.byId("format-toggle");

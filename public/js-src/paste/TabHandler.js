@@ -98,6 +98,13 @@ dojo.declare("paste.TabHandler", null, {
                 handle:    dojo.hitch(this, "urlChangeHandler"),
                 changeUrl: id,
             });
+            if (id == "about") {
+                paste.setTitle("About");
+            } else if (id == "active") {
+                paste.setTitle("Current Pastes");
+            } else if (id == "new-paste") {
+                paste.setTitle("New Paste");
+            }
         } else if ("paste" == id) {
             var pastetab = dijit.byId(id);
             var pasteid  = pastetab.controlButton.attr("label");
@@ -105,6 +112,7 @@ dojo.declare("paste.TabHandler", null, {
                 handle:    dojo.hitch(this, "urlChangeHandler"),
                 changeUrl: pasteid,
             });
+            paste.setTitle("Paste: " + id);
         } else if ("followup" == id) {
             var followuptab = dijit.byId(id);
             var label       = followuptab.controlButton.attr("label");
@@ -114,6 +122,7 @@ dojo.declare("paste.TabHandler", null, {
                 handle:    dojo.hitch(this, "urlChangeHandler"),
                 changeUrl: "followup-" + matches[1],
             });
+            paste.setTitle("Followup: " + matches[1]);
         }
     },
 

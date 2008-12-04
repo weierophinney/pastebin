@@ -3,8 +3,6 @@
     - If available, redirect to JS-enabled version
     - Add detection in active-grid action to use Zend_Paginator if JS is
       disabled
-- spindle layer
-  - Add ability to update page title (hook this in pastebin module)
 - Import bugapp into Spindle module
 - Navbar
   - links should load main content frame dynamically, w/o page refresh
