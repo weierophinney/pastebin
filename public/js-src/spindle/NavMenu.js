@@ -19,14 +19,11 @@ dojo.declare("spindle.NavMenu", dojox.layout.ExpandoPane,
     templateString  : null,
     templatePath    : dojo.moduleUrl('spindle', 'templates/NavMenu.html'),
 
-    postMixInProperties: function() {
-        if (typeof(this.content) != "undefined") {
-            delete this.content;
-        }
-    },
-
     postCreate: function() {
         this.inherited(arguments);
         dojo.parser.parse(this.containerNode);
+    },
+
+    _setContentAttr: function() {
     },
 });
