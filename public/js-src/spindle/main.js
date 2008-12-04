@@ -7,11 +7,13 @@ dojo.provide("spindle.main");
     dojo.require("dojo.parser");
 
     dojo.addOnLoad(function() {
-        spindle.navMenu = new spindle.NavMenu({
-            baseUrl: spindle.baseUrl,
-        });
-        dijit.byId("layout").addChild(spindle.navMenu);
-        spindle.navMenu.startup();
+        if (dijit.byId("layout")) {
+            spindle.navMenu = new spindle.NavMenu({
+                baseUrl: spindle.baseUrl,
+            });
+            dijit.byId("layout").addChild(spindle.navMenu);
+            dijit.byId("layout").resize();
+        }
     });
 
     // Derive base URL
