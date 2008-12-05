@@ -3,6 +3,21 @@ features of the Dojo/Zend Framework integration.
 
 INSTALLATION
 =======================================================================
+This application requires that you either have Zend Framework on your
+include_path, or that you will be symlinking your Zend Framework library
+into the library directory. If you do not yet have Zend Framework, you
+can get it from one of the following sources:
+
+  * Official Release:
+    http://framework.zend.com/dowload/latest
+
+  * Subversion; use either the current trunk or the 1.7 release branch:
+    svn co http://framework.zend.com/svn/framework/standard/trunk/library/Zend
+
+    svn co http://framework.zend.com/svn/framework/standard/branches/release-1.7/library/Zend
+
+Install Zend Framework locally, and the follow these steps:
+
 1. Untar the archive using:
 
     tar xzf <packagefile>
@@ -14,36 +29,18 @@ INSTALLATION
 
    (Assuming /var/www contains directories for your vhosts.)
 
-3. Symlink or install the library/Zend/ directory of your Zend Framework
-   installation (1.6.0RC1 or later, or current trunk) to library/Zend/
-   -- this is done to keep the tarball size down.
+3. Run the install script
+   The application now comes with an install script, that creates the
+   necessary symlinks, initializes the development database, and sets
+   appropriate permissions. Simply run it using php:
 
-   Alternately, you can grab current trunk or the 1.7 release branch
-   from SVN using:
+     php install.php path/to/ZendFramework/library/Zend
 
-     svn co http://framework.zend.com/svn/framework/standard/trunk/library/Zend
+   You can get full usage by passing the -h, --help, or -? options:
 
-     svn co http://framework.zend.com/svn/framework/standard/branches/release-1.7/library/Zend
+     php install.php -h
 
-4. If you are on Windows, rename the public/js-src directory to
-   public/js; on *nix, verify that public/js is a symlink to
-   public/js-src.
-
-5. Make the directory application/data and all files within it world
-   writeable; this can be accomplished on *nix systems using:
-
-    chmod -R a+rwX <packagedir>/application/data
-
-6. Make the directory public/api/spindle/paste/content world writeable; this can
-   be accomplished on *nix systems using:
-
-    chmod a+rwX <packagedir>/public/api/spindle/paste/content
-
-   This will only affect you when you set the application environment to
-   "production", at which time artifacts will be written to the
-   directory.
-
-7. Create a vhost that points its DocumentRoot to the public
+3. Create a vhost that points its DocumentRoot to the public
    subdirectory. As an example:
 
     <VirtualHost *>
@@ -65,7 +62,7 @@ INSTALLATION
 
     127.0.1.1 paste.local
 
-8. Finally, simply fire your browser to:
+4. Finally, simply fire your browser to:
 
     http://paste.local/
 
