@@ -112,7 +112,7 @@ dojo.declare("paste.TabHandler", null, {
                 handle:    dojo.hitch(this, "urlChangeHandler"),
                 changeUrl: pasteid,
             });
-            paste.setTitle("Paste: " + id);
+            paste.setTitle("Paste: " + pasteid);
         } else if ("followup" == id) {
             var followuptab = dijit.byId(id);
             var label       = followuptab.controlButton.attr("label");
