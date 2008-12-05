@@ -1,0 +1,37 @@
+<? $paste = $this->model->get($this->id); ?>
+<? if (!$paste): ?>
+    <p class="error">Paste not found or paste expired</p>
+    return;
+<? endif ?>
+<h3 class="pastebin-display">
+    Code 
+    <? if ('text' != $paste['type']): ?>
+    (<a id="format-toggle" href="#" onClick="paste.unformattedShow();">unformatted</a>)
+    <? endif ?>
+    <span class="permalink">[<a href="<?= $this->baseUrl() ?>/spindle/paste/display/id/<?= $paste['id'] ?>">Permalink</a>]</span>
+</h3>
+<div id="pastecode" class="highlight">
+    <pre><code class="<?= $paste['type'] ?>"><?= $this->escape($paste['code']) ?></code></pre>
+</div>
+<? if (!empty($paste['summary'])): ?>
+    <h3>Summary</h3>
+    <p class="summary"><?= $this->escape($paste['summary']) ?></p>
+<? endif ?>
+<p id="metadata">
+    <?= $paste['type'] ?> code pasted <?= $paste['created'] ?>
+    <?= (empty($paste['user'])) ? '' : ' by ' . $this->escape($paste['user']) ?>
+    <?= (empty($paste['expires'])) ? '' : '; expires ' . $paste['expires'] ?>
+</p>
+<? if (!empty($paste['parent'])): ?>
+    <p class="parent">
+    <a href="<?= $this->baseUrl() ?>/spindle/paste/display/id/<?= $paste['parent'] ?>">Parent paste (<?= $paste['parent'] ?>)</a>
+    </p>
+<? endif ?>
+<? if (!empty($paste['children'])): ?>
+    <p class="children">Child pastes:</p>
+    <ul class="children">
+    <? foreach ($paste['children'] as $child): ?>
+        <li><a href="<?= $this->baseUrl() ?>/spindle/paste/display/id/<?= $child ?>"><?= $child ?></a></li>
+    <? endforeach ?>
+    </ul>
+<? endif ?>

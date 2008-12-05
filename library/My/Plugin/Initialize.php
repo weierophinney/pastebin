@@ -36,10 +36,40 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     {
         $this->front = Zend_Controller_Front::getInstance();
         $this->initControllers()
+             ->initHelpers()
              ->initLog()
              ->initCache()
              ->initDb()
-             ->initView();
+             ->initView()
+             ->initModules();
+    }
+
+    /**
+     * PreDispatch actions
+     *
+     * Initialize module bootstraps
+     * 
+     * @param Zend_Controller_Request_Abstract $request 
+     * @return void
+     */
+    public function initModules()
+    {
+        $modules = $this->front->getControllerDirectory();
+        foreach ($modules as $module => $dir) {
+            if ('default' == $module) {
+                continue;
+            }
+            $bootstrapFile = dirname($dir) . '/Bootstrap.php';
+            $class         = ucfirst($module) . '_Bootstrap';
+            if (Zend_Loader::loadFile('Bootstrap.php', dirname($dir))
+                && class_exists($class)
+            ) {
+                $bootstrap = new $class;
+                $bootstrap->setAppBootstrap($this);
+                $bootstrap->bootstrap();
+            }
+        }
+        return $this;
     }
 
     /**
@@ -49,7 +79,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function initConfig()
     {
-        $this->config = new Zend_Config_Ini(APPLICATION_PATH . '/config/paste.ini', $this->env);
+        $this->config = new Zend_Config_Ini(APPLICATION_PATH . '/config/site.ini', $this->env, true);
         Zend_Registry::set('config', $this->config);
         return $this;
     }
@@ -62,6 +92,18 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     public function initControllers()
     {
         $this->front->setControllerDirectory($this->config->appPath . '/controllers', 'default');
+        $this->front->addModuleDirectory($this->config->appPath . '/modules');
+        return $this;
+    }
+
+    /**
+     * Initialize action helpers
+     * 
+     * @return My_Plugin_Initialize
+     */
+    public function initHelpers()
+    {
+        Zend_Controller_Action_HelperBroker::addHelper(new My_Controller_Helper_ResourceLoader());
         return $this;
     }
 
@@ -125,19 +167,20 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     {
         $view = new Zend_View;
         $view->addHelperPath('My/View/Helper/', 'My_View_Helper');
+        $view->addHelperPath(APPLICATION_PATH . '/views/helpers', 'Zend_View_Helper');
+        $view->addHelperPath(APPLICATION_PATH . '/modules/spindle/views/helpers', 'Spindle_View_Helper');
 
         Zend_Dojo::enableView($view);
         Zend_Dojo_View_Helper_Dojo::setUseDeclarative(true);
         $view->baseUrl = rtrim($this->getRequest()->getBaseUrl(), '/');
         $view->doctype('XHTML1_STRICT');
-        $view->headTitle('Pastebin');
+        $view->headTitle()->setSeparator(' - ')->append('Spindle');
         $view->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=utf-8');
-        $view->dojo()->setDjConfigOption('preventBackButtonFix', false)
-                     ->setDjConfigOption('isDebug', $this->config->view->dojo->isDebug)
+        $view->dojo()->setDjConfigOption('isDebug', $this->config->view->dojo->isDebug)
                      ->setLocalPath('/js/dojo/dojo.js')
-                     ->addLayer('/js/paste/layer.js')
-                     ->registerModulePath('../paste', 'paste')
-                     ->addStylesheetModule('paste.styles')
+                     ->registerModulePath('../spindle', 'spindle')
+                     ->addStylesheetModule('spindle.themes.spindle')
+                     ->requireModule('spindle.main')
                      ->disable();
 
         Zend_Registry::set('view', $view);

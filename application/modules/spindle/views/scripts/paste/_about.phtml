@@ -1,0 +1,17 @@
+<?
+$dijitParams = array(
+    'title'       => 'About', 
+    'class'       => 'tab',
+    'href'        => $this->baseUrl() . '/api/spindle/paste/content/about.html',
+    'parseOnLoad' => true,
+);
+$content = '';
+if ('about' == $this->current) {
+    unset($dijitParams['href'], $dijitParams['parseOnLoad']);
+    $dijitParams['selected'] = true;
+    if (!$content = $this->cache()->load('about.html')) {
+        $content = $this->render('paste/content/about.phtml');
+        $this->cache()->save('about.html', $content);
+    }
+}
+echo $this->contentPane('about', $content, $dijitParams);

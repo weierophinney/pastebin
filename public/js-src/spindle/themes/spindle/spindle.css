@@ -1,0 +1,88 @@
+@import "../../../dijit/themes/tundra/tundra.css";
+@import "../../../dojox/layout/resources/ExpandoPane.css";
+
+body, html {
+    width:  100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#layout {
+    width:  100%;
+    height: 100%;
+}
+
+#navPane {
+    width: 200px;
+    border: 1px solid #ccc;
+    background: #fff;
+}
+
+#navPane .dojoxExpandoTitle {
+    border: none;
+}
+
+#navPane ul.menu {
+    list-style-type: none;
+    padding: 0;
+    margin: 0.5em 0 0 0.5em;
+}
+
+#navPane ul.menu a {
+    color: #000;
+    text-decoration: none;
+    background-color: inherit;
+}
+
+#navPane ul.menu a:hover {
+    background-color: #cfcfcf;
+}
+
+#headline {
+    height: 2.5em;
+    background-color: #CCCCCC;
+}
+
+#headline h1 {
+    font-height: 1.2em;
+    margin: 0;
+    padding: 0 0 0 0.5em;
+}
+
+#headline a {
+    text-decoration: none;
+    color: black;
+}
+
+#headline a:hover {
+    text-decoration: underline;
+}
+
+#navPane {
+    width: 225px;
+    margin-left: 1em;
+    margin-top: 1em;
+    padding-left: 1em;
+}
+
+#footer {
+    visibility: collapse;
+    height: 1.5em;
+    background-color: #CCCCCC;
+}
+
+#footer p {
+    margin: 0;
+    padding: 0 0 0 0.5em;
+}
+
+dl.error {
+    background-color: #FFA4A4;
+    border: 1px solid #FF0000;
+    padding: 0.5em;
+}
+
+dl.error dt {
+    font-weight: bold;
+}

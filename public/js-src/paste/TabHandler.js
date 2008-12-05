@@ -1,6 +1,6 @@
 dojo.provide("paste.TabHandler");
 
-dojo.require("paste.layer");
+dojo.require("paste.main");
 dojo.require("dijit.layout.ContentPane");
 
 dojo.declare("paste.TabHandler", null, {
@@ -48,7 +48,7 @@ dojo.declare("paste.TabHandler", null, {
     },
 
     getFollowupUrl: function(pasteId) {
-        return this.baseUrl + "/api/paste/v1/content/followup-" + pasteId + ".html";
+        return this.baseUrl + "/api/spindle/paste/content/followup-" + pasteId + ".html";
     },
 
     getPasteContainer: function() {
@@ -56,7 +56,7 @@ dojo.declare("paste.TabHandler", null, {
     },
 
     getPasteUrl: function(pasteId) {
-        return this.baseUrl + "/api/paste/v1/content/paste-" + pasteId + ".html";
+        return this.baseUrl + "/api/spindle/paste/content/paste-" + pasteId + ".html";
     },
 
     loadFollowupTab: function(pasteId) {
@@ -98,6 +98,13 @@ dojo.declare("paste.TabHandler", null, {
                 handle:    dojo.hitch(this, "urlChangeHandler"),
                 changeUrl: id,
             });
+            if (id == "about") {
+                paste.setTitle("About");
+            } else if (id == "active") {
+                paste.setTitle("Current Pastes");
+            } else if (id == "new-paste") {
+                paste.setTitle("New Paste");
+            }
         } else if ("paste" == id) {
             var pastetab = dijit.byId(id);
             var pasteid  = pastetab.controlButton.attr("label");
@@ -105,6 +112,7 @@ dojo.declare("paste.TabHandler", null, {
                 handle:    dojo.hitch(this, "urlChangeHandler"),
                 changeUrl: pasteid,
             });
+            paste.setTitle("Paste: " + pasteid);
         } else if ("followup" == id) {
             var followuptab = dijit.byId(id);
             var label       = followuptab.controlButton.attr("label");
@@ -114,6 +122,7 @@ dojo.declare("paste.TabHandler", null, {
                 handle:    dojo.hitch(this, "urlChangeHandler"),
                 changeUrl: "followup-" + matches[1],
             });
+            paste.setTitle("Followup: " + matches[1]);
         }
     },
 

@@ -1,0 +1,21 @@
+<?
+$dijitParams = array(
+    'title'         => 'Followup: ' . $this->id, 
+    'class'         => 'tab', 
+    'href'          => $this->baseUrl() . '/api/spindle/paste/content/followup-' . $this->id . '.html',
+    'parseOnLoad'   => true,
+    'refreshOnShow' => true
+);
+$content = '';
+if ('followup' == $this->current) {
+    unset($dijitParams['href']);
+    $dijitParams['selected'] = true;
+    $script = 'followup-' . $this->id . '.html';
+    if (!$content = $this->cache()->load($script)) {
+        $content = $this->render('paste/content/followup.phtml')
+                 . $this->render('paste/_nav.phtml');
+        $this->cache()->save($script, $content);
+    }
+}
+
+echo $this->contentPane('followup', $content, $dijitParams);

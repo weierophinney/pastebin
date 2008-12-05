@@ -1,0 +1,14 @@
+<?
+$this->dojo()->enable(); 
+$this->current = 'active';
+$this->tabContainer()->captureStart('pastebin', array('class' => 'paste-tab')) ?>
+<?= $this->render('paste/_about.phtml') ?>
+<?= $this->render('paste/_new-paste.phtml') ?>
+<? 
+    if ($this->doPagination) {
+        echo $this->render('paste/active-pagination.phtml');
+    } else {
+        echo $this->render('paste/_active.phtml');
+    }
+?>
+<?= $this->tabContainer()->captureEnd('pastebin') ?>

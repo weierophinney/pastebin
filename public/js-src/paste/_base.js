@@ -67,6 +67,10 @@ dojo.provide("paste._base");
         footer.attr('content', "<p>" + metadata.innerHTML + "</p>");
     };
 
+    paste.setTitle = function(title) {
+        spindle.setTitle(title + ' - Pastebin');
+    };
+
     paste.unformattedShow = function() {
         dojo.toggleClass("pastecode", "highlight", false);
         var linkNode = dojo.byId("format-toggle");
@@ -100,7 +104,7 @@ dojo.provide("paste._base");
 
     paste._getService = function() {
         if (!paste._service) {
-            paste._service = new dojox.rpc.Service(paste.baseUrl + "/api/paste/v1/content/jsonrpc.smd", {
+            paste._service = new dojox.rpc.Service(paste.baseUrl + "/api/spindle/paste/content/jsonrpc.smd", {
                 envelope:"JSON-RPC-2.0",
             });
         }

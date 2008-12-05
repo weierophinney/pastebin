@@ -1,0 +1,39 @@
+<?
+$this->model->setUsePaginator(true);
+$paginator = $this->model->fetchActive($this->page);
+?>
+<? if (count($paginator)): ?>
+<table>
+    <thead>
+        <tr>
+            <th field="id" width="16em">ID</th>
+            <th field="type">Type</th>
+            <th field="user">User</th>
+            <th field="summary">Summary</th>
+            <th field="expires">Expires</th>
+        </tr>
+    </thead>
+    <? foreach ($paginator as $item): ?>
+        <? $link = $this->url(
+                array(
+                    'module'     => 'spindle',
+                    'controller' => 'paste',
+                    'action'     => 'display',
+                    'id'         => $item['id'],
+                ),
+                'default',
+                true
+            ); ?>
+    <tr>
+        <td><a href="<?= $link ?>"><?= $this->escape($item['id']) ?></a></td>
+        <td><?= $this->escape($item['type']) ?></td>
+        <td><?= $this->escape($item['user']) ?></td>
+        <td><?= $this->escape($item['summary']) ?></td>
+        <td><?= $this->escape($item['expires']) ?></td>
+    </tr>
+    <? endforeach ?>
+</table>
+<? endif ?>
+
+<?= $this->paginationControl($paginator, 'Sliding', 'paste/_paginationControl.phtml') ?>
+

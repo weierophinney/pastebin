@@ -1,5 +1,4 @@
 <?
-$content = $this->render('_layout.phtml');
 if (Zend_Controller_Front::getInstance()->getRequest()->getParam('nojs', false)) {
     $this->dojo()->disable();
     $content = preg_replace('#href="([^"]*)"#s', 'href="$1?nojs=true"', $content);
@@ -16,6 +15,13 @@ if (Zend_Controller_Front::getInstance()->getRequest()->getParam('nojs', false))
     <?= $this->headScript() ?> 
 </head>
 <body class="tundra">
-    <?= $content ?> 
+    <?  $this->borderContainer()->captureStart('layout', array('design' => 'headline')) ?>
+    <?= $this->render('_headline.phtml') ?>
+    <?= $this->render('_mainPane.phtml') ?>
+    <?= $this->render('_footer.phtml') ?>
+    <?= $this->borderContainer()->captureEnd('layout') ?>
+    <? if ($this->layout()->nav): ?>
+        <?= $this->layout()->nav; ?>
+    <? endif ?>
 </body>
 </html>

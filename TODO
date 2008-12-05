@@ -1,1 +1,5 @@
-- Use Paginator for active view
+- Import bugapp into Spindle module
+- layout builders per module
+  - JS that updates main content pane either 
+    - from HREF
+    - creating basic structure

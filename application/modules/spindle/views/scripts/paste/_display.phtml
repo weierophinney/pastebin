@@ -1,0 +1,19 @@
+<? 
+$dijitParams = array(
+    'title'         => $this->id,
+    'class'         => 'tab',
+    'href'          => $this->baseUrl() . '/api/spindle/paste/content/paste-' . $this->id . '.html',
+    'parseOnLoad'   => true,
+);
+$content = '';
+if ('display' == $this->current) {
+    unset($dijitParams['href']);
+    $dijitParams['selected'] = true;
+    $script = 'paste-' . $this->id . '.html';
+    if (!$content = $this->cache()->load($script)) {
+        $content = $this->render('paste/content/display.phtml')
+                 . $this->render('paste/_nav.phtml');
+        $this->cache()->save($script, $content);
+    }
+}
+echo $this->contentPane('paste', $content, $dijitParams);
