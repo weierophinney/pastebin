@@ -46,6 +46,20 @@ class Spindle_PasteController extends Zend_Controller_Action
     }
 
     /**
+     * Post Dispatch actions
+     *
+     * Render and capture navigation for this application
+     * 
+     * @return void
+     */
+    public function postDispatch()
+    {
+        if (!$this->_getParam('jsEnabled', false)) {
+            $this->getResponse()->insert('nav', $this->view->render('_nav.phtml'));
+        }
+    }
+
+    /**
      * Landing page
      * 
      * @return void
@@ -154,6 +168,13 @@ class Spindle_PasteController extends Zend_Controller_Action
      */
     public function activeAction()
     {
+        if (!$this->_getParam('jsEnabled', false)) {
+            $this->view->assign(array(
+                'doPagination' => true,
+                'model'        => $this->getModel(),
+                'page'         => $this->_getParam('page', 1),
+            ));
+        }
     }
 
     /**

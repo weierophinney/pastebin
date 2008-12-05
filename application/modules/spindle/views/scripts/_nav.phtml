@@ -1,0 +1,16 @@
+<? $basePasteUrl = $this->url(
+        array(
+            'module'     => 'spindle',
+            'controller' => 'paste',
+        ),
+        'default',
+        true
+    ); ?>
+<h4>Applications</h4>
+<ul class="nav">
+    <li class="navhead">Pastebin<ul>
+        <li><a href="<?= $basePasteUrl . '/about' ?>">About</a></li>
+        <li><a href="<?= $basePasteUrl . '/new-paste' ?>">New Paste</a></li>
+        <li><a href="<?= $basePasteUrl . '/active' ?>">Current Pastes</a></li>
+    </ul></li>
+</ul>

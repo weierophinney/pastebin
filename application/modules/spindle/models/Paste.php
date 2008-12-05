@@ -33,6 +33,11 @@ class Spindle_Model_Paste extends Spindle_Model_Model
     protected $_table;
 
     /**
+     * @var bool Whether or not to use a paginator for result sets
+     */
+    protected $_usePaginator = false;
+
+    /**
      * Constructor
      * 
      * @param mixed $options 
@@ -50,6 +55,28 @@ class Spindle_Model_Paste extends Spindle_Model_Model
             $this->setOptions($options);
         }
 
+    }
+
+    /**
+     * Set flag indicating whether or not to use paginator
+     * 
+     * @param  bool $flag 
+     * @return Spindle_Model_Paste
+     */
+    public function setUsePaginator($flag)
+    {
+        $this->_usePaginator = (bool) $flag;
+        return $this;
+    }
+
+    /**
+     * Use a paginator?
+     * 
+     * @return bool
+     */
+    public function usePaginator()
+    {
+        return $this->_usePaginator;
     }
 
     /**
@@ -119,9 +146,10 @@ class Spindle_Model_Paste extends Spindle_Model_Model
     /**
      * Get list of active pastes, ordered by creation date (desc)
      * 
-     * @return array
+     * @param  null|int|array If set to use paginator, an int value indicates page; array for specific criteria
+     * @return array|Zend_Paginator
      */
-    public function fetchActive(array $criteria = null)
+    public function fetchActive($criteria = null)
     {
         $table   = $this->getTable();
         $adapter = $table->getAdapter();
@@ -129,7 +157,15 @@ class Spindle_Model_Paste extends Spindle_Model_Model
         $select->from('paste', array('id', 'type', 'summary', 'user', 'created', 'expires'))
                ->where('expires IS NULL OR expires = "" OR expires > ?', date('Y-m-d H:i:s'));
 
-        if (null !== $criteria) {
+        if ($this->usePaginator()) {
+            $page      = (null === $criteria) ? 1 : (int) $criteria;
+            $paginator = new Zend_Paginator(
+                new Zend_Paginator_Adapter_DbSelect($select)
+            );
+            $paginator->setItemCountPerPage(15)
+                      ->setCurrentPageNumber($page);
+            return $paginator;
+        } elseif (is_array($criteria)) {
             $this->_refineSelection($select, $criteria);
         } else {
             $select->order('created DESC');

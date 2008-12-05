@@ -1,11 +1,8 @@
-- Paste application changes
-  - Add JS detection
-    - If available, redirect to JS-enabled version
-    - Add detection in active-grid action to use Zend_Paginator if JS is
-      disabled
 - Import bugapp into Spindle module
-- Navbar
-  - links should load main content frame dynamically, w/o page refresh
+- layout builders per module
+  - JS that updates main content pane either 
+    - from HREF
+    - creating basic structure
 - Create an install script
   - should set appropriate permissions
     - data directory (world writeable)

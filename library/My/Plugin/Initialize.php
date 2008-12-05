@@ -14,6 +14,11 @@ require_once 'Zend/Controller/Plugin/Abstract.php';
 class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
 {
     /**
+     * @var array Array of module bootstrap classes that have been loaded
+     */
+    protected $_moduleBootstraps = array();
+
+    /**
      * Constructor
      * 
      * @param  string $basePath Base path of application
@@ -44,33 +49,40 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     }
 
     /**
+     * PreDispatch actions
+     *
+     * Initialize module bootstraps
+     * 
+     * @param Zend_Controller_Request_Abstract $request 
+     * @return void
+     */
+    public function preDispatch(Zend_Controller_Request_Abstract $request)
+    {
+        $module = $request->getModuleName();
+        if (!array_key_exists($module, $this->_moduleBootstraps)) {
+            $bootstrapFile = $this->front->getModuleDirectory($module) . '/Bootstrap.php';
+            if (require $bootstrapFile) {
+                $class = ucfirst($module) . '_Bootstrap';
+                if (class_exists($class, false)) {
+                    $bootstrap = new $class;
+                    $bootstrap->setAppBootstrap($this);
+                    $bootstrap->bootstrap();
+                    $this->_moduleBootstraps[$module] = $bootstrap;
+                }
+            } else {
+                $this->_moduleBootstraps[$module] = false;
+            }
+        }
+    }
+
+    /**
      * Initialize configuration
      * 
      * @return My_Plugin_Initialize
      */
     public function initConfig()
     {
-        $configMaster = new Zend_Config_Ini(APPLICATION_PATH . '/config/site.ini', $this->env);
-        $configMaster = $configMaster->toArray();
-
-        $ri      = new DirectoryIterator(APPLICATION_PATH . '/modules');
-        $modules = array();
-        foreach ($ri as $file) {
-            if (!$file->isDir() || $file->isDot()) {
-                continue;
-            }
-            $modules[$file->getFileName()] = $file->getRealPath();
-        }
-
-        foreach ($modules as $module => $path) {
-            $configPath = $path . '/config/' . $module . '.ini';
-            if (file_exists($configPath)) {
-                $config = new Zend_Config_Ini($configPath, $this->env);
-                $configMaster = array_merge($configMaster, $config->toArray());
-            }
-        }
-
-        $this->config = new Zend_Config($configMaster);
+        $this->config = new Zend_Config_Ini(APPLICATION_PATH . '/config/site.ini', $this->env, true);
         Zend_Registry::set('config', $this->config);
         return $this;
     }

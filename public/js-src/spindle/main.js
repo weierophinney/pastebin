@@ -8,12 +8,23 @@ dojo.provide("spindle.main");
     dojo.require("dojo.parser");
 
     dojo.addOnLoad(function() {
-        if (dijit.byId("layout")) {
-            spindle.navMenu = new spindle.NavMenu({
-                baseUrl: spindle.baseUrl,
-            });
-            dijit.byId("layout").addChild(spindle.navMenu);
-            dijit.byId("layout").resize();
+        if (!dojo.cookie("spindleJsEnabled")) {
+        // Detect JS
+            var loc = dojo.doc.location;
+            if (loc.search) {
+                dojo.doc.location = loc.href + "&jsEnabled=1";
+            } else {
+                dojo.doc.location = loc.href + "?jsEnabled=1";
+            }
+        } else {
+        // Detect layout
+            if (dijit.byId("layout")) {
+                spindle.navMenu = new spindle.NavMenu({
+                    baseUrl: spindle.baseUrl,
+                });
+                dijit.byId("layout").addChild(spindle.navMenu);
+                dijit.byId("layout").resize();
+            }
         }
     });
 
