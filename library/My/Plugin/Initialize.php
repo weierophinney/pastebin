@@ -14,11 +14,6 @@ require_once 'Zend/Controller/Plugin/Abstract.php';
 class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
 {
     /**
-     * @var array Array of module bootstrap classes that have been loaded
-     */
-    protected $_moduleBootstraps = array();
-
-    /**
      * Constructor
      * 
      * @param  string $basePath Base path of application
@@ -45,7 +40,8 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
              ->initLog()
              ->initCache()
              ->initDb()
-             ->initView();
+             ->initView()
+             ->initModules();
     }
 
     /**
@@ -56,26 +52,24 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      * @param Zend_Controller_Request_Abstract $request 
      * @return void
      */
-    public function preDispatch(Zend_Controller_Request_Abstract $request)
+    public function initModules()
     {
-        $module = $request->getModuleName();
-        if (!empty($module)
-            && ('default' != $module)
-            && !array_key_exists($module, $this->_moduleBootstraps)
-        ) {
-            $bootstrapFile = $this->front->getModuleDirectory($module) . '/Bootstrap.php';
-            if (@include $bootstrapFile) {
-                $class = ucfirst($module) . '_Bootstrap';
-                if (class_exists($class, false)) {
-                    $bootstrap = new $class;
-                    $bootstrap->setAppBootstrap($this);
-                    $bootstrap->bootstrap();
-                    $this->_moduleBootstraps[$module] = $bootstrap;
-                }
-            } else {
-                $this->_moduleBootstraps[$module] = false;
+        $modules = $this->front->getControllerDirectory();
+        foreach ($modules as $module => $dir) {
+            if ('default' == $module) {
+                continue;
+            }
+            $bootstrapFile = dirname($dir) . '/Bootstrap.php';
+            $class         = ucfirst($module) . '_Bootstrap';
+            if (Zend_Loader::loadFile('Bootstrap.php', dirname($dir))
+                && class_exists($class)
+            ) {
+                $bootstrap = new $class;
+                $bootstrap->setAppBootstrap($this);
+                $bootstrap->bootstrap();
             }
         }
+        return $this;
     }
 
     /**
