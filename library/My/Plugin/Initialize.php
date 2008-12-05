@@ -59,9 +59,12 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     public function preDispatch(Zend_Controller_Request_Abstract $request)
     {
         $module = $request->getModuleName();
-        if (!array_key_exists($module, $this->_moduleBootstraps)) {
+        if (!empty($module)
+            && ('default' != $module)
+            && !array_key_exists($module, $this->_moduleBootstraps)
+        ) {
             $bootstrapFile = $this->front->getModuleDirectory($module) . '/Bootstrap.php';
-            if (require $bootstrapFile) {
+            if (@include $bootstrapFile) {
                 $class = ucfirst($module) . '_Bootstrap';
                 if (class_exists($class, false)) {
                     $bootstrap = new $class;
