@@ -3,8 +3,13 @@ dojo.provide("spindle.main");
 (function() {
     dojo.require("spindle._base");
     dojo.require("spindle.NavMenu");
+    dojo.require("spindle.StatusBar");
     dojo.require("dijit.layout.BorderContainer");
     dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.form.Button");
+    dojo.require("dijit.form.ValidationTextBox");
+    dojo.require("dijit.form.Form");
+    dojo.require("dijit.Dialog");
     dojo.require("dojo.parser");
 
     dojo.addOnLoad(function() {
@@ -17,14 +22,8 @@ dojo.provide("spindle.main");
                 dojo.doc.location = loc.href + "?jsEnabled=1";
             }
         } else {
-        // Detect layout
-            if (dijit.byId("layout")) {
-                spindle.navMenu = new spindle.NavMenu({
-                    baseUrl: spindle.baseUrl,
-                });
-                dijit.byId("layout").addChild(spindle.navMenu);
-                dijit.byId("layout").resize();
-            }
+            // Progressive enhancement
+            spindle.upgrade();
         }
     });
 

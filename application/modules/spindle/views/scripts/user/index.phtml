@@ -1,5 +1,11 @@
-<h2>Login</h2>
-<?= $this->loginForm ?>
-
-<h2>New User? Please register!</h2>
-<?= $this->registrationForm ?>
+<div id="spindle-user" dojoType="dijit.layout.AccordionContainer" 
+    duration="250" style="height: 300px">
+    <div id="spindle-user-login" dojoType="dijit.layout.AccordionPane"
+        title="Login" selected="true">
+        <?= $this->loginForm ?>
+    </div>
+    <div id="spindle-user-register" dojoType="dijit.layout.AccordionPane"
+        title="New User? Please Register!">
+        <?= $this->registrationForm ?>
+    </div>
+</div>

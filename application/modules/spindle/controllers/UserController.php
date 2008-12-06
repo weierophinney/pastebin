@@ -12,6 +12,12 @@ class Spindle_UserController extends Zend_Controller_Action
 {
     public function preDispatch()
     {
+        $ajaxContext = $this->_helper->gethelper('ajaxContext');
+        $ajaxContext->addActionContext('index', 'html')
+                    ->addActionContext('login', 'json')
+                    ->addActionContext('register', 'json');
+        $ajaxContext->initContext($this->_getParam('format'));
+
         if (Zend_Auth::getInstance()->hasIdentity()) {
             if (!in_array($this->getRequest()->getActionName(), array('logout', 'view'))) {
                 $this->_helper->redirector('view');
