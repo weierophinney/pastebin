@@ -1,0 +1,16 @@
+<h2>User: <?= $this->user->username ?></h2>
+<dl>
+    <dt>Full Name:</dt>
+    <dd><?= $this->escape($this->user->fullname) ?></dd>
+
+    <dt>Email:</dt>
+    <dd><?= $this->escape($this->user->email) ?></dd>
+</dl>
+
+<? /*
+<h3>Open bugs you own:</h3>
+<?= $this->openBugs($this->user->id, 'developer') ?>
+
+<h3>Open bugs you have reported:</h3>
+<?= $this->openBugs($this->user->id, 'reporter') ?>
+ */

@@ -6,6 +6,8 @@ class Spindle_Model_Form_Login extends Zend_Dojo_Form
         $this->addPrefixPath('My_Form_Element', 'My/Form/Element/', 'element');
         $this->addPrefixPath('My_Form_Decorator', 'My/Form/Decorator/', 'decorator');
 
+        $this->setElementsBelongTo('login');
+
         $username = $this->addElement('ValidationTextBox', 'username', array(
             'filters'    => array('StringTrim', 'StringToLower'),
             'validators' => array(

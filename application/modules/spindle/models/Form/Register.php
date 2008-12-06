@@ -11,6 +11,8 @@ class Spindle_Model_Form_Register extends Zend_Dojo_Form
 
         $this->addElementPrefixPath('Spindle_Model_Validate', dirname(__FILE__) . '/../Validate', 'validate');
 
+        $this->setElementsBelongTo('register');
+
         $username = $this->addElement('ValidationTextBox', 'username', array(
             'filters'    => array('StringTrim', 'StringToLower'),
             'validators' => array(

@@ -39,6 +39,7 @@ class Spindle_PasteController extends Zend_Controller_Action
                            ->registerModulePath('../paste', 'paste')
                            ->addStylesheetModule('paste.themes.paste')
                            ->requireModule('paste.main');
+        $this->view->inlineScript()->appendScript('dojo.back.init();');
 
         $this->view->cache()->setBasePath(
             realpath(APPLICATION_PATH . '/../public/api/spindle/paste/content')
