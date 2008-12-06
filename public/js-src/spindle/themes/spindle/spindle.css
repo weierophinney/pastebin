@@ -59,13 +59,6 @@ body, html {
     text-decoration: underline;
 }
 
-#navPane {
-    width: 225px;
-    margin-left: 1em;
-    margin-top: 1em;
-    padding-left: 1em;
-}
-
 #footer {
     visibility: collapse;
     height: 1.5em;
