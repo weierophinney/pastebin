@@ -6,7 +6,8 @@
     - Allow usage of Zend_Paginator
     - Allow specifying criteria by array for fetch ops?
   - Refactor controllers
-    - Push ACLs into models
+    - Push ACLs into models? At very least, add plugin initialization to
+      bootstrap
     - Pull forms from models
     - overall, less logic in controllers
   - Refactor views
@@ -15,3 +16,5 @@
   - JS that updates main content pane either 
     - from HREF
     - creating basic structure
+  - Selecting link from different app should setup main pane as above, and
+    populate
