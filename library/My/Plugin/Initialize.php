@@ -103,7 +103,8 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function initHelpers()
     {
-        Zend_Controller_Action_HelperBroker::addHelper(new My_Controller_Helper_ResourceLoader());
+        Zend_Controller_Action_HelperBroker::addPrefix('My_Controller_Helper');
+        Zend_Controller_Action_HelperBroker::getStaticHelper('ResourceLoader');
         return $this;
     }
 

@@ -1,4 +1,16 @@
 - Import bugapp into Spindle module
+  - Refactor models
+    - Use forms for validation
+    - Should models handle ACLS?
+    - Return arrays, not rowsets or rows
+    - Allow usage of Zend_Paginator
+    - Allow specifying criteria by array for fetch ops?
+  - Refactor controllers
+    - Push ACLs into models
+    - Pull forms from models
+    - overall, less logic in controllers
+  - Refactor views
+    - Determine optimal UI for app
 - layout builders per module
   - JS that updates main content pane either 
     - from HREF

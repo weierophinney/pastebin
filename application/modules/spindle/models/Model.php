@@ -28,6 +28,18 @@ abstract class Spindle_Model_Model
     protected $_plugins = array();
 
     /**
+     * Primary table for operations
+     * @var string
+     */
+    protected $_primaryTable = 'user';
+
+    /**
+     * Columns that may not be specified in save operations
+     * @var array
+     */
+    protected $_protectedColumns = array();
+
+    /**
      * @var My_Controller_Helper_ResourceLoader
      */
     protected $_resourceLoader;
@@ -96,6 +108,45 @@ abstract class Spindle_Model_Model
             $this->_resourceLoader->initModule('spindle');
         }
         return $this->_resourceLoader;
+    }
+
+    /**
+     * Insert or update a row
+     * 
+     * @param  array $info New or updated row data
+     * @param  string|null Table name to use (defaults to primaryTable)
+     * @return int Row ID of saved row
+     */
+    public function save(array $info, $tableName = null)
+    {
+        $tableName = (null === $tableName) ? $this->_primaryTable : $tableName;
+        $table = $this->getResourceLoader()->getDbTable($tableName);
+        $id    = null;
+        $row   = null;
+        if (array_key_exists('id', $info)) {
+            $id = $info['id'];
+            unset($info['id']);
+            $matches = $table->find($id);
+            if (0 < count($matches)) {
+                $row = $matches->current();
+            }
+        }
+        if (null === $row) {
+            $row = $table->createRow();
+            $row->date_created = date('Y-m-d');
+        }
+
+        $columns = $table->info('cols');
+        foreach ($this->_protectedColumns as $column) {
+            unset($columns[$column]);
+        }
+        foreach ($columns as $column) {
+            if (array_key_exists($column, $info)) {
+                $row->$column = $info[$column];
+            }
+        }
+
+        return $row->save();
     }
 
     /**
