@@ -11,7 +11,8 @@ class Spindle_Model_Form_Register extends Zend_Dojo_Form
 
         $this->addElementPrefixPath('Spindle_Model_Validate', dirname(__FILE__) . '/../Validate', 'validate');
 
-        $this->setElementsBelongTo('register');
+        $this->setElementsBelongTo('register')
+             ->setName('register');
 
         $username = $this->addElement('ValidationTextBox', 'username', array(
             'filters'    => array('StringTrim', 'StringToLower'),
@@ -45,7 +46,7 @@ class Spindle_Model_Form_Register extends Zend_Dojo_Form
             ),
             'required'   => false,
             'trim'       => true,
-            'regExp'     => '[^@]?@.*?\.[a-z]+$',
+            'regExp'     => "\\b['a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}\\b",
             'label'      => 'Your email address:',
         ));
 

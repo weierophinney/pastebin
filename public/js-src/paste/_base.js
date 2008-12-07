@@ -23,13 +23,13 @@ dojo.provide("paste._base");
 
     paste.prepareFollowupForm = function() {
         var followupform = dojo.byId("followupform");
-        paste._prepareForm(followupform);
+        spindle.prepareForm(followupform);
         dojo.connect(followupform, "onsubmit", paste, "processFollowupForm");
     };
 
     paste.prepareNewPasteForm =  function() {
         var pasteform = dojo.byId("pasteform");
-        paste._prepareForm(pasteform);
+        spindle.prepareForm(pasteform);
         dojo.connect(pasteform, "onsubmit", paste, "processNewForm");
     };
 
@@ -105,45 +105,10 @@ dojo.provide("paste._base");
         dojo.attr(form, "url", url);
     };
 
-    paste._prepareFormElements = function(formNode) {
-        // summary:
-        //     For forms using array notation, we need to create a nested
-        //     object. This code does so, using the form's ID. It only looks one
-        //     level deep currently.'
-        var formName  = formNode.id;
-        var values   = dojo.formToObject(formNode);
-
-        if (!formName) {
-            return values;
-        }
-
-        var subRegexp = new RegExp(/\[(.*?)\]/);
-        var keys      = {};
-        dojo.forEach(formNode.elements, function(element) {
-            var name       = element.name;
-            if (matches = subRegexp.exec(name)) {
-                keys[name] = matches[1];
-            }
-        });
-        var mapped   = {};
-        for (var name in values) {
-            if (keys[name]) {
-                var shortName     = keys[name];
-                mapped[shortName] = values[name];
-            } else {
-                mapped[name] = values[name];
-            }
-        }
-        var ret = {};
-        ret[formName] = mapped;
-        return ret;
-    };
-
     paste._processForm = function(pasteform) {
         var service = paste._getService();
 
-        var values = paste._prepareFormElements(pasteform.domNode);
-        console.log(values);
+        var values = spindle.prepareFormElements(pasteform.domNode);
 
         service.add(values)
             .addCallback(function(data) {

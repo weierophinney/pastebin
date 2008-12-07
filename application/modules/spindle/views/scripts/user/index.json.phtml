@@ -1,9 +1,11 @@
 <?php
-$form     = $this->loginForm;
+$form     = $this->form;
 $messages = array();
 $info     = $form->getMessages();
 if (isset($info['login'])) {
     $info = $info['login'];
+} elseif (isset($info['register'])) {
+    $info = $info['register'];
 }
 foreach ($info as $name => $errors) {
     if (!isset($form->{$name})) {

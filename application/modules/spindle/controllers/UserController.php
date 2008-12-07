@@ -75,13 +75,9 @@ class Spindle_UserController extends Zend_Controller_Action
             return $this->_helper->redirector('index');
         }
 
-        $this->view->isJson = false;
-        if ($this->_helper->ajaxContext->getCurrentContext()) {
-            $this->view->isJson = true;
-        }
 
         // Get our form and validate it
-        $form = $this->view->loginForm;
+        $form = $this->view->form = $this->view->loginForm;
         if (!$form->isValid($request->getPost())) {
             // Invalid entries
             return $this->render('index'); // re-render the login form
@@ -130,8 +126,8 @@ class Spindle_UserController extends Zend_Controller_Action
         }
 
         // Get our form and validate it
-        $form = $this->view->registrationForm;
         if (!$id = $this->model->save($request->getPost(), 'Register')) {
+            $this->view->form = $this->model->getRegistrationForm();
             return $this->render('index'); // re-render the login form
         }
 
@@ -145,6 +141,11 @@ class Spindle_UserController extends Zend_Controller_Action
             'date_created' => $userRow->date_created,
         );
         Zend_Auth::getInstance()->getStorage()->write((object) $user);
+
+        if (null !== $this->_helper->ajaxContext->getCurrentContext()) {
+            $this->view->identity = (object) $user;
+            return $this->render('login');
+        }
 
         $this->_helper->redirector('view');
     }

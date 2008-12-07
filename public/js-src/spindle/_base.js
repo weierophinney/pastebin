@@ -72,13 +72,15 @@ dojo.provide("spindle._base");
                 href:          spindle.baseUrl + "/spindle/user?format=html",
                 parseOnLoad:   true,
                 refreshOnShow: false,
-                style:         "height: 375px;",
+                style:         "height: 375px; width: 450px;",
                 onLoad:        function() {
-                    var loginForm = dojo.byId("login");
-                    if (loginForm) {
-                        dojo.attr(loginForm, {action: "#",method:"post"});
-                        dojo.connect(loginForm, "onsubmit", spindle, "processLogin");
-                    }
+                    var lform = dojo.byId("login");
+                    spindle.prepareForm(lform);
+                    dojo.connect(lform, "onsubmit", spindle, "processLoginForm");
+
+                    var rform = dojo.byId("register");
+                    spindle.prepareForm(rform);
+                    dojo.connect(rform, "onsubmit", spindle, "processRegisterForm");
                 },
             });
             dojo.body().appendChild(spindle._loginDialog.domNode);
@@ -87,14 +89,63 @@ dojo.provide("spindle._base");
         spindle._loginDialog.show();
     };
 
-    spindle.processLogin = function(e) {
-        if (e) {
-            e.preventDefault();
+    spindle.processLoginForm = function(e) {
+        e.preventDefault();
+        spindle._processAuthForm(dojo.byId("login"));
+    }
+
+    spindle.processRegisterForm = function(e) {
+        e.preventDefault();
+        spindle._processAuthForm(dojo.byId("register"));
+    }
+
+    spindle.prepareForm = function(form) {
+        var url  = dojo.attr(form, "action");
+        dojo.attr(form, {action: "#", method: "post", url: url});
+    };
+
+    spindle.prepareFormElements = function(formNode) {
+        // summary:
+        //     For forms using array notation, we need to create a nested
+        //     object. This code does so, using the form's ID. It only looks one
+        //     level deep currently.'
+        if (!formNode) {
+            return {};
         }
-        var loginform = dijit.byId("login");
+
+        var formName  = formNode.id;
+        var values    = dojo.formToObject(formNode);
+
+        if (!formName) {
+            return values;
+        }
+
+        var subRegexp = new RegExp(/\[(.*?)\]/);
+        var keys      = {};
+        dojo.forEach(formNode.elements, function(element) {
+            var name       = element.name;
+            if (matches = subRegexp.exec(name)) {
+                keys[name] = matches[1];
+            }
+        });
+        var mapped   = {};
+        for (var name in values) {
+            if (keys[name]) {
+                var shortName     = keys[name];
+                mapped[shortName] = values[name];
+            } else {
+                mapped[name] = values[name];
+            }
+        }
+        var ret = {};
+        ret[formName] = mapped;
+        return ret;
+    };
+
+    spindle._processAuthForm = function(lform) {
         dojo.xhrPost({
-            url:      spindle.baseUrl + "/spindle/user/login?format=json",
-            form:     loginform.domNode,
+            url:      spindle.baseUrl + dojo.attr(lform, "url") + "?format=json",
+            content:  dojo.formToObject(lform),
             handleAs: "json",
             error:    function(response, ioArgs) {
                 var errors = [{
@@ -118,4 +169,5 @@ dojo.provide("spindle._base");
             },
         });
     };
+
 })();
