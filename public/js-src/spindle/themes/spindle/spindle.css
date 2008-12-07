@@ -91,7 +91,7 @@ dl.error dt {
     margin-left: 0.5em;
     padding: 0.2em;
     padding-left: 0.5em;
-    border-left: 2px solid #ccc;
+    border-left: 2px solid #c0c0c0;
     vertical-align: middle;
     font-family: Arial, Helvetica, sans;
 }

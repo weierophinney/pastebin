@@ -29,12 +29,7 @@ dojo.provide("spindle._base");
                 "user", {style: "width: 6em"}
             );
             spindle.statusBar.setTextPane("message", "Ready");
-            var loginButton = new dijit.form.Button({
-                id:      "spindle-login-button",
-                label:   "Login",
-                onClick: spindle.loginDialog,
-            });
-            loginButton.placeAt(spindle.statusBar.getPaneNode("user"));
+            spindle.statusBar.setTextPane("user", '<a onclick="spindle.loginDialog();">Login</a>');
 
             // remove footer; will replace with statusbar
             var footer = dijit.byId("footer");
@@ -53,15 +48,17 @@ dojo.provide("spindle._base");
     };
 
     spindle.loginDialog = function() {
-        var dialog = new dijit.Dialog({
-            title:         "Please Login",
-            href:          spindle.baseUrl + "/spindle/user?format=html",
-            parseOnLoad:   true,
-            refreshOnShow: false,
-            style:         "height: 375px;",
-        });
-        dojo.body().appendChild(dialog.domNode);
-        dialog.startup();
-        dialog.show();
+        if (!spindle._loginDialog) {
+            spindle._loginDialog = new dijit.Dialog({
+                title:         "Please Login",
+                href:          spindle.baseUrl + "/spindle/user?format=html",
+                parseOnLoad:   true,
+                refreshOnShow: false,
+                style:         "height: 375px;",
+            });
+            dojo.body().appendChild(spindle._loginDialog.domNode);
+        }
+        spindle._loginDialog.startup();
+        spindle._loginDialog.show();
     };
 })();
