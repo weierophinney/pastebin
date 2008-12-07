@@ -95,10 +95,12 @@ class Spindle_Model_User extends Spindle_Model_Model implements Zend_Auth_Adapte
             );
         } else {
             // passed
-            $result = new Zend_Auth_Result(
-                Zend_Auth_Result::SUCCESS,
-                (object) $user->toArray()
+            $identity = $user->toArray();
+            unset(
+                $identity['password'],
+                $identity['date_banned']
             );
+            $result = new Zend_Auth_Result(Zend_Auth_Result::SUCCESS, (object) $identity);
         }
         return $result;
     }

@@ -3,19 +3,6 @@ dojo.provide("paste._base");
 (function() {
     paste.activeStatusTabs = ["about", "active", "new-paste"];
 
-    paste.errorTemplate = "<h4>There were one or more errors processing the form:</h4><dl class=\"error\">{% for item in items %}<dt>{{ item.label }}</dt>{% for message in item.messages %}<dd>{{ message }}</dd>{% endfor %}{% endfor %}</dl>";
-
-    paste.createErrorDialog = function(errors) {
-        var template = new dojox.dtl.Template(paste.errorTemplate);
-        var dialog = new dijit.Dialog({
-            title:   "An Error Occurred",
-            content: template.render(new dojox.dtl.Context({items: errors })),
-        });
-        dojo.body().appendChild(dialog.domNode);
-        dialog.startup();
-        dialog.show();
-    };
-
     paste.findParentForm = function(elementNode) {
         while (elementNode.nodeName.toLowerCase() != 'form') {
             elementNode = elementNode.parentNode;
@@ -163,7 +150,7 @@ dojo.provide("paste._base");
                 if (data.success) {
                     paste.tabs.loadPasteTabs(data.success);
                 } else if (data.error) {
-                    paste.createErrorDialog(data.messages);
+                    spindle.createErrorDialog(data.messages);
                 }
             })
             .addErrback(function(data){
@@ -173,7 +160,7 @@ dojo.provide("paste._base");
                         messages: ["A general error occurred; please try again later."],
                     },
                 ];
-                paste.createErrorDialog(errors);
+                spindle.createErrorDialog(errors);
             });
     };
 })();

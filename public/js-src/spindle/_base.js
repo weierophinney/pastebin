@@ -1,6 +1,24 @@
 dojo.provide("spindle._base");
 
 (function() {
+    spindle.errorTemplate = "<h4>There were one or more errors processing the form:</h4><dl class=\"error\">{% for item in items %}<dt>{{ item.label }}</dt>{% for message in item.messages %}<dd>{{ message }}</dd>{% endfor %}{% endfor %}</dl>";
+
+    spindle.createErrorDialog = function(errors) {
+        if (!spindle._errorDialog) {
+            spindle._errorDialog = new dijit.Dialog({
+                title:   "An Error Occurred",
+            });
+            dojo.body().appendChild(spindle._errorDialog.domNode);
+            spindle._errorDialog.startup();
+        }
+        var template = new dojox.dtl.Template(spindle.errorTemplate);
+        spindle._errorDialog.attr(
+            "content", 
+            template.render(new dojox.dtl.Context({items: errors }))
+        );
+        spindle._errorDialog.show();
+    };
+
     spindle.setTitle = function(title) {
         title += ' - Spindle';
         console.log("Changing title to " + title);
@@ -47,7 +65,7 @@ dojo.provide("spindle._base");
         }
     };
 
-    spindle.loginDialog = function() {
+    spindle.loginDialog = function(e) {
         if (!spindle._loginDialog) {
             spindle._loginDialog = new dijit.Dialog({
                 title:         "Please Login",
@@ -55,10 +73,49 @@ dojo.provide("spindle._base");
                 parseOnLoad:   true,
                 refreshOnShow: false,
                 style:         "height: 375px;",
+                onLoad:        function() {
+                    var loginForm = dojo.byId("login");
+                    if (loginForm) {
+                        dojo.attr(loginForm, {action: "#",method:"post"});
+                        dojo.connect(loginForm, "onsubmit", spindle, "processLogin");
+                    }
+                },
             });
             dojo.body().appendChild(spindle._loginDialog.domNode);
         }
         spindle._loginDialog.startup();
         spindle._loginDialog.show();
+    };
+
+    spindle.processLogin = function(e) {
+        if (e) {
+            e.preventDefault();
+        }
+        var loginform = dijit.byId("login");
+        dojo.xhrPost({
+            url:      spindle.baseUrl + "/spindle/user/login?format=json",
+            form:     loginform.domNode,
+            handleAs: "json",
+            error:    function(response, ioArgs) {
+                var errors = [{
+                    label:    "General Transport Error: ", 
+                    messages: ["A general error occurred; please try again later."],
+                }];
+                spindle.createErrorDialog(errors);
+            },
+            load: function(response, ioargs) {
+                if (response.success) {
+                    window.location.reload();
+                } else if (response.error) {
+                    spindle.createErrorDialog(response.messages);
+                } else {
+                    var errors = [{
+                        label:    "Problem with Submission", 
+                        messages: ["An unknown error occurred; please try again later."],
+                    }];
+                    spindle.createErrorDialog(errors);
+                }
+            },
+        });
     };
 })();

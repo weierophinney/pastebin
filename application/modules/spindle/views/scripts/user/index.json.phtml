@@ -1,0 +1,33 @@
+<?php
+$form     = $this->loginForm;
+$messages = array();
+$info     = $form->getMessages();
+if (isset($info['login'])) {
+    $info = $info['login'];
+}
+foreach ($info as $name => $errors) {
+    if (!isset($form->{$name})) {
+        $messages[] = array_values($errors);
+        continue;
+    }
+    $label      = $form->$name->getLabel();
+    $messages[] = array(
+        'label'    => $label,
+        'messages' => array_values($errors),
+    );
+}
+
+$formMessages = $form->getErrorMessages();
+if (!empty($formMessages)) {
+    $messages[] = array(
+        'label'    => 'Authorization',
+        'messages' => $formMessages,
+    );
+}
+
+echo $this->json(array(
+    'error'    => true,
+    'messages' => $messages,
+    'debug'    => $info,
+));
+

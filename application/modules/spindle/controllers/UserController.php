@@ -15,7 +15,8 @@ class Spindle_UserController extends Zend_Controller_Action
         $ajaxContext = $this->_helper->gethelper('ajaxContext');
         $ajaxContext->addActionContext('index', 'html')
                     ->addActionContext('login', 'json')
-                    ->addActionContext('register', 'json');
+                    ->addActionContext('register', 'json')
+                    ->setAutoJsonSerialization(false);
         $ajaxContext->initContext($this->_getParam('format'));
 
         if (Zend_Auth::getInstance()->hasIdentity()) {
@@ -74,6 +75,11 @@ class Spindle_UserController extends Zend_Controller_Action
             return $this->_helper->redirector('index');
         }
 
+        $this->view->isJson = false;
+        if ($this->_helper->ajaxContext->getCurrentContext()) {
+            $this->view->isJson = true;
+        }
+
         // Get our form and validate it
         $form = $this->view->loginForm;
         if (!$form->isValid($request->getPost())) {
@@ -88,11 +94,17 @@ class Spindle_UserController extends Zend_Controller_Action
         $result  = $auth->authenticate($this->model);
         if (!$result->isValid()) {
             // Invalid credentials
-            $form->setDescription('Invalid credentials provided');
+            $form->setDescription('Invalid credentials provided')
+                 ->addErrorMessage('Invalid credentials provided');
             return $this->render('index'); // re-render the login form
         }
 
         // We're authenticated! Redirect to the user page
+        if (null !== $this->_helper->ajaxContext->getCurrentContext()) {
+            $this->view->identity = $result->getIdentity();
+            return $this->render('login');
+        }
+
         $this->_helper->redirector('view');
     }
 

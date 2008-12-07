@@ -4,13 +4,14 @@ dojo.provide("spindle.main");
     dojo.require("spindle._base");
     dojo.require("spindle.NavMenu");
     dojo.require("spindle.StatusBar");
+    dojo.require("dojo.parser");
     dojo.require("dijit.layout.BorderContainer");
     dojo.require("dijit.layout.ContentPane");
     dojo.require("dijit.form.Button");
     dojo.require("dijit.form.ValidationTextBox");
     dojo.require("dijit.form.Form");
     dojo.require("dijit.Dialog");
-    dojo.require("dojo.parser");
+    dojo.require("dojox.dtl.Context");
 
     dojo.addOnLoad(function() {
         if (!dojo.cookie("spindleJsEnabled")) {
