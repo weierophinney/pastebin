@@ -12,6 +12,11 @@
 class Spindle_Bootstrap extends My_Module_Base
 {
     /**
+     * @var My_Loader_Resource
+     */
+    protected $_resourceLoader;
+
+    /**
      * Spindle-specific bootstrapping
      * 
      * @return void
@@ -19,7 +24,8 @@ class Spindle_Bootstrap extends My_Module_Base
     public function bootstrap()
     {
         $this->initConfig()
-             ->checkJsEnabled();
+             ->checkJsEnabled()
+             ->initPlugins();
     }
 
     /**
@@ -36,6 +42,20 @@ class Spindle_Bootstrap extends My_Module_Base
             $appBootstrap->env
         );
         $configMaster->merge($config);
+        return $this;
+    }
+
+    /**
+     * Initialize plugins
+     * 
+     * @return Spindle_Bootstrap
+     */
+    public function initPlugins()
+    {
+        $loader = $this->_getResourceLoader();
+        $front  = $this->getAppBootstrap()->front;
+
+        $front->registerPlugin($loader->getPlugin('Auth'));
         return $this;
     }
 
@@ -57,5 +77,26 @@ class Spindle_Bootstrap extends My_Module_Base
             $request->setParam('jsEnabled', false);
         }
         return $this;
+    }
+
+    /**
+     * Retrieve resource loader
+     * 
+     * @return My_Loader_Resource
+     */
+    protected function _getResourceLoader()
+    {
+        if (null === $this->_resourceLoader) {
+            if (Zend_Registry::isRegistered('ResourceLoader')) {
+                $this->_resourceLoader = Zend_Registry::get('ResourceLoader');
+            } else {
+                $this->_resourceLoader = new My_Loader_Resource;
+            }
+            $this->_resourceLoader->getLoader('plugin')->addPrefixPath(
+                'Spindle_Plugin',
+                dirname(__FILE__) . '/plugins'
+            );
+        }
+        return $this->_resourceLoader;
     }
 }

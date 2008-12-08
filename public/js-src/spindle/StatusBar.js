@@ -1,9 +1,15 @@
 dojo.provide("spindle.StatusBar");
 
+dojo.require("dijit.layout._LayoutWidget");
+dojo.require("dojox.dtl.Context");
+
 (function() {
     dojo.require("dijit.layout._LayoutWidget");
 
     dojo.declare("spindle.StatusBar", [dijit.layout._LayoutWidget], {
+        identityMetadataTemplate: "<div class=\"dijitInline\"><dl class=\"spindleStatusBarIdentity\">{% for item in user %}<dt>{{ item.label }}</dt><dd>{{ item.value }}</dd>{% endfor %}</dl><a id=\"spindleStatusUserCancel\">[close]</a>",
+        identityLoginLink: "<a id=\"spindleStatusUser\">{{ user }}</a>",
+
         startup: function() {
             if (this._started) {
                 return;
@@ -65,6 +71,56 @@ dojo.provide("spindle.StatusBar");
             }
         },
 
+        setHeight: function() {
+            var
+                height = 0,
+                thisNode = this.domNode;
+
+            dojo.forEach(this.getChildren(), function(child) {
+                height = Math.max(dojo.marginBox(child.domNode).h, height);
+            });
+
+            height = height + dojo._getPadBorderExtents(thisNode).h;
+
+            dojo.marginBox(thisNode, {h:height});
+        },
+
+        setStatusIdentity: function(identity) {
+            var template = new dojox.dtl.Template(this.identityMetadataTemplate);
+            var tplIdentity = [];
+            for (var i in identity) {
+                tplIdentity.push({label: i, value: identity[i]});
+            }
+            var dialogContent = template.render(new dojox.dtl.Context({user: tplIdentity}));
+
+            var dialog   = new dijit.TooltipDialog({
+                content: dialogContent,
+                closable: true,
+            });
+            dojo.body().appendChild(dialog.domNode);
+            dialog.startup();
+
+            var template = new dojox.dtl.Template(this.identityLoginLink);
+            var link = template.render(new dojox.dtl.Context({user: identity.username}));
+            if (!this.getPaneNode("user")) {
+                this.createTextPane("user", link);
+            } else {
+                this.getPaneNode("user").innerHTML = link;
+            }
+            var n = this.getPaneNode("user");
+            dojo.connect(n, "onclick", function(e){
+                e.preventDefault();
+                dijit.popup.open({
+                    popup: dialog, 
+                    around: n,
+                });
+            });
+            dojo.query("#spindleStatusUserCancel").onclick(function(e){
+                e.preventDefault();
+                dijit.popup.close(dialog);
+            });
+        },
+
         _setupChild: function(child) {
             var node = child.domNode;
             if (node) {
@@ -89,20 +145,6 @@ dojo.provide("spindle.StatusBar");
 
             var l = e1.l + e2.l;
             dojo.marginBox(children[0].domNode, {l:l,w:rightEdge-l});
-        },
-
-        setHeight: function() {
-            var
-                height = 0,
-                thisNode = this.domNode;
-
-            dojo.forEach(this.getChildren(), function(child) {
-                height = Math.max(dojo.marginBox(child.domNode).h, height);
-            });
-
-            height = height + dojo._getPadBorderExtents(thisNode).h;
-
-            dojo.marginBox(thisNode, {h:height});
         },
     });
 })();

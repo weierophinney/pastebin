@@ -24,6 +24,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     {
         $this->env   = $env;
         $this->initConfig();
+        Zend_Registry::set('ResourceLoader', new My_Loader_Resource);
     }
 
     /**
