@@ -112,7 +112,8 @@ dojo.require("dojox.dtl.Context");
                 e.preventDefault();
                 dijit.popup.open({
                     popup: dialog, 
-                    around: n,
+                    x: e.pageX,
+                    y: e.pageY,
                 });
             });
             dojo.query("#spindleStatusUserCancel").onclick(function(e){
