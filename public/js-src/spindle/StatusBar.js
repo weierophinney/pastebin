@@ -7,7 +7,7 @@ dojo.require("dojox.dtl.Context");
     dojo.require("dijit.layout._LayoutWidget");
 
     dojo.declare("spindle.StatusBar", [dijit.layout._LayoutWidget], {
-        identityMetadataTemplate: "<div class=\"dijitInline\"><dl class=\"spindleStatusBarIdentity\">{% for item in user %}<dt>{{ item.label }}</dt><dd>{{ item.value }}</dd>{% endfor %}</dl><a id=\"spindleStatusUserCancel\">[close]</a>",
+        identityMetadataTemplate: "<div class=\"dijitInline spindleStatusUserTooltip\"><dl class=\"spindleStatusBarIdentity\">{% for item in user %}<dt>{{ item.label }}:</dt><dd>{{ item.value }}</dd>{% endfor %}</dl><a id=\"spindleStatusUserCancel\">[close]</a>",
         identityLoginLink: "<a id=\"spindleStatusUser\">{{ user }}</a>",
 
         startup: function() {
@@ -94,7 +94,8 @@ dojo.require("dojox.dtl.Context");
             var dialogContent = template.render(new dojox.dtl.Context({user: tplIdentity}));
 
             var dialog   = new dijit.TooltipDialog({
-                content: dialogContent,
+                id:       "spindleUserTooltip",
+                content:  dialogContent,
                 closable: true,
             });
             dojo.body().appendChild(dialog.domNode);
@@ -107,18 +108,29 @@ dojo.require("dojox.dtl.Context");
             } else {
                 this.getPaneNode("user").innerHTML = link;
             }
+
             var n = this.getPaneNode("user");
+            var coords = dojo.coords(n, true);
+
             dojo.connect(n, "onclick", function(e){
                 e.preventDefault();
-                dijit.popup.open({
-                    popup: dialog, 
-                    x: e.pageX,
-                    y: e.pageY,
-                });
+                if (!dialog.attr("open")) {
+                    dijit.popup.open({
+                        popup: dialog, 
+                        x:     coords.x + coords.w,
+                        y:     coords.y - coords.t
+                    });
+                    dialog.attr("open", true);
+                } else {
+                    dijit.popup.close(dialog);
+                    dialog.attr("open", false);
+                }
             });
+
             dojo.query("#spindleStatusUserCancel").onclick(function(e){
                 e.preventDefault();
                 dijit.popup.close(dialog);
+                dialog.attr("open", false);
             });
         },
 

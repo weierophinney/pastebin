@@ -96,3 +96,32 @@ dl.error dt {
     font-family: Arial, Helvetica, sans;
 }
 
+.tundra .spindleStatusUserTooltip {
+    background-color: #c4c4c4;
+}
+
+.tundra dl.spindleStatusBarIdentity dl {
+    margin: 3px;
+    padding: 3px;
+}
+
+.tundra dl.spindleStatusBarIdentity dt,
+.tundra dl.spindleStatusBarIdentity dd {
+    margin-left: 3px;
+    padding-left: 0;
+}
+
+.tundra dl.spindleStatusBarIdentity dt {
+    border-top: 1px solid #000;
+    margin-top: 3px;
+    font-weight: bold;
+}
+
+.tundra #spindleStatusUserCancel {
+    display: block;
+    border-top: 1px solid #000;
+    margin-top: 3px;
+    padding-top: 3px;
+    text-align: center;
+
+}
