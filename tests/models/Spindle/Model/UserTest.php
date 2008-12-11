@@ -38,6 +38,9 @@ class Spindle_Model_UserTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         include dirname(__FILE__) . '/../../../../scripts/loadTestDb.php';
+        Zend_Controller_Action_HelperBroker::addPrefix('My_Controller_Helper');
+        $resourceLoader = Zend_Controller_Action_HelperBroker::getStaticHelper('ResourceLoader');
+        $resourceLoader->initModule('spindle', APPLICATION_PATH . '/modules/spindle');
         $this->model = new Spindle_Model_User();
         $this->truncateTable();
     }

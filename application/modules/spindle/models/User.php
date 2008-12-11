@@ -30,6 +30,12 @@ class Spindle_Model_User extends Spindle_Model_Model implements Zend_Auth_Adapte
     /** @var string password to use when authenticating */
     protected $_credentials;
 
+    /** @var Spindle_Model_Form_Login */
+    protected $_formLogin;
+
+    /** @var Spindle_Model_Form_Register */
+    protected $_formRegister;
+
     /**
      * Set authentication identity
      * 
@@ -81,7 +87,7 @@ class Spindle_Model_User extends Spindle_Model_Model implements Zend_Auth_Adapte
      */
     public function authenticate()
     {
-        $table = $this->getResourceLoader()->getDbTable('user');
+        $table = new Spindle_Model_DbTable_User;
         $select = $table->select();
         $select->where('username = ?', $this->getIdentity())
                ->where('password = ?', md5($this->getCredentials()))
@@ -112,7 +118,7 @@ class Spindle_Model_User extends Spindle_Model_Model implements Zend_Auth_Adapte
      */
     public function fetchUsers()
     {
-        $table  = $this->getResourceLoader()->getDbTable('user');
+        $table  = new Spindle_Model_DbTable_User;
         $select = $table->select();
         $select->from($table, array('id', 'username', 'email', 'fullname', 'date_created'))
                ->where('date_banned IS NULL');
@@ -127,7 +133,7 @@ class Spindle_Model_User extends Spindle_Model_Model implements Zend_Auth_Adapte
      */
     public function fetchUser($id)
     {
-        $table   = $this->getResourceLoader()->getDbTable('user');
+        $table   = new Spindle_Model_DbTable_User;
         $adapter = $table->getAdapter();
 
         $select = $table->select();
@@ -144,7 +150,7 @@ class Spindle_Model_User extends Spindle_Model_Model implements Zend_Auth_Adapte
      */
     public function ban($id)
     {
-        $table = $this->getResourceLoader()->getDbTable('user');
+        $table = new Spindle_Model_DbTable_User;
         $where = $this->_createUserCondition($id);
         return $table->update(
             array('date_banned' => date('Y-m-d')),
@@ -165,7 +171,9 @@ class Spindle_Model_User extends Spindle_Model_Model implements Zend_Auth_Adapte
         if (null === $tableName) {
             $tableName = 'Register';
         }
-        $form = $this->getResourceLoader()->getForm($tableName);
+        // $form = $this->getResourceLoader()->getForm($tableName);
+        $method = 'get' . ucfirst($tableName) . 'Form';
+        $form = $this->$method();
         if (!$form->isValid($info)) {
             return false;
         }
@@ -176,7 +184,7 @@ class Spindle_Model_User extends Spindle_Model_Model implements Zend_Auth_Adapte
             $values = $values[$key];
         }
         if (!array_key_exists('id', $values)) {
-            $table  = $this->getResourceLoader()->getDbTable('user');
+            $table  = new Spindle_Model_DbTable_User;
             $select = $table->select();
             $select->where('username = ?', $values['username'])
                    ->orWhere('email = ?', $values['email']);
@@ -199,7 +207,10 @@ class Spindle_Model_User extends Spindle_Model_Model implements Zend_Auth_Adapte
      */
     public function getLoginForm()
     {
-        return $this->getResourceLoader()->getForm('Login');
+        if (empty($this->_formLogin)) {
+            $this->_formLogin = new Spindle_Model_Form_Login;
+        }
+        return $this->_formLogin;
     }
 
     /**
@@ -207,9 +218,12 @@ class Spindle_Model_User extends Spindle_Model_Model implements Zend_Auth_Adapte
      * 
      * @return Spindle_Model_Form_Register
      */
-    public function getRegistrationForm()
+    public function getRegisterForm()
     {
-        return $this->getResourceLoader()->getForm('Register');
+        if (empty($this->_formRegister)) {
+            $this->_formRegister = new Spindle_Model_Form_Register;
+        }
+        return $this->_formRegister;
     }
 
     /**
@@ -220,7 +234,7 @@ class Spindle_Model_User extends Spindle_Model_Model implements Zend_Auth_Adapte
      */
     protected function _createUserCondition($id)
     {
-        $table   = $this->getResourceLoader()->getDbTable('user');
+        $table   = new Spindle_Model_DbTable_User;
         $adapter = $table->getAdapter();
         $conditions = array();
         foreach (array('id', 'email', 'username') as $field) {

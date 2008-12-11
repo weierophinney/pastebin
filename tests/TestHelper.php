@@ -50,8 +50,10 @@ set_include_path(implode(PATH_SEPARATOR, $path));
 /**
  * Register autoloader
  */
-require_once 'Zend/Loader.php';
-Zend_Loader::registerAutoload();
+require_once 'My/Loader/Autoloader.php';
+$autoloader = My_Loader_Autoloader::getInstance();
+$autoloader->registerNamespace('My')
+           ->setFallbackAutoloader(true);
 
 /*
  * Add library/ and models/ directory to the PHPUnit code coverage

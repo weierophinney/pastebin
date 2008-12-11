@@ -10,184 +10,241 @@
  * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version    $Id: $
  */
-class My_Loader_Resource
+class My_Loader_Resource implements My_Loader_Autoloader_Interface
 {
-    /**
-     * @var Zend_Loader_PluginLoader
-     */
-    protected $_loader = array(
-        'dbtable' => null,
-        'form'    => null,
-        'model'   => null,
-        'plugin'  => null,
-        'service' => null,
-    );
+    protected $_basePath;
+    protected $_components = array();
+    protected $_defaultResourceType;
+    protected $_prefix;
+    protected $_resourceTypes = array();
 
-    /**
-     * @var array Object registry
-     */
-    protected $_objects = array(
-        'dbtable' => array(),
-        'form'    => array(),
-        'model'   => array(),
-        'plugin'  => array(),
-        'service' => array(),
-    );
-
-    /**
-     * Initialize resource loaders
-     * 
-     * @return void
-     */
-    public function __construct()
+    public function __construct($options)
     {
-        foreach (array_keys($this->_loader) as $type) {
-            $this->getLoader($type);
+        if ($options instanceof Zend_Config) {
+            $options = $options->toArray();
         }
-    }
-
-    /**
-     * Retrieve plugin loader
-     * 
-     * @param  string $type 
-     * @return Zend_Loader_PluginLoader
-     * @throws Exception for invalid $type
-     */
-    public function getLoader($type)
-    {
-        switch (strtolower($type)) {
-            case 'dbtable':
-                if (null === $this->_loader['dbtable']) {
-                    $this->_loader['dbtable'] = new Zend_Loader_PluginLoader(array(
-                        'Model_DbTable' => APPLICATION_PATH . '/models/DbTable',
-                    ));
-                }
-                $loader = $this->_loader['dbtable'];
-                break;
-            case 'form':
-                if (null === $this->_loader['form']) {
-                    $this->_loader['form'] = new Zend_Loader_PluginLoader(array(
-                        'Model_Form' => APPLICATION_PATH . '/models/Form',
-                    ));
-                }
-                $loader = $this->_loader['form'];
-                break;
-            case 'model':
-                if (null === $this->_loader['model']) {
-                    $this->_loader['model'] = new Zend_Loader_PluginLoader(array(
-                        'Model' => APPLICATION_PATH . '/models',
-                    ));
-                }
-                $loader = $this->_loader['model'];
-                break;
-            case 'plugin':
-                if (null === $this->_loader['plugin']) {
-                    $this->_loader['plugin'] = new Zend_Loader_PluginLoader(array(
-                        'Controller_Plugin' => APPLICATION_PATH . '/plugins',
-                    ));
-                }
-                $loader = $this->_loader['plugin'];
-                break;
-            case 'service':
-                if (null === $this->_loader['service']) {
-                    $this->_loader['service'] = new Zend_Loader_PluginLoader(array(
-                        'Model_Service' => APPLICATION_PATH . '/models/Service',
-                    ));
-                }
-                $loader = $this->_loader['service'];
-                break;
-            default:
-                throw new Exception("Invalid resource type specified");
+        if (!is_array($options)) {
+            throw new My_Loader_Exception('Options must be passed to resource loader constructor');
         }
 
-        return $loader;
+        $this->setOptions($options);
+
+        if ((null === $this->getPrefix())
+            || (null === $this->getBasePath())
+        ) {
+            throw new My_Loader_Exception('Resource loader requires both a prefix and a base path for initialization');
+        }
+
+        $this->initDefaultResourceTypes();
+        My_Loader_Autoloader::unshiftAutoloader($this);
     }
 
-    /**
-     * Retrieve all resource loaders
-     * 
-     * @return array
-     */
-    public function getLoaders()
+    public function initDefaultResourceTypes()
     {
-        $loaders = array();
-        foreach ($this->_loader as $type => $loader) {
-            if (null === $loader) {
-                $loader = $this->getLoader($type);
+        $basePath = $this->getBasePath();
+        $this->addResourceTypes(array(
+            'dbtable' => array(
+                'prefix' => 'Model_DbTable',
+                'path'   => 'models/DbTable',
+            ),
+            'Form'    => array(
+                'prefix' => 'Model_Form',
+                'path'   => 'models/Form',
+            ),
+            'Model'   => array(
+                'prefix' => 'Model',
+                'path'   => 'models',
+            ),
+            'Plugin'  => array(
+                'prefix' => 'Plugin',
+                'path'   => 'plugins',
+            ),
+            'Service' => array(
+                'prefix' => 'Model_Service',
+                'path'   => 'models/Service',
+            ),
+        ));
+        $this->setDefaultResourceType('model');
+    }
+
+    public function __call($method, $args)
+    {
+        if ('get' == substr($method, 0, 3)) {
+            $type  = strtolower(substr($method, 3));
+            if (!$this->hasResourceType($type)) {
+                throw new My_Loader_Exception("Invalid resource type $type; cannot load resource");
             }
-            $loaders[$type] = $loader;
+            if (empty($args)) {
+                throw new My_Loader_Exception("Cannot load resources; no resource specified");
+            }
+            $resource = array_shift($args);
+            return $this->load($resource, $type);
         }
-        return $loaders;
+
+        throw new My_Loader_Exception("Method '$method' is not supported");
     }
 
-    /**
-     * Load a given resource by type
-     * 
-     * @param  string $resource 
-     * @param  string $type 
-     * @return object
-     */
-    protected function _loadResource($resource, $type)
+    public function autoload($class)
     {
-        if (empty($this->_objects[$type][$resource])) {
-            $class = $this->getLoader($type)->load($resource);
-            $this->_objects[$type][$resource] = new $class;
+        $segments = explode('_', $class);
+        if ($segments[0] != $this->getPrefix()) {
+            // wrong prefix? we're done'
+            return false;
         }
-        return $this->_objects[$type][$resource];
+        if (count($segments) < 3) {
+            // assumes all resources have a namespace and component, minimum
+            return false;
+        }
+
+        $final     = array_pop($segments);
+        $component = implode('_', $segments);
+        if (!isset($this->_components[$component])) {
+            // no matching component
+            return false;
+        }
+
+        $path = $this->_components[$component];
+        return include $path . '/' . $final . '.php';
     }
 
-    /**
-     * Load a dbtable class and return an instance
-     * 
-     * @param  string $table 
-     * @return Zend_Db_Table_Abstract
-     */
-    public function getDbtable($table)
+    public function setOptions(array $options)
     {
-        return $this->_loadResource($table, 'dbtable');
+        $methods = get_class_methods($this);
+        foreach ($options as $key => $value) {
+            $method = 'set' . ucfirst($key);
+            if (in_array($method, $methods)) {
+                $this->$method($value);
+            }
+        }
+        return $this;
     }
 
-    /**
-     * Load a form class and return an instance
-     * 
-     * @param  string $form 
-     * @return Zend_Form
-     */
-    public function getForm($form)
+    public function setPrefix($prefix)
     {
-        return $this->_loadResource($form, 'form');
+        $this->_prefix = rtrim((string) $prefix, '_');
+        return $this;
     }
 
-    /**
-     * Load a model class and return an object instance
-     * 
-     * @param  string $model 
-     * @return object
-     */
-    public function getModel($model)
+    public function getPrefix()
     {
-        return $this->_loadResource($model, 'model');
+        return $this->_prefix;
     }
 
-    /**
-     * Load a front controller plugin
-     * 
-     * @param  string $plugin 
-     * @return Zend_Controller_Plugin_Abstract
-     */
-    public function getPlugin($plugin)
+    public function setBasePath($path)
     {
-        return $this->_loadResource($plugin, 'plugin');
+        $this->_basePath = (string) $path;
+        return $this;
+    }
+    
+    public function getBasePath()
+    {
+        return $this->_basePath;
     }
 
-    /**
-     * Load a service class and return an object instance
-     * 
-     * @param  string $service 
-     * @return object
-     */
-    public function getService($service)
+    public function addResourceType($type, $path, $prefix = null)
     {
-        return $this->_loadResource($service, 'service');
+        $type = strtolower($type);
+        if (!isset($this->_resourceTypes[$type])) {
+            if (null === $prefix) {
+                throw new My_Loader_Exception('Initial definition of a resource type must include a prefix');
+            }
+            $prefix = trim($prefix, '_');
+            $this->_resourceTypes[$type] = array(
+                'prefix' => $this->getPrefix() . '_' . $prefix,
+            );
+        }
+        if (!is_string($path)) {
+            throw new My_Loader_Exception('Invalid path specification provided; must be string');
+        }
+        $this->_resourceTypes[$type]['path'] = $this->getBasePath() . '/' . $path;
+
+        $component = $this->_resourceTypes[$type]['prefix'];
+        $this->_components[$component] = $this->_resourceTypes[$type]['path'];
+        return $this;
+    }
+
+    public function addResourceTypes(array $types)
+    {
+        foreach ($types as $type => $spec) {
+            if (!is_array($spec)) {
+                throw new My_Loader_Exception('addResourceTypes() expects an array of arrays');
+            }
+            if (!isset($spec['path'])) {
+                throw new My_Loader_Exception('addResourceTypes() expects each array to include a paths element');
+            }
+            $paths  = $spec['path'];
+            $prefix = null;
+            if (isset($spec['prefix'])) {
+                $prefix = $spec['prefix'];
+            }
+            $this->addResourceType($type, $paths, $prefix);
+        }
+        return $this;
+    }
+
+    public function setResourceTypes(array $types)
+    {
+        $this->clearResourceTypes();
+        return $this->addResourceTypes($types);
+    }
+
+    public function getResourceTypes()
+    {
+        return $this->_resourceTypes;
+    }
+
+    public function hasResourceType($type)
+    {
+        return isset($this->_resourceTypes[$type]);
+    }
+
+    public function removeResourceType($type)
+    {
+        if ($this->hasResourceType($type)) {
+            $prefix = $this->_resourceTypes[$type]['prefix'];
+            unset($this->_components[$prefix]);
+            unset($this->_resourceTypes[$type]);
+        }
+        return $this;
+    }
+
+    public function clearResourceTypes()
+    {
+        $this->_resourceTypes = array();
+        $this->_components    = array();
+        $this->initDefaultResourceTypes();
+        return $this;
+    }
+
+    public function setDefaultResourceType($type)
+    {
+        if ($this->hasResourceType($type)) {
+            $this->_defaultResourceType = $type;
+        }
+        return $this;
+    }
+
+    public function getDefaultResourceType()
+    {
+        return $this->_defaultResourceType;
+    }
+
+    public function load($resource, $type = null)
+    {
+        if (null === $type) {
+            $type = $this->getDefaultResourceType();
+            if (empty($type)) {
+                throw new My_Loader_Exception('No resource type specified');
+            }
+        }
+        if (!$this->hasResourceType($type)) {
+            throw new My_Loader_Exception('Invalid resource type specified');
+        }
+        $prefix = $this->_resourceTypes[$type]['prefix'];
+        $class  = $prefix . '_' . ucfirst($resource);
+        if (!isset($this->_resources[$class])) {
+            $this->_resources[$class] = new $class;
+        }
+        return $this->_resources[$class];
     }
 }

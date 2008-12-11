@@ -23,9 +23,25 @@ class Spindle_Bootstrap extends My_Module_Base
      */
     public function bootstrap()
     {
-        $this->initConfig()
+        $this->moduleDir = dirname(__FILE__);
+        $this->log = new Zend_Log(new Zend_Log_Writer_Stream('/tmp/autoload.log'));
+
+        $this->initAutoloader()
+             ->initConfig()
              ->checkJsEnabled()
              ->initPlugins();
+    }
+
+    public function initAutoloader()
+    {
+        $resourceLoader = new My_Loader_Resource(array(
+            'prefix'   => 'Spindle',
+            'basePath' => realpath(dirname(__FILE__)),
+        ));
+        $resourceLoader = Zend_Controller_Action_HelperBroker::getStaticHelper('ResourceLoader');
+        $resourceLoader->initModule('spindle', realpath(dirname(__FILE__)));
+        $this->_resourceLoader = $resourceLoader;
+        return $this;
     }
 
     /**
@@ -87,15 +103,7 @@ class Spindle_Bootstrap extends My_Module_Base
     protected function _getResourceLoader()
     {
         if (null === $this->_resourceLoader) {
-            if (Zend_Registry::isRegistered('ResourceLoader')) {
-                $this->_resourceLoader = Zend_Registry::get('ResourceLoader');
-            } else {
-                $this->_resourceLoader = new My_Loader_Resource;
-            }
-            $this->_resourceLoader->getLoader('plugin')->addPrefixPath(
-                'Spindle_Plugin',
-                dirname(__FILE__) . '/plugins'
-            );
+            $this->initAutoloader();
         }
         return $this->_resourceLoader;
     }

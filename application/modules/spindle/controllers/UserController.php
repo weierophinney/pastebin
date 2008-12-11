@@ -12,7 +12,7 @@ class Spindle_UserController extends Zend_Controller_Action
 {
     public function preDispatch()
     {
-        $ajaxContext = $this->_helper->gethelper('ajaxContext');
+        $ajaxContext = $this->_helper->getHelper('ajaxContext');
         $ajaxContext->addActionContext('index', 'html')
                     ->addActionContext('login', 'json')
                     ->addActionContext('register', 'json')
@@ -32,34 +32,7 @@ class Spindle_UserController extends Zend_Controller_Action
         $this->view->headTitle()->prepend('User');
         $this->view->dojo()->enable();
 
-        $resourceLoader = $this->_helper->getHelper('ResourceLoader');
-        $this->model    = $resourceLoader->getModel('user');
-
-        $this->view->loginForm = $resourceLoader->getForm('Login');
-        $this->view->loginForm
-             ->setMethod('post')
-             ->setAction($this->view->url(
-                 array(
-                     'module'     => 'spindle',
-                     'controller' => 'user',
-                     'action'     => 'login',
-                 ),
-                 'default',
-                 true
-               ));
-
-        $this->view->registrationForm = $resourceLoader->getForm('Register');
-        $this->view->registrationForm
-             ->setMethod('post')
-             ->setAction($this->view->url(
-                 array(
-                     'module'     => 'spindle',
-                     'controller' => 'user',
-                     'action'     => 'register',
-                 ),
-                 'default',
-                 true
-               ));
+        $this->view->model = $this->model = new Spindle_Model_User;
     }
 
     public function indexAction()
@@ -77,7 +50,7 @@ class Spindle_UserController extends Zend_Controller_Action
 
 
         // Get our form and validate it
-        $form = $this->view->form = $this->view->loginForm;
+        $form = $this->view->form = $this->model->getLoginForm();
         if (!$form->isValid($request->getPost())) {
             // Invalid entries
             return $this->render('index'); // re-render the login form

@@ -7,8 +7,9 @@ $paths     = array(
     '.', 
 );
 set_include_path(implode(PATH_SEPARATOR, $paths));
-require_once 'Zend/Loader.php';
-Zend_Loader::registerAutoload();
+require_once 'My/Loader/Autoloader.php';
+$autoloader = My_Loader_Autoloader::getInstance();
+$autoloader->registerNamespace('My');
 
 include dirname(__FILE__) . '/../application/bootstrap.php';
 

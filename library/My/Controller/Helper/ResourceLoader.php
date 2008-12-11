@@ -12,27 +12,16 @@
  */
 class My_Controller_Helper_ResourceLoader extends Zend_Controller_Action_Helper_Abstract
 {
-    /**
-     * @var array Valid loader methods
-     */
-    protected $_loaderMethods;
-
-    /**
-     * @var My_Loader_Resource
-     */
-    protected $_resourceLoader;
+    protected $_currentModule;
+    protected $_loaders  = array();
 
     /**
      * Initialize resource loader
      * 
-     * @param  null|My_Loader_Resource
      * @return void
      */
-    public function __construct($resourceLoader = null)
+    public function __construct()
     {
-        if ($resourceLoader instanceof My_Loader_Resource) {
-            $this->setResourceLoader($resourceLoader);
-        }
     }
 
     /**
@@ -45,43 +34,43 @@ class My_Controller_Helper_ResourceLoader extends Zend_Controller_Action_Helper_
     public function __call($method, $args)
     {
         $loader = $this->getResourceLoader();
-        if (!method_exists($loader, $method)) {
-            throw new My_Exception(sprintf('Method "%s" does not exist in class %s', $method, __CLASS__));
-        }
         return call_user_func_array(array($loader, $method), $args);
     }
 
-    /**
-     * Set resource loader
-     *
-     * @param  My_Loader_Resource $resourceLoader
-     * @return My_Controller_Helper_ResourceLoader
-     */
-    public function setResourceLoader(My_Loader_Resource $resourceLoader)
+    public function setCurrentModule($module)
     {
-        $this->_resourceLoader = $resourceLoader;
+        $this->_currentModule = $module;
         return $this;
     }
 
-    /**
-     * Retrieve resource loader
-     *
-     * If no loader is registered and a 'ResourceLoader' registry key is 
-     * present, pulls from the registry. If none registered, instantiates an 
-     * instance.
-     *
-     * @return My_Loader_Resource
-     */
-    public function getResourceLoader()
+    public function getCurrentModule()
     {
-        if (null === $this->_resourceLoader) {
-            if (Zend_Registry::isRegistered('ResourceLoader')) {
-                $this->setResourceLoader(Zend_Registry::get('ResourceLoader'));
-            } else {
-                $this->setResourceLoader(new My_Loader_Resource);
+        return $this->_currentModule;
+    }
+
+    public function addResourceLoader($module, $loader)
+    {
+        $this->_loaders[$module] = $loader;
+        return $this;
+    }
+
+    public function hasResourceLoader($module)
+    {
+        return isset($this->_loaders[$module]);
+    }
+
+    public function getResourceLoader($module = null)
+    {
+        if (empty($module)) {
+            $module = $this->getCurrentModule();
+            if (empty($module)) {
+                throw new My_Exception("Cannot retrieve resource loader; no currently selected module");
             }
         }
-        return $this->_resourceLoader;
+        if (!$this->hasResourceLoader($module)) {
+            throw new My_Exception("No resource loader registered for $module");
+        }
+        return $this->_loaders[$module];
     }
 
     /**
@@ -113,27 +102,16 @@ class My_Controller_Helper_ResourceLoader extends Zend_Controller_Action_Helper_
             $dir = APPLICATION_PATH . '/modules/' . $module;
         }
 
-        foreach ($this->getResourceLoader()->getLoaders() as $type => $loader) {
-            $prefix = ucfirst($module) . '_';
-            switch ($type) {
-                case 'dbtable':
-                    $prefix .= 'Model_DbTable';
-                    $path    = '/models/DbTable';
-                    break;
-                case 'model':
-                    $prefix .= 'Model';
-                    $path    = '/models';
-                    break;
-                case 'form':
-                case 'service':
-                    $prefix .= 'Model_' . ucfirst($type);
-                    $path    = '/models/' . ucfirst($type);
-                    break;
-            }
-            if (!$loader->getPaths($prefix)) {
-                $loader->addPrefixPath($prefix, $dir . $path);
-            }
+        $module = ucfirst($module);
+        if (!$this->hasResourceLoader($module)) {
+            $resourceLoader = new My_Loader_Resource(array(
+                'prefix'   => $module,
+                'basePath' => $dir,
+            ));
+            $this->addResourceLoader($module, $resourceLoader);
         }
+
+        $this->setCurrentModule($module);
     }
 
     /**
@@ -146,15 +124,6 @@ class My_Controller_Helper_ResourceLoader extends Zend_Controller_Action_Helper_
     public function direct($resource, $type = 'model')
     {
         $loader = $this->getResourceLoader();
-        if (null === $this->_loaderMethods) {
-            $this->_loaderMethods = get_class_methods($loader);
-        }
-
-        $method = 'get' . ucfirst(strtolower($type));
-        if (!in_array($method, $this->_loaderMethods)) {
-            throw new Exception('Invalid resource type specified; must be one of (' . implode(', ', array_keys($this->getLoaders())) . ')');
-        }
-
-        return $loader->$method($resource, $type);
+        return $loader->load($resource, $type);
     }
 }

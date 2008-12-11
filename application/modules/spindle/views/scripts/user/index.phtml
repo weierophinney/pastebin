@@ -1,11 +1,36 @@
+<?php
+$loginForm    = $this->model->getLoginForm();
+$loginForm->setMethod('post')
+          ->setAction($this->url(
+              array(
+                  'module'     => 'spindle',
+                  'controller' => 'user',
+                  'action'     => 'login',
+              ),
+              'default',
+              true
+            ));
+
+$registerForm = $this->model->getregisterForm();
+$registerForm->setMethod('post')
+             ->setAction($this->url(
+                 array(
+                     'module'     => 'spindle',
+                     'controller' => 'user',
+                     'action'     => 'register',
+                 ),
+                 'default',
+                 true
+               ));
+?>
 <div id="spindle-user" dojoType="dijit.layout.AccordionContainer" 
     duration="250" style="height: 300px">
     <div id="spindle-user-login" dojoType="dijit.layout.AccordionPane"
         title="Login" selected="true">
-        <?= $this->loginForm ?>
+        <?= $loginForm ?>
     </div>
     <div id="spindle-user-register" dojoType="dijit.layout.AccordionPane"
         title="New User? Please Register!">
-        <?= $this->registrationForm ?>
+        <?= $registerForm ?>
     </div>
 </div>

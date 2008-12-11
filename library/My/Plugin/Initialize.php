@@ -24,7 +24,6 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     {
         $this->env   = $env;
         $this->initConfig();
-        Zend_Registry::set('ResourceLoader', new My_Loader_Resource);
     }
 
     /**
@@ -46,8 +45,6 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     }
 
     /**
-     * PreDispatch actions
-     *
      * Initialize module bootstraps
      * 
      * @param Zend_Controller_Request_Abstract $request 
@@ -196,6 +193,33 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         }
 
         return $this;
+    }
+
+    public function unshiftAutoloadRegistry($callback)
+    {
+        if (!is_string($callback) && (!is_array($callback) || 2 <> count($callback))) {
+            throw new My_Exception('Invalid autoload callback provided');
+        }
+        $registry = spl_autoload_functions();
+        if (!empty($registry)) {
+            foreach ($registry as $function) {
+                spl_autoload_unregister($function);
+            }
+        } else {
+            $registry = array();
+        }
+        spl_autoload_register($callback);
+        foreach ($registry as $function) {
+            spl_autoload_register($function);
+        }
+    }
+
+    public function pushAutoloadRegistry($callback)
+    {
+        if (!is_string($callback) && (!is_array($callback) || 2 <> count($callback))) {
+            throw new My_Exception('Invalid autoload callback provided');
+        }
+        spl_autoload_register($callback);
     }
 
     /**
