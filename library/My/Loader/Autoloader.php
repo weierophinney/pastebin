@@ -7,7 +7,10 @@ class My_Loader_Autoloader
 
     protected $_autoloaders = array();
     protected $_fallbackAutoloader = false;
-    protected $_namespaces = array('Zend' => true);
+    protected $_namespaces = array(
+        'Zend'  => true,
+        'ZendX' => true,
+    );
     protected $_suppressNotFoundWarnings = true;
 
     protected function __construct()

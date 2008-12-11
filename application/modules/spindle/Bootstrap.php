@@ -38,6 +38,7 @@ class Spindle_Bootstrap extends My_Module_Base
             'prefix'   => 'Spindle',
             'basePath' => realpath(dirname(__FILE__)),
         ));
+        $resourceLoader->addResourceType('validator', 'models/Validate', 'Model_Validate');
         $resourceLoader = Zend_Controller_Action_HelperBroker::getStaticHelper('ResourceLoader');
         $resourceLoader->initModule('spindle', realpath(dirname(__FILE__)));
         $this->_resourceLoader = $resourceLoader;
