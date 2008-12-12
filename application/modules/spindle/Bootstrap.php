@@ -24,12 +24,21 @@ class Spindle_Bootstrap extends My_Module_Base
     public function bootstrap()
     {
         $this->moduleDir = dirname(__FILE__);
-        $this->log = new Zend_Log(new Zend_Log_Writer_Stream('/tmp/autoload.log'));
+        $this->log = new Zend_Log(new Zend_Log_Writer_Stream('/tmp/pubsub.log'));
+
+        My_PubSub::subscribe("Spindle_Model_User::save::start", $this, 'log');
+        My_PubSub::subscribe("Spindle_Model_User::save::end", $this, 'log');
 
         $this->initAutoloader()
              ->initConfig()
              ->checkJsEnabled()
              ->initPlugins();
+    }
+
+    public function log()
+    {
+        $args = func_get_args();
+        $this->log->info(var_export($args, 1));
     }
 
     public function initAutoloader()

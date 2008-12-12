@@ -162,17 +162,19 @@ class Spindle_Model_User extends Spindle_Model_Model implements Zend_Auth_Adapte
      * Save user
      * 
      * @param  array $info 
-     * @param  string|null $tableName In this case, indicates the form to use
+     * @param  string|null $validator Validation chain to use
      * @return int|false
      * @throws Exception with duplicate user or missing information
      */
-    public function save(array $info, $tableName = null)
+    public function save(array $info, $validator = null)
     {
-        if (null === $tableName) {
-            $tableName = 'Register';
+        if (null === $validator) {
+            $validator = 'Register';
         }
-        // $form = $this->getResourceLoader()->getForm($tableName);
-        $method = 'get' . ucfirst($tableName) . 'Form';
+
+        My_PubSub::publish(__CLASS__ . '::save::start', $info, $validator, $this);
+
+        $method = 'get' . ucfirst($validator) . 'Form';
         $form = $this->$method();
         if (!$form->isValid($info)) {
             return false;
@@ -197,7 +199,10 @@ class Spindle_Model_User extends Spindle_Model_Model implements Zend_Auth_Adapte
         if (array_key_exists('password', $values)) {
             $values['password'] = md5($values['password']);
         }
-        return parent::save($values);
+        $id = parent::save($values);
+
+        My_PubSub::publish(__CLASS__ . '::save::end', $id, $this);
+        return $id;
     }
 
     /**
