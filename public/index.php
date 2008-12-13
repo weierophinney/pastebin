@@ -9,7 +9,8 @@ $paths     = array(
 set_include_path(implode(PATH_SEPARATOR, $paths));
 require_once 'My/Loader/Autoloader.php';
 $autoloader = My_Loader_Autoloader::getInstance();
-$autoloader->registerNamespace('My');
+$autoloader->registerNamespace('My')
+           ->registerNamespace('Phly');
 
 include dirname(__FILE__) . '/../application/bootstrap.php';
 

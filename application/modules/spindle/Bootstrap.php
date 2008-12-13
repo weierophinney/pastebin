@@ -26,8 +26,8 @@ class Spindle_Bootstrap extends My_Module_Base
         $this->moduleDir = dirname(__FILE__);
         $this->log = new Zend_Log(new Zend_Log_Writer_Stream('/tmp/pubsub.log'));
 
-        My_PubSub::subscribe("Spindle_Model_User::save::start", $this, 'log');
-        My_PubSub::subscribe("Spindle_Model_User::save::end", $this, 'log');
+        Phly_PubSub::subscribe("Spindle_Model_User::save::start", $this, 'log');
+        Phly_PubSub::subscribe("Spindle_Model_User::save::end", $this, 'log');
 
         $this->initAutoloader()
              ->initConfig()

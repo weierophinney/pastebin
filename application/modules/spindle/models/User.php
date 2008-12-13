@@ -172,7 +172,7 @@ class Spindle_Model_User extends Spindle_Model_Model implements Zend_Auth_Adapte
             $validator = 'Register';
         }
 
-        My_PubSub::publish(__CLASS__ . '::save::start', $info, $validator, $this);
+        Phly_PubSub::publish(__CLASS__ . '::save::start', $info, $validator, $this);
 
         $method = 'get' . ucfirst($validator) . 'Form';
         $form = $this->$method();
@@ -201,7 +201,7 @@ class Spindle_Model_User extends Spindle_Model_Model implements Zend_Auth_Adapte
         }
         $id = parent::save($values);
 
-        My_PubSub::publish(__CLASS__ . '::save::end', $id, $this);
+        Phly_PubSub::publish(__CLASS__ . '::save::end', $id, $this);
         return $id;
     }
 
