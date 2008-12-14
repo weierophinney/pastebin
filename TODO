@@ -1,12 +1,5 @@
-- Refactor ResourceLoader
-  - Should manipulate spl_autoload registry
-  - Should provide methods for loading by type
-    - Must rewrite into class name
-    - Must include class
-    - Should include an object registry
-  - Should register class prefix for lookups
-  - Rewrite all resourceLoader calls to ensure they work with refactored ResourceLoader
-    - Instance of resource loader per module
+- Update Pastebin to use PubSub
+  - On add(), update cache
 - Import bugapp into Spindle module
   - Refactor models
     - Use forms for validation

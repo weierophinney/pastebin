@@ -9,48 +9,31 @@
  * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version    $Id: $
  */
-class Spindle_Bootstrap extends My_Module_Base
+class Spindle_Bootstrap extends My_Application_Bootstrap_Module
 {
-    /**
-     * @var My_Loader_Resource
-     */
-    protected $_resourceLoader;
-
-    /**
-     * Spindle-specific bootstrapping
-     * 
-     * @return void
-     */
-    public function bootstrap()
+    public function init()
     {
         $this->moduleDir = dirname(__FILE__);
-        $this->log = new Zend_Log(new Zend_Log_Writer_Stream('/tmp/pubsub.log'));
-
-        Phly_PubSub::subscribe("Spindle_Model_User::save::start", $this, 'log');
-        Phly_PubSub::subscribe("Spindle_Model_User::save::end", $this, 'log');
-
-        $this->initAutoloader()
-             ->initConfig()
-             ->checkJsEnabled()
-             ->initPlugins();
     }
 
-    public function log()
+    public function getResourceLoader()
     {
-        $args = func_get_args();
-        $this->log->info(var_export($args, 1));
+        if (null === $this->_resourceLoader) {
+            $resourceLoader = new My_Loader_Resource(array(
+                'prefix'   => 'Spindle',
+                'basePath' => realpath(dirname(__FILE__)),
+            ));
+            $resourceLoader->addResourceType('validator', 'models/Validate', 'Model_Validate');
+            $this->setResourceLoader($resourceLoader);
+        }
+        return $this->_resourceLoader;
     }
 
     public function initAutoloader()
     {
-        $resourceLoader = new My_Loader_Resource(array(
-            'prefix'   => 'Spindle',
-            'basePath' => realpath(dirname(__FILE__)),
-        ));
-        $resourceLoader->addResourceType('validator', 'models/Validate', 'Model_Validate');
-        $resourceLoader = Zend_Controller_Action_HelperBroker::getStaticHelper('ResourceLoader');
-        $resourceLoader->initModule('spindle', realpath(dirname(__FILE__)));
-        $this->_resourceLoader = $resourceLoader;
+        $autoloader = $this->getResourceLoader();
+        $helper = Zend_Controller_Action_HelperBroker::getStaticHelper('ResourceLoader');
+        $helper->addResourceLoader('spindle', $autoloader);
         return $this;
     }
 
@@ -61,11 +44,11 @@ class Spindle_Bootstrap extends My_Module_Base
      */
     public function initConfig()
     {
-        $appBootstrap = $this->getAppBootstrap();
+        $appBootstrap = $this->getApplication();
         $configMaster = $appBootstrap->config;
         $config       = new Zend_Config_Ini(
             dirname(__FILE__). '/config/spindle.ini', 
-            $appBootstrap->env
+            $appBootstrap->getEnvironment()
         );
         $configMaster->merge($config);
         return $this;
@@ -78,8 +61,8 @@ class Spindle_Bootstrap extends My_Module_Base
      */
     public function initPlugins()
     {
-        $loader = $this->_getResourceLoader();
-        $front  = $this->getAppBootstrap()->front;
+        $loader = $this->getResourceLoader();
+        $front  = $this->getApplication()->front;
 
         $front->registerPlugin($loader->getPlugin('Auth'));
         return $this;
@@ -90,10 +73,10 @@ class Spindle_Bootstrap extends My_Module_Base
      * 
      * @return Spindle_Bootstrap
      */
-    public function checkJsEnabled()
+    public function initJsEnabled()
     {
-        $appBootstrap = $this->getAppBootstrap();
-        $request      = $appBootstrap->getRequest();
+        $appBootstrap = $this->getApplication();
+        $request      = $appBootstrap->request;
         if ($request->getParam('jsEnabled', false)) {
             setcookie('spindleJsEnabled', 1, strtotime('+30 days'));
             $request->setParam('jsEnabled', true);
@@ -103,18 +86,5 @@ class Spindle_Bootstrap extends My_Module_Base
             $request->setParam('jsEnabled', false);
         }
         return $this;
-    }
-
-    /**
-     * Retrieve resource loader
-     * 
-     * @return My_Loader_Resource
-     */
-    protected function _getResourceLoader()
-    {
-        if (null === $this->_resourceLoader) {
-            $this->initAutoloader();
-        }
-        return $this->_resourceLoader;
     }
 }

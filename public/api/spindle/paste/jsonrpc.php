@@ -1,9 +1,9 @@
 <?php
 require_once dirname(__FILE__) . '/bootstrap.php';
 
-$plugin  = Zend_Registry::get('init');
-$request = $plugin->getRequest();
-$plugin->initDb();
+$bootstrap = Zend_Registry::get('bootstrap');
+$request   = $bootstrap->getRequest();
+$bootstrap->initDb();
 
 $loader   = new My_Controller_Helper_ResourceLoader;
 $loader->initModule('spindle');

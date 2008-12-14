@@ -1,73 +1,17 @@
 <?php
-/** Zend_Controller_Plugin_Abstract */
-require_once 'Zend/Controller/Plugin/Abstract.php';
-
-/**
- * Plugin to initialize application state
- * 
- * @uses       Zend_Controller_Plugin_Abstract
- * @category   My
- * @package    My_Plugin
- * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
- * @version    $Id: $
- */
-class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
+class Bootstrap extends My_Application_Bootstrap_Base
 {
-    /**
-     * Constructor
-     * 
-     * @param  string $basePath Base path of application
-     * @param  string $env Application environment
-     * @return void
-     */
-    public function __construct($env = 'production')
-    {
-        $this->env   = $env;
-        $this->initConfig();
-    }
+    public $front;
 
-    /**
-     * Route Startup handler
-     * 
-     * @param  Zend_Controller_Request_Abstract $request 
-     * @return void
-     */
-    public function routeStartup(Zend_Controller_Request_Abstract $request)
+    public function init()
     {
+        $this->runInitializer('config');
         $this->front = Zend_Controller_Front::getInstance();
-        $this->initControllers()
-             ->initHelpers()
-             ->initLog()
-             ->initCache()
-             ->initDb()
-             ->initView()
-             ->initModules();
     }
 
-    /**
-     * Initialize module bootstraps
-     * 
-     * @param Zend_Controller_Request_Abstract $request 
-     * @return void
-     */
-    public function initModules()
+    public function run()
     {
-        $modules = $this->front->getControllerDirectory();
-        foreach ($modules as $module => $dir) {
-            if ('default' == $module) {
-                continue;
-            }
-            $bootstrapFile = dirname($dir) . '/Bootstrap.php';
-            $class         = ucfirst($module) . '_Bootstrap';
-            if (Zend_Loader::loadFile('Bootstrap.php', dirname($dir))
-                && class_exists($class)
-            ) {
-                $bootstrap = new $class;
-                $bootstrap->setAppBootstrap($this);
-                $bootstrap->bootstrap();
-            }
-        }
-        return $this;
+        $this->front->dispatch();
     }
 
     /**
@@ -77,7 +21,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function initConfig()
     {
-        $this->config = new Zend_Config_Ini(APPLICATION_PATH . '/config/site.ini', $this->env, true);
+        $this->config = new Zend_Config_Ini(APPLICATION_PATH . '/config/site.ini', $this->getEnvironment(), true);
         Zend_Registry::set('config', $this->config);
         return $this;
     }
@@ -89,8 +33,15 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function initControllers()
     {
-        $this->front->setControllerDirectory($this->config->appPath . '/controllers', 'default');
-        $this->front->addModuleDirectory($this->config->appPath . '/modules');
+        $this->front->setControllerDirectory(APPLICATION_PATH . '/controllers', 'default');
+        $this->front->addModuleDirectory(APPLICATION_PATH . '/modules');
+        return $this;
+    }
+
+    public function initRequest()
+    {
+        $this->request = new Zend_Controller_Request_Http;
+        $this->front->setRequest($this->request);
         return $this;
     }
 
@@ -116,10 +67,12 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         $writer = new Zend_Log_Writer_Firebug();
         $log    = new Zend_Log($writer);
 
+
         $writer->setPriorityStyle(8, 'TABLE');
         $log->addPriority('TABLE', 8);
 
         Zend_Registry::set('log', $log);
+        Phly_PubSub::subscribe('log', $log, 'info');
         return $this;
     }
 
@@ -130,6 +83,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function initCache()
     {
+        $this->runInitializer('config');
         $config = $this->config->cache;
         $this->cache = $this->_getCache($config);
         Zend_Registry::set('cache', $this->cache);
@@ -143,6 +97,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function initDb()
     {
+        $this->runInitializer('config');
         $config   = $this->config->db;
         $cache    = $this->_getCache($config->cache);
         $profiler = new Zend_Db_Profiler_Firebug('All DB Queries');
@@ -164,6 +119,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function initView($doLayout = true)
     {
+        $this->runInitializer('request');
         $view = new Zend_View;
         $view->addHelperPath('My/View/Helper/', 'My_View_Helper');
         $view->addHelperPath(APPLICATION_PATH . '/views/helpers', 'Zend_View_Helper');
@@ -171,7 +127,7 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
 
         Zend_Dojo::enableView($view);
         Zend_Dojo_View_Helper_Dojo::setUseDeclarative(true);
-        $view->baseUrl = rtrim($this->getRequest()->getBaseUrl(), '/');
+        $view->baseUrl = rtrim($this->request->getBaseUrl(), '/');
         $view->doctype('XHTML1_STRICT');
         $view->headTitle()->setSeparator(' - ')->append('Spindle');
         $view->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=utf-8');
@@ -195,31 +151,30 @@ class My_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         return $this;
     }
 
-    public function unshiftAutoloadRegistry($callback)
+    /**
+     * Initialize module bootstraps
+     * 
+     * @return void
+     */
+    public function initModules()
     {
-        if (!is_string($callback) && (!is_array($callback) || 2 <> count($callback))) {
-            throw new My_Exception('Invalid autoload callback provided');
-        }
-        $registry = spl_autoload_functions();
-        if (!empty($registry)) {
-            foreach ($registry as $function) {
-                spl_autoload_unregister($function);
-            }
-        } else {
-            $registry = array();
-        }
-        spl_autoload_register($callback);
-        foreach ($registry as $function) {
-            spl_autoload_register($function);
-        }
-    }
+        $this->runInitializer('controllers');
+        $modules = $this->front->getControllerDirectory();
 
-    public function pushAutoloadRegistry($callback)
-    {
-        if (!is_string($callback) && (!is_array($callback) || 2 <> count($callback))) {
-            throw new My_Exception('Invalid autoload callback provided');
+        foreach ($modules as $module => $dir) {
+            if ('default' == $module) {
+                continue;
+            }
+            $bootstrapFile = dirname($dir) . '/Bootstrap.php';
+            $class         = ucfirst($module) . '_Bootstrap';
+            if (Zend_Loader::loadFile('Bootstrap.php', dirname($dir))
+                && class_exists($class)
+            ) {
+                $bootstrap = new $class($this);
+                $bootstrap->bootstrap();
+            }
         }
-        spl_autoload_register($callback);
+        return $this;
     }
 
     /**

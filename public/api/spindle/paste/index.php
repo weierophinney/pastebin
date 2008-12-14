@@ -1,10 +1,10 @@
 <?php
 require_once dirname(__FILE__) . '/bootstrap.php';
 
-$plugin  = Zend_Registry::get('init');
-$request = $plugin->getRequest();
-$file    = $request->getPathInfo();
-$matches = false;
+$bootstrap = Zend_Registry::get('bootstrap');
+$request   = $bootstrap->request;
+$file      = $request->getPathInfo();
+$matches   = false;
 
 if (!in_array($file, array('/content/about.html', '/content/active-grid.html', '/content/new-paste.html'))
     && !preg_match('#/(paste|followup)-([a-z0-9]{13})\.html$#i', $file, $matches)
@@ -15,8 +15,8 @@ if (!in_array($file, array('/content/about.html', '/content/active-grid.html', '
     exit;
 }
 
-$plugin->initView()
-       ->initDb();
+$bootstrap->initView()
+          ->initDb();
 $loader = new My_Controller_Helper_ResourceLoader;
 $loader->initModule('spindle');
 
