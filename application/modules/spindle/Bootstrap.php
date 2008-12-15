@@ -23,7 +23,9 @@ class Spindle_Bootstrap extends My_Application_Bootstrap_Module
                 'prefix'   => 'Spindle',
                 'basePath' => realpath(dirname(__FILE__)),
             ));
-            $resourceLoader->addResourceType('validator', 'models/Validate', 'Model_Validate');
+            $resourceLoader->addResourceType('validator', 'models/Validate', 'Model_Validate')
+                           ->addResourceType('aclrole', 'models/Acl/Role', 'Model_Acl_Role')
+                           ->addResourceType('aclresource', 'models/Acl/Resource', 'Model_Acl_Resource');
             $this->setResourceLoader($resourceLoader);
         }
         return $this->_resourceLoader;
