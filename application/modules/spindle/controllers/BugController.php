@@ -1,5 +1,14 @@
 <?php
-class BugController extends Zend_Controller_Action
+/**
+ * Bugs
+ * 
+ * @uses       Zend_Controller_Action
+ * @package    Spindle
+ * @subpackage Controller
+ * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
+ * @version    $Id: $
+ */
+class Spindle_BugController extends Zend_Controller_Action
 {
     public $userId = null;
 
@@ -44,23 +53,23 @@ class BugController extends Zend_Controller_Action
 
         $method = 'fetch' . $status . 'Bugs';
         if ('' != $developer) {
-            $user    = $this->_helper->getModel('user')->fetchUser($developer);
+            $user    = $this->_helper->resourceLoader->getModel('user')->fetchUser($developer);
             if (null !== $user) {
                 $method .= 'ByDeveloper';
-                $bugs    = $this->_helper->getModel('bug')->$method($developer);
+                $bugs    = $this->_helper->resourceLoader->getModel('bug')->$method($developer);
                 $this->view->listType = $status . ' bugs owned by ' . $user->username;
             }
         } elseif ('' != $reporter) {
-            $user    = $this->_helper->getModel('user')->fetchUser($reporter);
+            $user    = $this->_helper->resourceLoader->getModel('user')->fetchUser($reporter);
             if (null !== $user) {
                 $method .= 'ByReporter';
-                $bugs    = $this->_helper->getModel('bug')->$method($developer);
+                $bugs    = $this->_helper->resourceLoader->getModel('bug')->$method($developer);
                 $this->view->listType = $status . ' bugs reported by ' . $user->username;
             }
         } 
 
         if (!isset($bugs)) {
-            $bugs    = $this->_helper->getModel('bug')->$method();
+            $bugs    = $this->_helper->resourceLoader->getModel('bug')->$method();
             $this->view->listType = $status . ' bugs';
         }
 
@@ -73,7 +82,7 @@ class BugController extends Zend_Controller_Action
             return $this->_helper->redirector('list');
         }
 
-        $bug = $this->_helper->getModel('bug')->fetchBug($id);
+        $bug = $this->_helper->resourceLoader->getModel('bug')->fetchBug($id);
         if (null === $bug) {
             return $this->render('not-found');
         }
@@ -105,7 +114,7 @@ class BugController extends Zend_Controller_Action
 
         $values = $form->getValues();
         $values['reporter_id'] = Zend_Auth::getInstance()->getIdentity()->id;
-        $model = $this->_helper->getModel('bug');
+        $model = $this->_helper->resourceLoader->getModel('bug');
         $id = $model->save($values);
         if (null === $id) {
             throw new Exception('Unexpected error saving bug');
@@ -132,7 +141,7 @@ class BugController extends Zend_Controller_Action
             return $this->viewAction();
         }
 
-        $model = $this->_helper->getModel('comment');
+        $model = $this->_helper->resourceLoader->getModel('comment');
         $id = $model->save($form->getValues());
         if (null === $id) {
             throw new Exception('Unexpected error saving comment');
@@ -151,14 +160,14 @@ class BugController extends Zend_Controller_Action
             return $this->render('not-found');
         }
 
-        $model = $this->_helper->getModel('bug');
+        $model = $this->_helper->resourceLoader->getModel('bug');
         $model->delete($id);
         return $this->_helper->redirector('list');
     }
 
     public function cleanupAction()
     {
-        $model = $this->_helper->getModel('bug');
+        $model = $this->_helper->resourceLoader->getModel('bug');
         $model->cleanupTestBugs();
         $this->_helper->redirector('index');
     }

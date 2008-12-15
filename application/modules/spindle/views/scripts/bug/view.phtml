@@ -1,0 +1,19 @@
+<h2><?= $this->escape($this->bug->summary) ?></h2>
+<dl>
+    <dt>Issue Type:</dt>
+    <dt><?= $this->bug->issue_type ?></dt>
+
+    <dt>Priority:</dt>
+    <dt><?= $this->bug->priority ?></dt>
+</dl>
+
+<h3>Description</h3>
+<textarea readonly="readonly"><?= $this->escape($this->bug->description) ?></textarea>
+
+<h3>Comments</h3>
+<?= $this->comments($this->bug) ?>
+
+<?  if ($this->checkAcl('bug', 'comment')): ?>
+<h3>Submit a comment:</h3>
+<?= $this->commentForm ?>
+<? endif ?>

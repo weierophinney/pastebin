@@ -1,0 +1,105 @@
+<ul>
+<li><a href="<?= $this->url(
+        array(
+            'controller' => 'bug',
+            'action'     => 'list',
+        ),
+        'default',
+        true
+    ) ?>">Open bugs</a>
+    <? if (null !== $this->user_name): ?>
+    <ul>
+        <li><a href="<?= $this->url(
+            array(
+                'controller' => 'bug',
+                'action'     => 'list',
+                'status'     => 'open',
+                'developer'  => $this->user_name,
+            ),
+            'default',
+            true
+        ) ?>">Your open bugs</a></li>
+        <li><a href="<?= $this->url(
+            array(
+                'controller' => 'bug',
+                'action'     => 'list',
+                'status'     => 'open',
+                'reporter'   => $this->user_name,
+            ),
+            'default',
+            true
+        ) ?>">Open bugs you reported</a></li>
+    </ul>
+    <? endif ?>
+</li>
+
+<li><a href="<?= $this->url(
+        array(
+            'controller' => 'bug',
+            'action'     => 'list',
+            'status'     => 'resolved',
+        ),
+        'default',
+        true
+    ) ?>">Resolved bugs</a>
+    <? if (null !== $this->user_name): ?>
+    <ul>
+        <li><a href="<?= $this->url(
+            array(
+                'controller' => 'bug',
+                'action'     => 'list',
+                'status'     => 'resolved',
+                'developer'  => $this->user_name,
+            ),
+            'default',
+            true
+        ) ?>">Your resolved bugs</a></li>
+        <li><a href="<?= $this->url(
+            array(
+                'controller' => 'bug',
+                'action'     => 'list',
+                'status'     => 'resolved',
+                'reporter'   => $this->user_name,
+            ),
+            'default',
+            true
+        ) ?>">Resolved bugs you reported</a></li>
+    </ul>
+    <? endif ?>
+</li>
+
+<li><a href="<?= $this->url(
+        array(
+            'controller' => 'bug',
+            'action'     => 'list',
+            'status'     => 'closed',
+        ),
+        'default',
+        true
+    ) ?>">Closed bugs</a>
+    <? if (null !== $this->user_name): ?>
+    <ul>
+        <li><a href="<?= $this->url(
+            array(
+                'controller' => 'bug',
+                'action'     => 'list',
+                'status'     => 'closed',
+                'developer'  => $this->user_name,
+            ),
+            'default',
+            true
+        ) ?>">Your closed bugs</a></li>
+        <li><a href="<?= $this->url(
+            array(
+                'controller' => 'bug',
+                'action'     => 'list',
+                'status'     => 'closed',
+                'reporter'   => $this->user_name,
+            ),
+            'default',
+            true
+        ) ?>">Closed bugs you reported</a></li>
+    </ul>
+    <? endif ?>
+</li>
+</ul>
