@@ -25,7 +25,8 @@ class Spindle_Bootstrap extends My_Application_Bootstrap_Module
             ));
             $resourceLoader->addResourceType('validator', 'models/Validate', 'Model_Validate')
                            ->addResourceType('aclrole', 'models/Acl/Role', 'Model_Acl_Role')
-                           ->addResourceType('aclresource', 'models/Acl/Resource', 'Model_Acl_Resource');
+                           ->addResourceType('aclresource', 'models/Acl/Resource', 'Model_Acl_Resource')
+                           ->addResourceType('bug', 'models/Bug', 'Model_Bug');
             $this->setResourceLoader($resourceLoader);
         }
         return $this->_resourceLoader;

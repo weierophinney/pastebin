@@ -1,7 +1,4 @@
 <?php
-/** Spindle_Model_Model */
-require_once dirname(__FILE__) . '/Model.php';
-
 /**
  * Bug application model
  * 
@@ -41,7 +38,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * 
      * @param  string $field 
      * @param  string $direction 
-     * @return Bugapp_Bug
+     * @return Spindle_Model_Bug
      */
     public function setSortOrder($field, $direction)
     {
@@ -54,7 +51,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * 
      * @param  string $field 
      * @param  string $direction 
-     * @return Bugapp_Bug
+     * @return Spindle_Model_Bug
      */
     public function addSortOrder($field, $direction)
     {
@@ -202,14 +199,15 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * Fetch an individual bug by id
      * 
      * @param  int $id 
-     * @return Zend_Db_Table_Row_Abstract|null
+     * @return Spindle_Model_Bug_Result|null
      */
     public function fetchBug($id)
     {
         $select = $this->_getSelect();
         $select->where('b.id = ?', $id)
                ->where('date_deleted IS NULL');
-        return $this->getResourceLoader()->getDbTable('bug')->fetchRow($select);
+        $row = $this->getResourceLoader()->getDbTable('bug')->fetchRow($select);
+        return (null !== $row) ? new Spindle_Model_Bug_Result($row->toArray()) : null;
     }
 
     /**
@@ -217,7 +215,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Zend_Db_Table_Rowset|null
+     * @return Spindle_Model_Bug_ResultSet
      */
     public function fetchOpenBugs($limit = null, $offset = null)
     {
@@ -225,7 +223,8 @@ class Spindle_Model_Bug extends Spindle_Model_Model
         $select->where('date_closed IS NULL');
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
-        return $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        $rowSet = $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        return new Spindle_Model_Bug_ResultSet($rowSet->toArray());
     }
 
     /**
@@ -233,7 +232,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Zend_Db_Table_Rowset|null
+     * @return Spindle_Model_Bug_ResultSet
      */
     public function fetchClosedBugs($limit = null, $offset = null)
     {
@@ -241,7 +240,8 @@ class Spindle_Model_Bug extends Spindle_Model_Model
         $select->where('date_closed IS NOT NULL');
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
-        return $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        $rowSet = $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        return new Spindle_Model_Bug_ResultSet($rowSet->toArray());
     }
 
     /**
@@ -249,7 +249,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Zend_Db_Table_Rowset|null
+     * @return Spindle_Model_Bug_ResultSet
      */
     public function fetchResolvedBugs($limit = null, $offset = null)
     {
@@ -258,7 +258,8 @@ class Spindle_Model_Bug extends Spindle_Model_Model
                ->where('date_closed IS NULL');
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
-        return $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        $rowSet = $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        return new Spindle_Model_Bug_ResultSet($rowSet->toArray());
     }
 
     /**
@@ -267,7 +268,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * @param  int $reporterId 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Zend_Db_Table_Rowset|null
+     * @return Spindle_Model_Bug_ResultSet
      */
     public function fetchOpenBugsByReporter($reporterId, $limit = null, $offset = null)
     {
@@ -276,7 +277,8 @@ class Spindle_Model_Bug extends Spindle_Model_Model
                ->where('reporter_id = ?', $reporterId);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
-        return $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        $rowSet = $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        return new Spindle_Model_Bug_ResultSet($rowSet->toArray());
     }
 
     /**
@@ -285,7 +287,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * @param  int $reporterId 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Zend_Db_Table_Rowset|null
+     * @return Spindle_Model_Bug_ResultSet
      */
     public function fetchResolvedBugsByReporter($reporterId, $limit = null, $offset = null)
     {
@@ -295,7 +297,8 @@ class Spindle_Model_Bug extends Spindle_Model_Model
                ->where('reporter_id = ?', $reporterId);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
-        return $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        $rowSet = $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        return new Spindle_Model_Bug_ResultSet($rowSet->toArray());
     }
 
     /**
@@ -304,7 +307,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * @param  int $reporterId 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Zend_Db_Table_Rowset|null
+     * @return Spindle_Model_Bug_ResultSet
      */
     public function fetchClosedBugsByReporter($reporterId, $limit = null, $offset = null)
     {
@@ -313,7 +316,8 @@ class Spindle_Model_Bug extends Spindle_Model_Model
                ->where('reporter_id = ?', $reporterId);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
-        return $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        $rowSet = $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        return new Spindle_Model_Bug_ResultSet($rowSet->toArray());
     }
 
     /**
@@ -322,7 +326,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * @param  int $developerId 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Zend_Db_Table_Rowset|null
+     * @return Spindle_Model_Bug_ResultSet
      */
     public function fetchOpenBugsByDeveloper($developerId, $limit = null, $offset = null)
     {
@@ -331,7 +335,8 @@ class Spindle_Model_Bug extends Spindle_Model_Model
                ->where('developer_id = ?', $developerId);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
-        return $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        $rowSet = $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        return new Spindle_Model_Bug_ResultSet($rowSet->toArray());
     }
 
     /**
@@ -340,7 +345,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * @param  int $developerId 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Zend_Db_Table_Rowset|null
+     * @return Spindle_Model_Bug_ResultSet
      */
     public function fetchResolvedBugsByDeveloper($developerId, $limit = null, $offset = null)
     {
@@ -350,7 +355,8 @@ class Spindle_Model_Bug extends Spindle_Model_Model
                ->where('developer_id = ?', $developerId);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
-        return $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        $rowSet = $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        return new Spindle_Model_Bug_ResultSet($rowSet->toArray());
     }
 
     /**
@@ -359,7 +365,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * @param  int $developerId 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Zend_Db_Table_Rowset|null
+     * @return Spindle_Model_Bug_ResultSet
      */
     public function fetchClosedBugsByDeveloper($developerId, $limit = null, $offset = null)
     {
@@ -368,7 +374,8 @@ class Spindle_Model_Bug extends Spindle_Model_Model
                ->where('developer_id = ?', $developerId);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
-        return $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        $rowSet = $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        return new Spindle_Model_Bug_ResultSet($rowSet->toArray());
     }
 
     /**
@@ -404,7 +411,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * @param  Zend_Db_Table_Select $select 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Bugapp_Bug
+     * @return Spindle_Model_Bug
      */
     protected function _setLimit(Zend_Db_Table_Select $select, $limit, $offset)
     {
@@ -422,7 +429,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * Set sort order on select object
      * 
      * @param  Zend_Db_Table_Select $select 
-     * @return Bugapp_Bug
+     * @return Spindle_Model_Bug
      */
     protected function _setSort(Zend_Db_Table_Select $select)
     {

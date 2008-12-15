@@ -30,6 +30,8 @@ class Spindle_BugController extends Zend_Controller_Action
             $this->userId = $auth->getIdentity()->id;
         }
 
+        $this->view->headTitle()->prepend('Bugs');
+        $this->view->dojo()->enable();
         $this->view->placeholder('nav')->append(
             $this->view->render('bug/_nav.phtml')
         );
@@ -120,7 +122,7 @@ class Spindle_BugController extends Zend_Controller_Action
             throw new Exception('Unexpected error saving bug');
         }
 
-        $this->_helper->redirector('view', 'bug', 'default', array('id' => $id));
+        $this->_helper->redirector('view', 'bug', 'spindle', array('id' => $id));
     }
 
     public function commentAction()
@@ -147,7 +149,7 @@ class Spindle_BugController extends Zend_Controller_Action
             throw new Exception('Unexpected error saving comment');
         }
 
-        $this->_helper->redirector('view', 'bug', 'default', array('id' => $bugId));
+        $this->_helper->redirector('view', 'bug', 'spindle', array('id' => $bugId));
     }
 
     public function deleteAction()
@@ -175,20 +177,18 @@ class Spindle_BugController extends Zend_Controller_Action
     public function getBugForm()
     {
         if (!isset($this->view->bugForm)) {
-            $this->view->bugForm  = $this->_helper->getForm(
-                'bug', 
-                array(
-                    'method' => 'post',
-                    'action' => $this->view->url(
-                        array(
-                            'controller' => 'bug',
-                            'action'     => 'process-add',
-                        ),
-                        'default',
-                        true
-                    ), 
-                )
-            );
+            $this->view->bugForm  = new Spindle_Model_Form_Bug(array(
+                'method' => 'post',
+                'action' => $this->view->url(
+                    array(
+                        'module'     => 'spindle',
+                        'controller' => 'bug',
+                        'action'     => 'process-add',
+                    ),
+                    'default',
+                    true
+                ), 
+            ));
         }
         return $this->view->bugForm;
     }
@@ -196,20 +196,18 @@ class Spindle_BugController extends Zend_Controller_Action
     public function getCommentForm()
     {
         if (!isset($this->view->commentForm)) {
-            $this->view->commentForm  = $this->_helper->getForm(
-                'comment', 
-                array(
-                    'method' => 'post',
-                    'action' => $this->view->url(
-                        array(
-                            'controller' => 'bug',
-                            'action'     => 'comment',
-                        ),
-                        'default',
-                        true
-                    ), 
-                )
-            );
+            $this->view->commentForm  = new Spindle_Model_Form_Comment(array(
+                'method' => 'post',
+                'action' => $this->view->url(
+                    array(
+                        'module'     => 'spindle',
+                        'controller' => 'bug',
+                        'action'     => 'comment',
+                    ),
+                    'default',
+                    true
+                ), 
+            ));
             $userId = $this->view->commentForm->user_id;
             $userId->addValidator('Identical', true, array($this->userId));
         }
