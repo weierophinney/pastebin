@@ -45,9 +45,6 @@ class Spindle_Model_Paste extends Spindle_Model_Model
      */
     public function __construct($options = null)
     {
-        $this->addHook('preAdd')
-             ->addHook('postAdd');
-
         if ($options instanceof Zend_Config) {
             $options = $options->toArray();
         }
@@ -87,7 +84,7 @@ class Spindle_Model_Paste extends Spindle_Model_Model
      */
     public function add(array $data)
     {
-        $this->callHook('preAdd', array($data));
+        Phly_PubSub::publish(__CLASS__ . '::' . __METHOD__ . '::start', $data, $this);
         $form     = $this->getForm();
 
         $belongTo = $form->getElementsBelongTo();
@@ -106,7 +103,7 @@ class Spindle_Model_Paste extends Spindle_Model_Model
 
         $id = $this->getTable()->insert($values);
 
-        $this->callHook('postAdd', array($id));
+        Phly_PubSub::publish(__CLASS__ . '::' . __METHOD__ . '::end', $id, $this);
 
         return $id;
     }

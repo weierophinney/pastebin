@@ -1,5 +1,3 @@
-- Update Pastebin to use PubSub
-  - On add(), update cache
 - Import bugapp into Spindle module
   - Refactor models
     - Use forms for validation
@@ -20,3 +18,8 @@
     - creating basic structure
   - Selecting link from different app should setup main pane as above, and
     populate
+- Pastebin improvements
+  - Add caching subscriber to Paste model (create cached view)
+    - Use Zend_Cache to cache pastes
+      - using expiration from individual pastes
+      - API would pull from cache, and not directly from filesystem
