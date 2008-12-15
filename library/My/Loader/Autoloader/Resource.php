@@ -3,14 +3,14 @@
  * Resource loader
  * 
  * @uses       Zend_Controller_Action_Helper_Abstract
- * @package    My
- * @subpackage Controller
+ * @package    My_Loader
+ * @subpackage Autoloader
  * @copyright  Copyright (C) 2008 - Matthew Weier O'Phinney
  * @author     Matthew Weier O'Phinney <matthew@weierophinney.net> 
  * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version    $Id: $
  */
-class My_Loader_Resource implements My_Loader_Autoloader_Interface
+class My_Loader_Autoloader_Resource implements My_Loader_Autoloader_Interface
 {
     protected $_basePath;
     protected $_components = array();
@@ -87,24 +87,34 @@ class My_Loader_Resource implements My_Loader_Autoloader_Interface
     public function autoload($class)
     {
         $segments = explode('_', $class);
-        if ($segments[0] != $this->getPrefix()) {
+        $prefix   = array_shift($segments);
+        if ($prefix != $this->getPrefix()) {
             // wrong prefix? we're done'
             return false;
         }
-        if (count($segments) < 3) {
+        if (count($segments) < 2) {
             // assumes all resources have a namespace and component, minimum
             return false;
         }
 
         $final     = array_pop($segments);
-        $component = implode('_', $segments);
-        if (!isset($this->_components[$component])) {
-            // no matching component
+        $component = $prefix;
+        $lastMatch = false;
+        do {
+            $segment    = array_shift($segments);
+            $component .= '_' . $segment;
+            if (isset($this->_components[$component])) {
+                $lastMatch = $component;
+            }
+        } while (count($segments));
+
+        if (!$lastMatch) {
             return false;
         }
 
-        $path = $this->_components[$component];
-        return include $path . '/' . $final . '.php';
+        $final = substr($class, strlen($lastMatch));
+        $path = $this->_components[$lastMatch];
+        return include $path . '/' . str_replace('_', '/', $final) . '.php';
     }
 
     public function setOptions(array $options)

@@ -104,7 +104,7 @@ class My_Controller_Helper_ResourceLoader extends Zend_Controller_Action_Helper_
 
         $module = ucfirst($module);
         if (!$this->hasResourceLoader($module)) {
-            $resourceLoader = new My_Loader_Resource(array(
+            $resourceLoader = new My_Loader_Autoloader_Resource(array(
                 'prefix'   => $module,
                 'basePath' => $dir,
             ));

@@ -3,7 +3,7 @@ abstract class My_Application_Bootstrap_Module extends My_Application_Bootstrap_
 {
     protected $_resourceLoader;
 
-    public function setResourceLoader(My_Loader_Resource $loader)
+    public function setResourceLoader(My_Loader_Autoloader_Resource $loader)
     {
         $this->_resourceLoader = $loader;
         return $this;
@@ -17,7 +17,7 @@ abstract class My_Application_Bootstrap_Module extends My_Application_Bootstrap_
                 $prefix = $matches[1];
                 $r = new ReflectionClass($this);
                 $path = $r->getFileName();
-                $this->setResourceLoader(new My_Loader_Resource(array(
+                $this->setResourceLoader(new My_Loader_Autoloader_Resource(array(
                     'prefix' => $prefix,
                     'path'   => dirname($path),
                 )));

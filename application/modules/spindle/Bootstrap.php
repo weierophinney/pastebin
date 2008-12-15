@@ -19,14 +19,10 @@ class Spindle_Bootstrap extends My_Application_Bootstrap_Module
     public function getResourceLoader()
     {
         if (null === $this->_resourceLoader) {
-            $resourceLoader = new My_Loader_Resource(array(
+            $resourceLoader = new My_Loader_Autoloader_Resource(array(
                 'prefix'   => 'Spindle',
                 'basePath' => realpath(dirname(__FILE__)),
             ));
-            $resourceLoader->addResourceType('validator', 'models/Validate', 'Model_Validate')
-                           ->addResourceType('aclrole', 'models/Acl/Role', 'Model_Acl_Role')
-                           ->addResourceType('aclresource', 'models/Acl/Resource', 'Model_Acl_Resource')
-                           ->addResourceType('bug', 'models/Bug', 'Model_Bug');
             $this->setResourceLoader($resourceLoader);
         }
         return $this->_resourceLoader;
@@ -64,10 +60,11 @@ class Spindle_Bootstrap extends My_Application_Bootstrap_Module
      */
     public function initPlugins()
     {
+        $this->runInitializer('Autoloader');
         $loader = $this->getResourceLoader();
         $front  = $this->getApplication()->front;
 
-        $front->registerPlugin($loader->getPlugin('Auth'));
+        $front->registerPlugin(new Spindle_Plugin_Auth);
         return $this;
     }
 

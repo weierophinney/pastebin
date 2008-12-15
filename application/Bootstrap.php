@@ -67,6 +67,8 @@ class Bootstrap extends My_Application_Bootstrap_Base
         $writer = new Zend_Log_Writer_Firebug();
         $log    = new Zend_Log($writer);
 
+        $log->addWriter(new Zend_Log_Writer_Stream('/tmp/autoload.log'));
+
 
         $writer->setPriorityStyle(8, 'TABLE');
         $log->addPriority('TABLE', 8);
@@ -159,6 +161,7 @@ class Bootstrap extends My_Application_Bootstrap_Base
     public function initModules()
     {
         $this->runInitializer('controllers');
+        $this->runInitializer('log');
         $modules = $this->front->getControllerDirectory();
 
         foreach ($modules as $module => $dir) {
