@@ -13,9 +13,29 @@
 abstract class Spindle_Model_Model
 {
     /**
+     * @var Spindle_Model_Acl_Spindle
+     */
+    protected $_acl;
+
+    /**
+     * @var string Resource in ACL to query
+     */
+    protected $_aclResource;
+
+    /**
      * @var array Class methods
      */
     protected $_classMethods;
+
+    /**
+     * @var string Default validator to use; used to construct form accessor
+     */
+    protected $_defaultValidator;
+
+    /**
+     * @var stdClass|null
+     */
+    protected $_identity;
 
     /**
      * Primary table for operations
@@ -101,18 +121,120 @@ abstract class Spindle_Model_Model
     }
 
     /**
+     * Set identity of current user
+     * 
+     * @param  mixed $identity 
+     * @return Spindle_Model_Model
+     */
+    public function setIdentity($identity)
+    {
+        if (is_array($identity)) {
+            $identity = (object) $identity;
+        } elseif (is_scalar($identity) && !is_bool($identity)) {
+            $identity = new stdClass;
+            $identity->id = $identity;
+        } elseif (null === $identity) {
+            $identity = null;
+        } elseif (!is_object($identity)) {
+            throw new Spindle_Model_Exception('Invalid identity provided');
+        }
+        $this->_identity = $identity;
+        return $this;
+    }
+
+    /**
+     * Retrieve identity
+     * 
+     * @return stdClass
+     */
+    public function getIdentity()
+    {
+        return $this->_identity;
+    }
+
+    /**
+     * Set ACLs
+     * 
+     * @param  Zend_Acl $acl 
+     * @return Spindle_Model_Model
+     */
+    public function setAcl(Zend_Acl $acl)
+    {
+        $this->_acl = $acl;
+        return $this;
+    }
+
+    /**
+     * Retrieve ACLs
+     *
+     * If none set, uses {@link Spindle_Model_Acl_Spindle}
+     * 
+     * @return Zend_Acl
+     */
+    public function getAcl()
+    {
+        if (null === $this->_acl) {
+            $this->setAcl(new Spindle_Model_Acl_Spindle());
+        }
+        return $this->_acl;
+    }
+
+    /**
+     * Check ACLs
+     * 
+     * @param  string $privilege 
+     * @return bool
+     */
+    public function checkAcl($privilege)
+    {
+        $identity = $this->getIdentity();
+        if (!$identity || !isset($identity->role)) {
+            $role = 'guest';
+        } else {
+            $role = $identity->role;
+        }
+        if (null === $this->_aclResource) {
+            throw new Spindle_Model_Exception('No ACL resource defined');
+        }
+
+        return $this->getAcl()->isAllowed($role, $this->_aclResource, $privilege);
+    }
+
+    /**
      * Insert or update a row
      * 
      * @param  array $info New or updated row data
-     * @param  string|null Table name to use (defaults to primaryTable)
-     * @return int Row ID of saved row
+     * @param  string|null $validator Validation chain to use; defaults to $_defaultValidator
+     * @return false|int Row ID of saved row, false if insufficient privileges
+     * @throws Spindle_Model_Exception For insufficient permissions
      */
-    public function save(array $info, $tableName = null)
+    public function save(array $info, $validator = null)
     {
-        $tableName = (null === $tableName) ? $this->_primaryTable : $tableName;
-        $table = $this->getResourceLoader()->getDbTable($tableName);
-        $id    = null;
-        $row   = null;
+        Phly_PubSub::publish('Spindle_Model::save::pre', $info, $validator, $this);
+        if (!$this->checkAcl('save')) {
+            return false;
+        }
+
+        if (empty($validator)) {
+            $validator = $this->_defaultValidator;
+        }
+
+        $accessor  = 'get' . ucfirst($validator) . 'Form';
+        $validator = $this->$accessor();
+        $table     = $this->getResourceLoader()->getDbTable($this->_primaryTable);
+        $id        = null;
+        $row       = null;
+
+        if (!$validator->isValid($info)) {
+            return false;
+        }
+
+        $info = $validator->getValues();
+        if (null !== ($parent = $validator->getElementsBelongTo())) {
+            $info = $info[$parent];
+        }
+
+
         if (array_key_exists('id', $info)) {
             $id = $info['id'];
             unset($info['id']);
@@ -136,6 +258,10 @@ abstract class Spindle_Model_Model
             }
         }
 
-        return $row->save();
+        Phly_PubSub::publish('Spindle_Model::save::preSave', $row, $this);
+        $id = $row->save();
+
+        Phly_PubSub::publish('Spindle_Model::save::post', $id, $this);
+        return $id;
     }
 }

@@ -12,7 +12,7 @@ class Spindle_Model_Form_Bug extends Zend_Dojo_Form
         $priorities = $model->getPriorities();
         $types      = $model->getTypes();
 
-        $summary = $this->addElement('ValidationTextBox', 'summary', array(
+        $this->addElement('ValidationTextBox', 'summary', array(
             'filters'    => array('StringTrim'),
             'validators' => array(
                 array('StringLength', false, array(0, 255)),
@@ -22,28 +22,33 @@ class Spindle_Model_Form_Bug extends Zend_Dojo_Form
             'label'      => 'Summary:',
         ));
 
-        $typeId = $this->addElement('FilteringSelect', 'type_id', array(
+        $this->addElement('FilteringSelect', 'type_id', array(
             'required'     => true,
             'multiOptions' => $types,
             'label'        => 'Issue Type:',
         ));
 
-        $priorityId = $this->addElement('FilteringSelect', 'priority_id', array(
+        $this->addElement('FilteringSelect', 'priority_id', array(
             'required'     => true,
             'multiOptions' => $priorities,
             'label'        => 'Priority:',
         ));
 
-        $description = $this->addElement('SimpleTextarea', 'description', array(
+        $this->addElement('SimpleTextarea', 'description', array(
             'filters'    => array('StringTrim'),
             'required'   => true,
             'label'      => 'Bug Description:',
         ));
 
-        $report = $this->addElement('SubmitButton', 'report', array(
+        $this->addElement('SubmitButton', 'report', array(
             'required' => false,
             'ignore'   => true,
             'label'    => 'Report Issue',
+        ));
+
+        $this->addElement('hidden', 'id', array(
+            'required'   => false,
+            'decorators' => array('ViewHelper'),
         ));
     }
 }

@@ -41,18 +41,7 @@ class Spindle_Plugin_Auth extends Zend_Controller_Plugin_Abstract
     public function getAcl()
     {
         if (null === $this->_acl) {
-            $acl = new Zend_Acl();
-            $acl->add(new Spindle_Model_Acl_Resource_Bug)
-                ->addRole(new Spindle_Model_Acl_Role_Guest)
-                ->addRole(new Spindle_Model_Acl_Role_User, 'guest')
-                ->addRole(new Spindle_Model_Acl_Role_Developer, 'user')
-                ->addRole(new Spindle_Model_Acl_Role_Manager, 'developer')
-                ->deny()
-                ->allow('guest', 'bug', array('view', 'list', 'index'))
-                ->allow('user', 'bug', array('comment', 'add', 'process-add'))
-                ->allow('developer', 'bug', array('resolve'))
-                ->allow('developer', 'bug', array('close', 'delete'));
-            $this->_acl = $acl;
+            $this->_acl = new Spindle_Model_Acl_Spindle();
         }
         return $this->_acl;
     }

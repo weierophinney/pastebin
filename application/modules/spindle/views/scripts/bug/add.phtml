@@ -1,2 +1,15 @@
+<?php
+$form = $this->model->getBugForm();
+$form->setMethod('post')
+     ->setAction($this->url(
+         array(
+             'module'     => 'spindle',
+             'controller' => 'bug',
+             'action'     => 'process-add',
+         ),
+         'default',
+         true
+     ));
+?>
 <h2>Report an Issue</h2>
-<?= $this->bugForm ?>
+<?= $form ?>

@@ -1,10 +1,39 @@
-<h2><?= $this->listType ?></h2>
+<?php
+$status = ucfirst(strtolower($this->status));
+if (!in_array($status, array('Open', 'Resolved', 'Closed'))) {
+    $status = 'Open';
+}
+
+$method= 'fetch' . $status . 'Bugs';
+if ('' != $this->developer) {
+    $user = $this->userModel->fetchUser($this->developer);
+    if (null !== $user) {
+        $method  .= 'ByDeveloper';
+        $bugs     = $this->model->$method($this->developer);
+        $listType = $status . ' bugs owned by ' . $user->username;
+    }
+} elseif ('' != $this->reporter) {
+    $user = $this->userModel->fetchUser($this->reporter);
+    if (null !== $user) {
+        $method  .= 'ByReporter';
+        $bugs     = $this->model->$method($this->reporter);
+        $listType = $status . ' bugs reported by ' . $user->username;
+    }
+}
+
+if (!isset($bugs) || !$bugs) {
+    $bugs     = $this->model->$method();
+    $listType = $status . ' bugs';
+}
+
+?>
+<h2><?= $listType ?></h2>
 
 <ul class="buglist">
-<? if (0 == count($this->bugs)): ?>
+<? if (0 == count($bugs)): ?>
     <li><b>No bugs found matching this criteria</b></li>
 <? else: ?>
-    <? foreach ($this->bugs as $bug): ?>
+    <? foreach ($bugs as $bug): ?>
     <li><?= $this->bugLink($bug->id, $bug->summary) ?></li>
     <? endforeach ?>
 <? endif ?>

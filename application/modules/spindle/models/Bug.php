@@ -13,6 +13,26 @@
 class Spindle_Model_Bug extends Spindle_Model_Model
 {
     /**
+     * @var string ACL resource to query
+     */
+    protected $_aclResource = 'bug';
+
+    /**
+     * @var array registry of table objects
+     */
+    protected $_dbTables = array();
+
+    /**
+     * @var string default validation chain (form)
+     */
+    protected $_defaultValidator = 'bug';
+
+    /**
+     * @var Spindle_Model_Form_Bug
+     */
+    protected $_form;
+
+    /**
      * Primary table for operations
      * @var string
      */
@@ -32,6 +52,12 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * @var array Sort orders
      */
     protected $_sortOrder = array();
+
+    public function __construct($options = null)
+    {
+        parent::__construct($options);
+        Phly_PubSub::subscribe('Spindle_Model::save::preSave', $this, 'setReporter');
+    }
 
     /**
      * Set sort order for returning results
@@ -60,16 +86,35 @@ class Spindle_Model_Bug extends Spindle_Model_Model
     }
 
     /**
+     * Set reporter_id for a row
+     * 
+     * @param  object $row 
+     * @return void
+     */
+    public function setReporter($row)
+    {
+        if (is_object($row) && empty($row->id)) {
+            $identity = $this->getIdentity();
+            if ($identity && !empty($identity->id)) {
+                $row->reporter_id = $identity->id;
+            }
+        }
+    }
+
+    /**
      * Link one bug to another
      * 
      * @param  int $originalBug 
      * @param  int $linkedBug 
      * @param  int $linkType 
-     * @return true
+     * @return bool False if not allowed, true otherwise
      */
     public function link($originalBug, $linkedBug, $linkType)
     {
-        $table = $this->getResourceLoader()->getDbTable('BugRelation');
+        if (!$this->checkAcl('link')) {
+            return false;
+        }
+        $table  = $this->getDbTable('BugRelation');
         $select = $table->select();
         $select->where('bug_id = ?', $originalBug)
                ->where('related_id = ?', $linkedBug);
@@ -111,16 +156,19 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * @param  int $bugId 
      * @param  int $resolutionId 
      * @param  int $developerId 
-     * @return int
+     * @return false|int False if no privs, ID of row otherwise
      */
     public function resolve($bugId, $resolutionId, $developerId)
     {
+        if (!$this->checkAcl('resolve')) {
+            return false;
+        }
         $resolutions = $this->getResolutions();
         if (!in_array($resolutionId, array_keys($resolutions))) {
             throw new Exception('Invalid resolution type provided');
         }
 
-        $table = $this->getResourceLoader()->getDbTable('bug');
+        $table = $this->getDbTable('bug');
         $where = $table->getAdapter()->quoteInto('id = ?', $bugId);
         $data  = array(
             'date_resolved' => date('Y-m-d'),
@@ -134,11 +182,14 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * Close a bug
      * 
      * @param  int $bugId 
-     * @return int
+     * @return int|false ID of row on success, false otherwise
      */
     public function close($bugId)
     {
-        $table = $this->getResourceLoader()->getDbTable('bug');
+        if (!$this->checkAcl('close')) {
+            return false;
+        }
+        $table = $this->getDbTable('bug');
         $where = $table->getAdapter()->quoteInto('id = ?', $bugId);
         $data  = array(
             'date_closed' => date('Y-m-d'),
@@ -150,11 +201,14 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * Delete a bug
      * 
      * @param  int $bugId 
-     * @return int Number of rows updated
+     * @return int|false Number of rows updated; false if no privileges
      */
     public function delete($bugId)
     {
-        $table = $this->getResourceLoader()->getDbTable('bug');
+        if (!$this->checkAcl('delete')) {
+            return false;
+        }
+        $table = $this->getDbTable('bug');
         $where = $table->getAdapter()->quoteInto('id = ?', $bugId);
         return $table->update(array('date_deleted' => date('Y-m-d')), $where);
     }
@@ -166,7 +220,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      */
     public function getTypes()
     {
-        $table   = $this->getResourceLoader()->getDbTable('IssueType');
+        $table   = $this->getDbTable('IssueType');
         $adapter = $table->getAdapter();
         return $adapter->fetchPairs('select id, type FROM issue_type');
     }
@@ -178,7 +232,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      */
     public function getResolutions()
     {
-        $table   = $this->getResourceLoader()->getDbTable('ResolutionType');
+        $table   = $this->getDbTable('ResolutionType');
         $adapter = $table->getAdapter();
         return $adapter->fetchPairs('select id, resolution FROM resolution_type');
     }
@@ -190,7 +244,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      */
     public function getPriorities()
     {
-        $table   = $this->getResourceLoader()->getDbTable('PriorityType');
+        $table   = $this->getDbTable('PriorityType');
         $adapter = $table->getAdapter();
         return $adapter->fetchPairs('select id, priority FROM priority_type');
     }
@@ -199,14 +253,17 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * Fetch an individual bug by id
      * 
      * @param  int $id 
-     * @return Spindle_Model_Bug_Result|null
+     * @return Spindle_Model_Bug_Result|null|false False on lack of privileges
      */
     public function fetchBug($id)
     {
+        if (!$this->checkAcl('view')) {
+            return false;
+        }
         $select = $this->_getSelect();
         $select->where('b.id = ?', $id)
                ->where('date_deleted IS NULL');
-        $row = $this->getResourceLoader()->getDbTable('bug')->fetchRow($select);
+        $row = $this->getDbTable('bug')->fetchRow($select);
         return (null !== $row) ? new Spindle_Model_Bug_Result($row->toArray()) : null;
     }
 
@@ -215,15 +272,18 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Spindle_Model_Bug_ResultSet
+     * @return Spindle_Model_Bug_ResultSet|false False if no privileges
      */
     public function fetchOpenBugs($limit = null, $offset = null)
     {
+        if (!$this->checkAcl('list')) {
+            return false;
+        }
         $select = $this->_getSelect();
         $select->where('date_closed IS NULL');
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
-        $rowSet = $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        $rowSet = $this->getDbTable('bug')->fetchAll($select);
         return new Spindle_Model_Bug_ResultSet($rowSet->toArray());
     }
 
@@ -232,15 +292,18 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Spindle_Model_Bug_ResultSet
+     * @return Spindle_Model_Bug_ResultSet|false False if no privileges
      */
     public function fetchClosedBugs($limit = null, $offset = null)
     {
+        if (!$this->checkAcl('list')) {
+            return false;
+        }
         $select = $this->_getSelect();
         $select->where('date_closed IS NOT NULL');
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
-        $rowSet = $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        $rowSet = $this->getDbTable('bug')->fetchAll($select);
         return new Spindle_Model_Bug_ResultSet($rowSet->toArray());
     }
 
@@ -249,16 +312,19 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Spindle_Model_Bug_ResultSet
+     * @return Spindle_Model_Bug_ResultSet|false False if no privileges
      */
     public function fetchResolvedBugs($limit = null, $offset = null)
     {
+        if (!$this->checkAcl('list')) {
+            return false;
+        }
         $select = $this->_getSelect();
         $select->where('resolution_id > 2')
                ->where('date_closed IS NULL');
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
-        $rowSet = $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        $rowSet = $this->getDbTable('bug')->fetchAll($select);
         return new Spindle_Model_Bug_ResultSet($rowSet->toArray());
     }
 
@@ -268,16 +334,19 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * @param  int $reporterId 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Spindle_Model_Bug_ResultSet
+     * @return Spindle_Model_Bug_ResultSet|false False if no privileges
      */
     public function fetchOpenBugsByReporter($reporterId, $limit = null, $offset = null)
     {
+        if (!$this->checkAcl('list')) {
+            return false;
+        }
         $select = $this->_getSelect();
         $select->where('date_closed IS NULL')
                ->where('reporter_id = ?', $reporterId);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
-        $rowSet = $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        $rowSet = $this->getDbTable('bug')->fetchAll($select);
         return new Spindle_Model_Bug_ResultSet($rowSet->toArray());
     }
 
@@ -287,17 +356,20 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * @param  int $reporterId 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Spindle_Model_Bug_ResultSet
+     * @return Spindle_Model_Bug_ResultSet|false False if no privileges
      */
     public function fetchResolvedBugsByReporter($reporterId, $limit = null, $offset = null)
     {
+        if (!$this->checkAcl('list')) {
+            return false;
+        }
         $select = $this->_getSelect();
         $select->where('resolution_id > 2')
                ->where('date_closed IS NULL')
                ->where('reporter_id = ?', $reporterId);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
-        $rowSet = $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        $rowSet = $this->getDbTable('bug')->fetchAll($select);
         return new Spindle_Model_Bug_ResultSet($rowSet->toArray());
     }
 
@@ -307,16 +379,19 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * @param  int $reporterId 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Spindle_Model_Bug_ResultSet
+     * @return Spindle_Model_Bug_ResultSet|false False if no privileges
      */
     public function fetchClosedBugsByReporter($reporterId, $limit = null, $offset = null)
     {
+        if (!$this->checkAcl('list')) {
+            return false;
+        }
         $select = $this->_getSelect();
         $select->where('date_closed IS NOT NULL')
                ->where('reporter_id = ?', $reporterId);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
-        $rowSet = $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        $rowSet = $this->getDbTable('bug')->fetchAll($select);
         return new Spindle_Model_Bug_ResultSet($rowSet->toArray());
     }
 
@@ -326,16 +401,19 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * @param  int $developerId 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Spindle_Model_Bug_ResultSet
+     * @return Spindle_Model_Bug_ResultSet|false False if no privileges
      */
     public function fetchOpenBugsByDeveloper($developerId, $limit = null, $offset = null)
     {
+        if (!$this->checkAcl('list')) {
+            return false;
+        }
         $select = $this->_getSelect();
         $select->where('date_closed IS NULL')
                ->where('developer_id = ?', $developerId);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
-        $rowSet = $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        $rowSet = $this->getDbTable('bug')->fetchAll($select);
         return new Spindle_Model_Bug_ResultSet($rowSet->toArray());
     }
 
@@ -345,17 +423,20 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * @param  int $developerId 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Spindle_Model_Bug_ResultSet
+     * @return Spindle_Model_Bug_ResultSet|false False if no privileges
      */
     public function fetchResolvedBugsByDeveloper($developerId, $limit = null, $offset = null)
     {
+        if (!$this->checkAcl('list')) {
+            return false;
+        }
         $select = $this->_getSelect();
         $select->where('resolution_id > 2')
                ->where('date_closed IS NULL')
                ->where('developer_id = ?', $developerId);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
-        $rowSet = $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        $rowSet = $this->getDbTable('bug')->fetchAll($select);
         return new Spindle_Model_Bug_ResultSet($rowSet->toArray());
     }
 
@@ -365,17 +446,33 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * @param  int $developerId 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Spindle_Model_Bug_ResultSet
+     * @return Spindle_Model_Bug_ResultSet|false False if no privileges
      */
     public function fetchClosedBugsByDeveloper($developerId, $limit = null, $offset = null)
     {
+        if (!$this->checkAcl('list')) {
+            return false;
+        }
         $select = $this->_getSelect();
         $select->where('date_closed IS NOT NULL')
                ->where('developer_id = ?', $developerId);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
-        $rowSet = $this->getResourceLoader()->getDbTable('bug')->fetchAll($select);
+        $rowSet = $this->getDbTable('bug')->fetchAll($select);
         return new Spindle_Model_Bug_ResultSet($rowSet->toArray());
+    }
+
+    /**
+     * Bug form/validation chain
+     * 
+     * @return Spindle_Model_Form_Bug
+     */
+    public function getBugForm()
+    {
+        if (null === $this->_form) {
+            $this->_form = new Spindle_Model_Form_Bug;
+        }
+        return $this->_form;
     }
 
     /**
@@ -385,7 +482,22 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      */
     public function cleanupTestBugs()
     {
-        $this->getResourceLoader()->getDbTable('bug')->delete('description = "appBenchmarking"');
+        $this->getDbTable('bug')->delete('description = "appBenchmarking"');
+    }
+
+    /**
+     * Lazy loaded DB Table registry
+     * 
+     * @param  string $name 
+     * @return Zend_Db_Table_Abstract
+     */
+    public function getDbTable($name)
+    {
+        if (!isset($this->_dbTables[$name])) {
+            $class = 'Spindle_Model_DbTable_' . ucfirst($name);
+            $this->_dbTables[$name] = new $class;
+        }
+        return $this->_dbTables[$name];
     }
 
     /**
@@ -395,7 +507,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      */
     protected function _getSelect()
     {
-        $bugTable = $this->getResourceLoader()->getDbTable('bug');
+        $bugTable = $this->getDbTable('bug');
         $select   = $bugTable->select()->setIntegrityCheck(false);
         $select->from(array('b' => 'bug'))
                ->joinLeft(array('i' => 'issue_type'), 'i.id = b.type_id', array('issue_type' => 'type'))

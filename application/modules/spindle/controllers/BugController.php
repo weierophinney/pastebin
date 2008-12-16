@@ -14,22 +14,18 @@ class Spindle_BugController extends Zend_Controller_Action
 
     public function preDispatch()
     {
-        $authenticated = Zend_Auth::getInstance()->hasIdentity();
-        $action        = $this->getRequest()->getActionName();
-        $acl           = Zend_Registry::get('acl');
-        $role          = Zend_Registry::get('role');
-
-        if ($acl->has('bug')) {
-            if (!$acl->isAllowed($role, 'bug', $action)) {
-                return $this->_forward('list');
-            }
-        }
-
-        $auth = Zend_Auth::getInstance();
+        $this->model = new Spindle_Model_Bug;
+        $auth        = Zend_Auth::getInstance();
         if ($auth->hasIdentity()) {
-            $this->userId = $auth->getIdentity()->id;
+            $identity = $auth->getIdentity();
+            $this->model->setIdentity($identity);
+            $this->userId = $identity->id;
+        } else {
+            $this->model->setIdentity(null);
         }
 
+
+        $this->view->model = $this->model;
         $this->view->headTitle()->prepend('Bugs');
         $this->view->dojo()->enable();
         $this->view->placeholder('nav')->append(
@@ -44,38 +40,12 @@ class Spindle_BugController extends Zend_Controller_Action
 
     public function listAction()
     {
-        $developer = $this->_getParam('developer', '');
-        $reporter  = $this->_getParam('reporter', '');
-        $status    = $this->_getParam('status', 'open');
-
-        $status = ucfirst(strtolower($status));
-        if (!in_array($status, array('Open', 'Resolved', 'Closed'))) {
-            $status = 'Open';
-        }
-
-        $method = 'fetch' . $status . 'Bugs';
-        if ('' != $developer) {
-            $user    = $this->_helper->resourceLoader->getModel('user')->fetchUser($developer);
-            if (null !== $user) {
-                $method .= 'ByDeveloper';
-                $bugs    = $this->_helper->resourceLoader->getModel('bug')->$method($developer);
-                $this->view->listType = $status . ' bugs owned by ' . $user->username;
-            }
-        } elseif ('' != $reporter) {
-            $user    = $this->_helper->resourceLoader->getModel('user')->fetchUser($reporter);
-            if (null !== $user) {
-                $method .= 'ByReporter';
-                $bugs    = $this->_helper->resourceLoader->getModel('bug')->$method($developer);
-                $this->view->listType = $status . ' bugs reported by ' . $user->username;
-            }
-        } 
-
-        if (!isset($bugs)) {
-            $bugs    = $this->_helper->resourceLoader->getModel('bug')->$method();
-            $this->view->listType = $status . ' bugs';
-        }
-
-        $this->view->bugs = $bugs;
+        $this->view->assign(array(
+            'developer' => $this->_getParam('developer', ''),
+            'reporter'  => $this->_getParam('reporter', ''),
+            'status'    => $this->_getParam('status', 'open'),
+            'userModel' => new Spindle_Model_User(),
+        ));
     }
 
     public function viewAction()
@@ -84,7 +54,7 @@ class Spindle_BugController extends Zend_Controller_Action
             return $this->_helper->redirector('list');
         }
 
-        $bug = $this->_helper->resourceLoader->getModel('bug')->fetchBug($id);
+        $bug = $this->model->fetchBug($id);
         if (null === $bug) {
             return $this->render('not-found');
         }
@@ -97,7 +67,9 @@ class Spindle_BugController extends Zend_Controller_Action
 
     public function addAction()
     {
-        $form = $this->getBugForm();
+        if (!$this->model->checkAcl('save')) {
+            $this->_forward('list');
+        }
     }
 
     public function processAddAction()
@@ -108,18 +80,11 @@ class Spindle_BugController extends Zend_Controller_Action
             return $this->_helper->redirector('list');
         }
 
-        $form = $this->getBugForm();
-        if (!$form->isValid($request->getPost())) {
+        $form = $this->model->getBugForm();
+        $form->removeElement('id');
+        if (!$id = $this->model->save($request->getPost())) {
             // failed
             return $this->render('add');
-        }
-
-        $values = $form->getValues();
-        $values['reporter_id'] = Zend_Auth::getInstance()->getIdentity()->id;
-        $model = $this->_helper->resourceLoader->getModel('bug');
-        $id = $model->save($values);
-        if (null === $id) {
-            throw new Exception('Unexpected error saving bug');
         }
 
         $this->_helper->redirector('view', 'bug', 'spindle', array('id' => $id));
@@ -162,35 +127,17 @@ class Spindle_BugController extends Zend_Controller_Action
             return $this->render('not-found');
         }
 
-        $model = $this->_helper->resourceLoader->getModel('bug');
-        $model->delete($id);
+        if (!$this->model->delete($id)) {
+            $this->message = "Insufficient permissions to delete issues.";
+            return $this->render('error');
+        }
         return $this->_helper->redirector('list');
     }
 
     public function cleanupAction()
     {
-        $model = $this->_helper->resourceLoader->getModel('bug');
-        $model->cleanupTestBugs();
+        $this->model->cleanupTestBugs();
         $this->_helper->redirector('index');
-    }
-
-    public function getBugForm()
-    {
-        if (!isset($this->view->bugForm)) {
-            $this->view->bugForm  = new Spindle_Model_Form_Bug(array(
-                'method' => 'post',
-                'action' => $this->view->url(
-                    array(
-                        'module'     => 'spindle',
-                        'controller' => 'bug',
-                        'action'     => 'process-add',
-                    ),
-                    'default',
-                    true
-                ), 
-            ));
-        }
-        return $this->view->bugForm;
     }
 
     public function getCommentForm()
