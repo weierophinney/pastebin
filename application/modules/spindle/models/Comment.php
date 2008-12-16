@@ -1,7 +1,4 @@
 <?php
-/** Spindle_Model_Model */
-require_once dirname(__FILE__) . '/Model.php';
-
 /**
  * Comment model
  * 
@@ -15,6 +12,21 @@ require_once dirname(__FILE__) . '/Model.php';
  */
 class Spindle_Model_Comment extends Spindle_Model_Model
 {
+    /**
+     * @var string ACL resource to query
+     */
+    protected $_aclResource = 'comment';
+
+    /**
+     * @var string default validation chain (form)
+     */
+    protected $_defaultValidator = 'comment';
+
+    /**
+     * @var Spindle_Model_Form_Bug
+     */
+    protected $_form;
+
     /**
      * Primary table for operations
      * @var string
@@ -34,24 +46,32 @@ class Spindle_Model_Comment extends Spindle_Model_Model
      * Fetch all comments by bug ID
      * 
      * @param  int $bugId 
-     * @return Zend_Db_Table_Rowset_Abstract
+     * @return Spindle_Model_ResultSet|false False if no privileges
      */
     public function fetchCommentsByBug($bugId)
     {
+        if (!$this->checkAcl('list')) {
+            return false;
+        }
         $select = $this->_getSelect()->where('bug_id = ?', $bugId);
-        return $this->getResourceLoader()->getDbTable('comment')->fetchAll($select);
+        $rowSet = $this->getDbTable('comment')->fetchAll($select);
+        return new Spindle_Model_ResultSet($rowSet->toArray());
     }
 
     /**
      * Fetch comments by user ID
      * 
      * @param  int $userId 
-     * @return Zend_Db_Table_Rowset_Abstract
+     * @return Zend_Db_Table_Rowset_Abstract|
      */
     public function fetchCommentsByUser($userId)
     {
+        if (!$this->checkAcl('list')) {
+            return false;
+        }
         $select = $this->_getSelect()->where('user_id = ?', $userId);
-        return $this->getResourceLoader()->getDbTable('comment')->fetchAll($select);
+        $rowSet = $this->getDbTable('comment')->fetchAll($select);
+        return new Spindle_Model_ResultSet($rowSet->toArray());
     }
 
     /**
@@ -62,12 +82,28 @@ class Spindle_Model_Comment extends Spindle_Model_Model
      */
     public function delete($id)
     {
-        $table = $this->getResourceLoader()->getDbTable('comment');
+        if (!$this->checkAcl('delete')) {
+            return false;
+        }
+        $table = $this->getDbTable('comment');
         $where = $table->getAdapter()->quoteInto('id = ?', $id);
         return $table->update(
             array('date_deleted' => date('Y-m-d')),
             $where
         );
+    }
+
+    /**
+     * Bug form/validation chain
+     * 
+     * @return Spindle_Model_Form_Comment
+     */
+    public function getCommentForm()
+    {
+        if (null === $this->_form) {
+            $this->_form = new Spindle_Model_Form_Comment;
+        }
+        return $this->_form;
     }
 
     /**
@@ -77,8 +113,10 @@ class Spindle_Model_Comment extends Spindle_Model_Model
      */
     protected function _getSelect()
     {
-        $table  = $this->getResourceLoader()->getDbTable('comment');
-        $select = $table->select()->where('date_deleted IS NULL')->order('date_created ASC');
+        $table  = $this->getDbTable('comment');
+        $select = $table->select()
+                        ->where('date_deleted IS NULL')
+                        ->order('date_created ASC');
         return $select;
     }
 }

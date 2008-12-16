@@ -28,6 +28,11 @@ abstract class Spindle_Model_Model
     protected $_classMethods;
 
     /**
+     * @var array registry of table objects
+     */
+    protected $_dbTables = array();
+
+    /**
      * @var string Default validator to use; used to construct form accessor
      */
     protected $_defaultValidator;
@@ -203,10 +208,12 @@ abstract class Spindle_Model_Model
     /**
      * Insert or update a row
      * 
+     * @pubsub Spindle_Model::save::pre(array $info, string $validator, Spindle_Model_Model $model)
+     * @pubsub Spindle_Model::save::preSave(Zend_Db_Table_Row_Abstract $row, Spindle_Model_Model $model)
+     * @pubsub Spindle_Model::save::post(int|null $id, Spindle_Model_Model $model)
      * @param  array $info New or updated row data
      * @param  string|null $validator Validation chain to use; defaults to $_defaultValidator
      * @return false|int Row ID of saved row, false if insufficient privileges
-     * @throws Spindle_Model_Exception For insufficient permissions
      */
     public function save(array $info, $validator = null)
     {
@@ -221,7 +228,7 @@ abstract class Spindle_Model_Model
 
         $accessor  = 'get' . ucfirst($validator) . 'Form';
         $validator = $this->$accessor();
-        $table     = $this->getResourceLoader()->getDbTable($this->_primaryTable);
+        $table     = $this->getDbTable($this->_primaryTable);
         $id        = null;
         $row       = null;
 
@@ -264,4 +271,20 @@ abstract class Spindle_Model_Model
         Phly_PubSub::publish('Spindle_Model::save::post', $id, $this);
         return $id;
     }
+
+    /**
+     * Lazy loaded DB Table registry
+     * 
+     * @param  string $name 
+     * @return Zend_Db_Table_Abstract
+     */
+    public function getDbTable($name)
+    {
+        if (!isset($this->_dbTables[$name])) {
+            $class = 'Spindle_Model_DbTable_' . ucfirst($name);
+            $this->_dbTables[$name] = new $class;
+        }
+        return $this->_dbTables[$name];
+    }
+
 }

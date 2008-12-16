@@ -14,23 +14,31 @@ class Spindle_BugController extends Zend_Controller_Action
 
     public function preDispatch()
     {
-        $this->model = new Spindle_Model_Bug;
-        $auth        = Zend_Auth::getInstance();
+        $this->model        = new Spindle_Model_Bug;
+        $this->commentModel = new Spindle_Model_Comment;
+
+        $commentsHelper = $this->view->getHelper('comments');
+        $commentsHelper->setModel('Comment', $this->commentModel);
+
+        $auth = Zend_Auth::getInstance();
         if ($auth->hasIdentity()) {
             $identity = $auth->getIdentity();
             $this->model->setIdentity($identity);
+            $this->commentModel->setIdentity($identity);
             $this->userId = $identity->id;
         } else {
             $this->model->setIdentity(null);
+            $this->commentModel->setIdentity(null);
         }
 
 
-        $this->view->model = $this->model;
         $this->view->headTitle()->prepend('Bugs');
         $this->view->dojo()->enable();
         $this->view->placeholder('nav')->append(
             $this->view->render('bug/_nav.phtml')
         );
+
+        $this->view->model = $this->model;
     }
 
     public function indexAction()
@@ -59,9 +67,6 @@ class Spindle_BugController extends Zend_Controller_Action
             return $this->render('not-found');
         }
 
-        $commentForm = $this->getCommentForm();
-        $commentForm->bug_id->setValue($bug->id);
-        $commentForm->user_id->setValue($this->userId);
         $this->view->bug = $bug;
     }
 
@@ -102,16 +107,9 @@ class Spindle_BugController extends Zend_Controller_Action
             return $this->_helper->redirector('list');
         }
 
-        $form = $this->getCommentForm();
-        if (!$form->isValid($request->getPost())) {
+        if (!$id = $this->commentModel->save($request->getPost())) {
             $request->setParam('id', $bugId);
             return $this->viewAction();
-        }
-
-        $model = $this->_helper->resourceLoader->getModel('comment');
-        $id = $model->save($form->getValues());
-        if (null === $id) {
-            throw new Exception('Unexpected error saving comment');
         }
 
         $this->_helper->redirector('view', 'bug', 'spindle', array('id' => $bugId));
@@ -138,26 +136,5 @@ class Spindle_BugController extends Zend_Controller_Action
     {
         $this->model->cleanupTestBugs();
         $this->_helper->redirector('index');
-    }
-
-    public function getCommentForm()
-    {
-        if (!isset($this->view->commentForm)) {
-            $this->view->commentForm  = new Spindle_Model_Form_Comment(array(
-                'method' => 'post',
-                'action' => $this->view->url(
-                    array(
-                        'module'     => 'spindle',
-                        'controller' => 'bug',
-                        'action'     => 'comment',
-                    ),
-                    'default',
-                    true
-                ), 
-            ));
-            $userId = $this->view->commentForm->user_id;
-            $userId->addValidator('Identical', true, array($this->userId));
-        }
-        return $this->view->commentForm;
     }
 }

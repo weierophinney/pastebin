@@ -1,16 +1,20 @@
 <?php
 class Spindle_View_Helper_Comments extends Zend_View_Helper_Abstract
 {
-    public function comments(Zend_Db_Table_Row_Abstract $bug)
+    protected $_model = array();
+
+    public function comments($bugId)
     {
-        $comments = $bug->findDependentRowset('Spindle_Model_DbTable_Comment');
+        $commentModel = $this->getModel('Comment');
+        $comments     = $commentModel->fetchCommentsByBug($bugId);
         if (0 == count($comments)) {
-            return '';
+            return '<p>No comments</p>'
+                 . $this->renderForm($bugId);
         }
 
         $html = '';
         foreach ($comments as $comment) {
-            $user  = $comment->findParentRow('Spindle_Model_DbTable_User');
+            $user  = $this->getModel('User')->fetchUser($comment->reporter_id);
             $link  = $this->view->url(
                 array(
                     'controller' => 'user',
@@ -26,6 +30,48 @@ class Spindle_View_Helper_Comments extends Zend_View_Helper_Abstract
                   .  '<p>' . $this->view->escape($comment->comment) . '</p>'
                   .  '</div>';
         }
+
+        $html .= $this->renderForm($bugId);
+
         return $html;
+    }
+
+    public function renderForm($bugId)
+    {
+        $html = '';
+        $commentModel = $this->getModel('Comment');
+        if ($commentModel->checkAcl('save')) {
+            $form = $commentModel->getCommentForm();
+            $form->setMethod('post')
+                 ->setAction($this->view->url(
+                       array(
+                           'module'     => 'spindle',
+                           'controller' => 'bug',
+                           'action'     => 'comment',
+                       ),
+                       'default',
+                       true
+                   ));
+            $form->bug_id->setValue($bugId);
+            $form->user_id->setValue($commentModel->getIdentity()->id);
+            $html .= '<h3>Submit a comment:</h3>'
+                  .  $form;
+        }
+        return $html;
+    }
+
+    public function getModel($name)
+    {
+        if (!isset($this->_model[$name])) {
+            $class = 'Spindle_Model_' . $name;
+            $this->_model[$name] = new $class;
+        }
+        return $this->_model[$name];
+    }
+
+    public function setModel($name, $model)
+    {
+        $this->_model[$name] = $model;
+        return $this;
     }
 }

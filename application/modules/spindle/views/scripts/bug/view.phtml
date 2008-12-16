@@ -10,12 +10,6 @@
 <h3>Description</h3>
 <textarea readonly="readonly"><?= $this->escape($this->bug->description) ?></textarea>
 
-<? /*
 <h3>Comments</h3>
-<?= $this->comments($this->bug) ?>
+<?= $this->comments($this->bug->id) ?>
 
-<?  if ($this->checkAcl('bug', 'comment')): ?>
-<h3>Submit a comment:</h3>
-<?= $this->commentForm ?>
-<? endif 
- */ ?>

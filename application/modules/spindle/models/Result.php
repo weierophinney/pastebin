@@ -1,5 +1,5 @@
 <?php
-class Spindle_Model_Bug_Result
+class Spindle_Model_Result
 {
     protected $_data;
 
