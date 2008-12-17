@@ -43,6 +43,11 @@ abstract class Spindle_Model_Model
     protected $_identity;
 
     /**
+     * @var Phly_PubSub_Provider
+     */
+    protected $_plugins;
+
+    /**
      * Primary table for operations
      * @var string
      */
