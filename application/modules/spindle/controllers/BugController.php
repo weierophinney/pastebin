@@ -62,12 +62,10 @@ class Spindle_BugController extends Zend_Controller_Action
             return $this->_helper->redirector('list');
         }
 
-        $bug = $this->model->fetchBug($id);
-        if (null === $bug) {
+        $this->view->bug = $this->model->fetchBug($id);
+        if (null === $this->view->bug) {
             return $this->render('not-found');
         }
-
-        $this->view->bug = $bug;
     }
 
     public function addAction()
@@ -103,13 +101,18 @@ class Spindle_BugController extends Zend_Controller_Action
             return $this->_helper->redirector('list');
         }
 
-        if (!($bugId = $this->_getParam('bug_id'))) {
+        if (!($path = $this->_getParam('path'))) {
             return $this->_helper->redirector('list');
         }
 
+        $segments = explode('/', $path);
+        $bugId    = array_pop($segments);
+
         if (!$id = $this->commentModel->save($request->getPost())) {
             $request->setParam('id', $bugId);
-            return $this->viewAction();
+            $this->_helper->viewRenderer->setScriptAction('view');
+            $this->viewAction();
+            return;
         }
 
         $this->_helper->redirector('view', 'bug', 'spindle', array('id' => $bugId));

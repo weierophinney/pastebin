@@ -11,5 +11,14 @@
 <textarea readonly="readonly"><?= $this->escape($this->bug->description) ?></textarea>
 
 <h3>Comments</h3>
-<?= $this->comments($this->bug->id) ?>
+<?= $this->comments($this->url(
+    array(
+        'module'     => 'spindle',
+        'controller' => 'bug',
+        'action'     => 'view',
+        'id'         => $this->bug->id,
+    ),
+    'default',
+    true
+)) ?>
 

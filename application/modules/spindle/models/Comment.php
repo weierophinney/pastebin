@@ -43,17 +43,17 @@ class Spindle_Model_Comment extends Spindle_Model_Model
     );
 
     /**
-     * Fetch all comments by bug ID
+     * Fetch all comments by path
      * 
-     * @param  int $bugId 
+     * @param  string $path
      * @return Spindle_Model_ResultSet|false False if no privileges
      */
-    public function fetchCommentsByBug($bugId)
+    public function fetchCommentsByPath($path)
     {
         if (!$this->checkAcl('list')) {
             return false;
         }
-        $select = $this->_getSelect()->where('bug_id = ?', $bugId);
+        $select = $this->_getSelect()->where('path = ?', $path);
         $rowSet = $this->getDbTable('comment')->fetchAll($select);
         return new Spindle_Model_ResultSet($rowSet->toArray());
     }

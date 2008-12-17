@@ -88,7 +88,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      */
     public function setReporter($row)
     {
-        if (is_object($row) && empty($row->id)) {
+        if (is_object($row) && empty($row->id) && isset($row->reporter_id)) {
             $identity = $this->getIdentity();
             if ($identity && !empty($identity->id)) {
                 $row->reporter_id = $identity->id;

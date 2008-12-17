@@ -59,7 +59,7 @@ $statements[] =<<<EOQ
 CREATE TABLE "comment" (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
-    bug_id INTEGER NOT NULL,
+    path TEXT NOT NULL,
     "comment" TEXT,
     date_created DATE NOT NULL,
     date_deleted DATE
@@ -67,7 +67,7 @@ CREATE TABLE "comment" (
 EOQ;
 
 $statements[] =<<<EOQ
-CREATE INDEX "comment_bug_id" ON "comment" ("bug_id");
+CREATE INDEX "comment_path" ON "comment" ("path");
 EOQ;
 
 $statements[] =<<<EOQ

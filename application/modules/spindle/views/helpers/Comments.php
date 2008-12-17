@@ -3,18 +3,18 @@ class Spindle_View_Helper_Comments extends Zend_View_Helper_Abstract
 {
     protected $_model = array();
 
-    public function comments($bugId)
+    public function comments($path)
     {
         $commentModel = $this->getModel('Comment');
-        $comments     = $commentModel->fetchCommentsByBug($bugId);
+        $comments     = $commentModel->fetchCommentsByPath($path);
         if (0 == count($comments)) {
             return '<p>No comments</p>'
-                 . $this->renderForm($bugId);
+                 . $this->renderForm($path);
         }
 
         $html = '';
         foreach ($comments as $comment) {
-            $user  = $this->getModel('User')->fetchUser($comment->reporter_id);
+            $user  = $this->getModel('User')->fetchUser($comment->user_id);
             $link  = $this->view->url(
                 array(
                     'controller' => 'user',
@@ -25,18 +25,18 @@ class Spindle_View_Helper_Comments extends Zend_View_Helper_Abstract
                 true
             );
             $html .= '<div class="comment">'
-                  .  '<h4>Reported by <a href="' . $link . '">' . $this->view->escape($user->fullname) . '</a>'
+                  .  '<h4>Poseted by <a href="' . $link . '">' . $this->view->escape($user->fullname) . '</a>'
                   .  ' on ' . date('Y-m-d', strtotime($comment->date_created)) . '</h4>'
                   .  '<p>' . $this->view->escape($comment->comment) . '</p>'
                   .  '</div>';
         }
 
-        $html .= $this->renderForm($bugId);
+        $html .= $this->renderForm($path);
 
         return $html;
     }
 
-    public function renderForm($bugId)
+    public function renderForm($path)
     {
         $html = '';
         $commentModel = $this->getModel('Comment');
@@ -52,7 +52,7 @@ class Spindle_View_Helper_Comments extends Zend_View_Helper_Abstract
                        'default',
                        true
                    ));
-            $form->bug_id->setValue($bugId);
+            $form->path->setValue($path);
             $form->user_id->setValue($commentModel->getIdentity()->id);
             $html .= '<h3>Submit a comment:</h3>'
                   .  $form;
