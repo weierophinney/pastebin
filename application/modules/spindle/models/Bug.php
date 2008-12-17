@@ -51,7 +51,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
     public function __construct($options = null)
     {
         parent::__construct($options);
-        Phly_PubSub::subscribe('Spindle_Model::save::preSave', $this, 'setReporter');
+        $this->getPluginProvider()->subscribe('save::preSave', $this, 'setReporter');
     }
 
     /**

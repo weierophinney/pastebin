@@ -77,6 +77,19 @@ abstract class Spindle_Model_Model
     }
 
     /**
+     * Plugin provider
+     * 
+     * @return Phly_PubSub_Provider
+     */
+    public function getPluginProvider()
+    {
+        if (null === $this->_plugins) {
+            $this->_plugins = new Phly_PubSub_Provider();
+        }
+        return $this->_plugins;
+    }
+
+    /**
      * Set options using setter methods
      * 
      * @param  array $options 
@@ -208,16 +221,17 @@ abstract class Spindle_Model_Model
     /**
      * Insert or update a row
      * 
-     * @pubsub Spindle_Model::save::pre(array $info, string $validator, Spindle_Model_Model $model)
-     * @pubsub Spindle_Model::save::preSave(Zend_Db_Table_Row_Abstract $row, Spindle_Model_Model $model)
-     * @pubsub Spindle_Model::save::post(int|null $id, Spindle_Model_Model $model)
+     * @pubsub save::pre(array $info, string $validator, Spindle_Model_Model $model)
+     * @pubsub save::preSave(Zend_Db_Table_Row_Abstract $row, Spindle_Model_Model $model)
+     * @pubsub save::post(int|null $id, Spindle_Model_Model $model)
      * @param  array $info New or updated row data
      * @param  string|null $validator Validation chain to use; defaults to $_defaultValidator
      * @return false|int Row ID of saved row, false if insufficient privileges
      */
     public function save(array $info, $validator = null)
     {
-        Phly_PubSub::publish('Spindle_Model::save::pre', $info, $validator, $this);
+        $pluginProvider = $this->getPluginProvider();
+        $pluginProvider->publish('save::pre', $info, $validator, $this);
         if (!$this->checkAcl('save')) {
             return false;
         }
@@ -265,10 +279,10 @@ abstract class Spindle_Model_Model
             }
         }
 
-        Phly_PubSub::publish('Spindle_Model::save::preSave', $row, $this);
+        $pluginProvider->publish('Spindle_Model::save::preSave', $row, $this);
         $id = $row->save();
 
-        Phly_PubSub::publish('Spindle_Model::save::post', $id, $this);
+        $pluginProvider->publish('Spindle_Model::save::post', $id, $this);
         return $id;
     }
 
