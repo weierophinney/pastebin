@@ -1,7 +1,4 @@
 - Import bugapp into Spindle module
-  - Refactor models
-    - Allow usage of Zend_Paginator
-    - Allow specifying criteria by array for fetch ops?
   - Refactor views
     - Determine optimal UI for app
 - layout builders per module

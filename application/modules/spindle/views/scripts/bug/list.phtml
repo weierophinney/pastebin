@@ -1,4 +1,6 @@
 <?php
+$this->model->setUsePaginator(true);
+
 $status = ucfirst(strtolower($this->status));
 if (!in_array($status, array('Open', 'Resolved', 'Closed'))) {
     $status = 'Open';
@@ -9,20 +11,20 @@ if ('' != $this->developer) {
     $user = $this->userModel->fetchUser($this->developer);
     if (null !== $user) {
         $method  .= 'ByDeveloper';
-        $bugs     = $this->model->$method($this->developer);
+        $bugs     = $this->model->$method($this->developer, $this->page);
         $listType = $status . ' bugs owned by ' . $user->username;
     }
 } elseif ('' != $this->reporter) {
     $user = $this->userModel->fetchUser($this->reporter);
     if (null !== $user) {
         $method  .= 'ByReporter';
-        $bugs     = $this->model->$method($this->reporter);
+        $bugs     = $this->model->$method($this->reporter, $this->page);
         $listType = $status . ' bugs reported by ' . $user->username;
     }
 }
 
 if (!isset($bugs) || !$bugs) {
-    $bugs     = $this->model->$method();
+    $bugs     = $this->model->$method($this->page);
     $listType = $status . ' bugs';
 }
 
@@ -34,7 +36,11 @@ if (!isset($bugs) || !$bugs) {
     <li><b>No bugs found matching this criteria</b></li>
 <? else: ?>
     <? foreach ($bugs as $bug): ?>
+    <? $bug = (object) $bug ?>
     <li><?= $this->bugLink($bug->id, $bug->summary) ?></li>
     <? endforeach ?>
 <? endif ?>
 </ul>
+
+<?= $this->paginationControl($bugs, 'Sliding', '_paginationControl.phtml') ?>
+

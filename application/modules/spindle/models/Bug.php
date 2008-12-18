@@ -248,7 +248,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * Fetch an individual bug by id
      * 
      * @param  int $id 
-     * @return Spindle_Model_Result|null|false False on lack of privileges
+     * @return Zend_Paginator|Spindle_Model_Result|null|false False on lack of privileges
      */
     public function fetchBug($id)
     {
@@ -265,196 +265,142 @@ class Spindle_Model_Bug extends Spindle_Model_Model
     /**
      * Fetch all open bugs
      * 
-     * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Spindle_Model_ResultSet|false False if no privileges
+     * @param  int|null $limit 
+     * @return Zend_Paginator|Spindle_Model_ResultSet|false False if no privileges
      */
-    public function fetchOpenBugs($limit = null, $offset = null)
+    public function fetchOpenBugs($offset = null, $limit = null)
     {
-        if (!$this->checkAcl('list')) {
-            return false;
-        }
-        $select = $this->_getSelect();
-        $select->where('date_closed IS NULL');
-        $this->_setLimit($select, $limit, $offset)
-             ->_setSort($select);
-        $rowSet = $this->getDbTable('bug')->fetchAll($select);
-        return new Spindle_Model_ResultSet($rowSet->toArray());
+        return $this->_fetchBugs(array(
+            'date_closed IS NULL',
+        ), $limit, $offset);
     }
 
     /**
      * Fetch all closed bugs
      * 
-     * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Spindle_Model_ResultSet|false False if no privileges
+     * @param  int|null $limit 
+     * @return Zend_Paginator|Spindle_Model_ResultSet|false False if no privileges
      */
-    public function fetchClosedBugs($limit = null, $offset = null)
+    public function fetchClosedBugs($offset = null, $limit = null)
     {
-        if (!$this->checkAcl('list')) {
-            return false;
-        }
-        $select = $this->_getSelect();
-        $select->where('date_closed IS NOT NULL');
-        $this->_setLimit($select, $limit, $offset)
-             ->_setSort($select);
-        $rowSet = $this->getDbTable('bug')->fetchAll($select);
-        return new Spindle_Model_ResultSet($rowSet->toArray());
+        return $this->_fetchBugs(array(
+            'date_closed IS NOT NULL',
+        ), $limit, $offset);
     }
 
     /**
      * Fetch all resolved bugs
      * 
-     * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Spindle_Model_ResultSet|false False if no privileges
+     * @param  int|null $limit 
+     * @return Zend_Paginator|Spindle_Model_ResultSet|false False if no privileges
      */
-    public function fetchResolvedBugs($limit = null, $offset = null)
+    public function fetchResolvedBugs($offset = null, $limit = null)
     {
-        if (!$this->checkAcl('list')) {
-            return false;
-        }
-        $select = $this->_getSelect();
-        $select->where('resolution_id > 2')
-               ->where('date_closed IS NULL');
-        $this->_setLimit($select, $limit, $offset)
-             ->_setSort($select);
-        $rowSet = $this->getDbTable('bug')->fetchAll($select);
-        return new Spindle_Model_ResultSet($rowSet->toArray());
+        return $this->_fetchBugs(array(
+            'resolution_id > 2',
+            'date_closed IS NULL',
+        ), $limit, $offset);
     }
 
     /**
      * Fetch open bugs by reporter ID
      * 
      * @param  int $reporterId 
-     * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Spindle_Model_ResultSet|false False if no privileges
+     * @param  int|null $limit 
+     * @return Zend_Paginator|Spindle_Model_ResultSet|false False if no privileges
      */
-    public function fetchOpenBugsByReporter($reporterId, $limit = null, $offset = null)
+    public function fetchOpenBugsByReporter($reporterId, $offset = null, $limit = null)
     {
-        if (!$this->checkAcl('list')) {
-            return false;
-        }
-        $select = $this->_getSelect();
-        $select->where('date_closed IS NULL')
-               ->where('reporter_id = ?', $reporterId);
-        $this->_setLimit($select, $limit, $offset)
-             ->_setSort($select);
-        $rowSet = $this->getDbTable('bug')->fetchAll($select);
-        return new Spindle_Model_ResultSet($rowSet->toArray());
+        return $this->_fetchBugs(array(
+            'date_closed IS NULL',
+            array('reporter_id = ?', $reporterId),
+        ), $limit, $offset);
     }
 
     /**
      * Fetch resolved bugs by reporter
      * 
      * @param  int $reporterId 
-     * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Spindle_Model_ResultSet|false False if no privileges
+     * @param  int|null $limit 
+     * @return Zend_Paginator|Spindle_Model_ResultSet|false False if no privileges
      */
-    public function fetchResolvedBugsByReporter($reporterId, $limit = null, $offset = null)
+    public function fetchResolvedBugsByReporter($reporterId, $offset = null, $limit = null)
     {
-        if (!$this->checkAcl('list')) {
-            return false;
-        }
-        $select = $this->_getSelect();
-        $select->where('resolution_id > 2')
-               ->where('date_closed IS NULL')
-               ->where('reporter_id = ?', $reporterId);
-        $this->_setLimit($select, $limit, $offset)
-             ->_setSort($select);
-        $rowSet = $this->getDbTable('bug')->fetchAll($select);
-        return new Spindle_Model_ResultSet($rowSet->toArray());
+        return $this->_fetchBugs(array(
+            'resolution_id > 2',
+            'date_closed IS NULL',
+            array('reporter_id = ?', $reporterId),
+        ), $limit, $offset);
     }
 
     /**
      * Fetch closed bugs by reporter ID
      * 
      * @param  int $reporterId 
-     * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Spindle_Model_ResultSet|false False if no privileges
+     * @param  int|null $limit 
+     * @return Zend_Paginator|Spindle_Model_ResultSet|false False if no privileges
      */
-    public function fetchClosedBugsByReporter($reporterId, $limit = null, $offset = null)
+    public function fetchClosedBugsByReporter($reporterId, $offset = null, $limit = null)
     {
-        if (!$this->checkAcl('list')) {
-            return false;
-        }
-        $select = $this->_getSelect();
-        $select->where('date_closed IS NOT NULL')
-               ->where('reporter_id = ?', $reporterId);
-        $this->_setLimit($select, $limit, $offset)
-             ->_setSort($select);
-        $rowSet = $this->getDbTable('bug')->fetchAll($select);
-        return new Spindle_Model_ResultSet($rowSet->toArray());
+        return $this->_fetchBugs(array(
+            'date_closed IS NOT NULL',
+            array('reporter_id = ?', $reporterId),
+        ), $limit, $offset);
     }
 
     /**
      * Fetch open bugs by developer
      * 
      * @param  int $developerId 
-     * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Spindle_Model_ResultSet|false False if no privileges
+     * @param  int|null $limit 
+     * @return Zend_Paginator|Spindle_Model_ResultSet|false False if no privileges
      */
     public function fetchOpenBugsByDeveloper($developerId, $limit = null, $offset = null)
     {
-        if (!$this->checkAcl('list')) {
-            return false;
-        }
-        $select = $this->_getSelect();
-        $select->where('date_closed IS NULL')
-               ->where('developer_id = ?', $developerId);
-        $this->_setLimit($select, $limit, $offset)
-             ->_setSort($select);
-        $rowSet = $this->getDbTable('bug')->fetchAll($select);
-        return new Spindle_Model_ResultSet($rowSet->toArray());
+        return $this->_fetchBugs(array(
+            'date_closed IS NULL',
+            array('developer_id = ?', $developerId),
+        ), $limit, $offset);
     }
 
     /**
      * Fetch resolved bugs by developer ID
      * 
      * @param  int $developerId 
-     * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Spindle_Model_ResultSet|false False if no privileges
+     * @param  int|null $limit 
+     * @return Zend_Paginator|Spindle_Model_ResultSet|false False if no privileges
      */
-    public function fetchResolvedBugsByDeveloper($developerId, $limit = null, $offset = null)
+    public function fetchResolvedBugsByDeveloper($developerId, $offset = null, $limit = null)
     {
-        if (!$this->checkAcl('list')) {
-            return false;
-        }
-        $select = $this->_getSelect();
-        $select->where('resolution_id > 2')
-               ->where('date_closed IS NULL')
-               ->where('developer_id = ?', $developerId);
-        $this->_setLimit($select, $limit, $offset)
-             ->_setSort($select);
-        $rowSet = $this->getDbTable('bug')->fetchAll($select);
-        return new Spindle_Model_ResultSet($rowSet->toArray());
+        return $this->_fetchBugs(array(
+            'resolution_id > 2',
+            'date_closed IS NULL',
+            array('developer_id = ?', $developerId),
+        ), $limit, $offset);
     }
 
     /**
      * Fetch closed bugs by developer ID
      * 
      * @param  int $developerId 
-     * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Spindle_Model_ResultSet|false False if no privileges
+     * @param  int|null $limit 
+     * @return Zend_Paginator|Spindle_Model_ResultSet|false False if no privileges
      */
-    public function fetchClosedBugsByDeveloper($developerId, $limit = null, $offset = null)
+    public function fetchClosedBugsByDeveloper($developerId, $offset = null, $limit = null)
     {
-        if (!$this->checkAcl('list')) {
-            return false;
-        }
-        $select = $this->_getSelect();
-        $select->where('date_closed IS NOT NULL')
-               ->where('developer_id = ?', $developerId);
-        $this->_setLimit($select, $limit, $offset)
-             ->_setSort($select);
-        $rowSet = $this->getDbTable('bug')->fetchAll($select);
-        return new Spindle_Model_ResultSet($rowSet->toArray());
+        return $this->_fetchBugs(array(
+            'date_closed IS NOT NULL',
+            array('developer_id = ?', $developerId),
+        ), $limit, $offset);
     }
 
     /**
@@ -478,6 +424,48 @@ class Spindle_Model_Bug extends Spindle_Model_Model
     public function cleanupTestBugs()
     {
         $this->getDbTable('bug')->delete('description = "appBenchmarking"');
+    }
+
+    /**
+     * Fetch bugs by criteria, limit, and offset
+     * 
+     * @param  array $criteria 
+     * @param  string $limit 
+     * @param  int $offset 
+     * @return false|Spindle_Model_ResultSet|Zend_Paginator
+     */
+    protected function _fetchBugs(array $criteria, $limit, $offset)
+    {
+        if (!$this->checkAcl('list')) {
+            return false;
+        }
+
+        $select = $this->_getSelect();
+
+        foreach ($criteria as $criterion) {
+            if (is_array($criterion)) {
+                $statement = array_shift($criterion);
+                $value     = array_shift($criterion);
+                $select->where($statement, $value);
+            } else {
+                $select->where($criterion);
+            }
+        }
+
+        if ($this->usePaginator()) {
+            $page      = (null === $offset) ? 1 : (int) $offset;
+            $paginator = new Zend_Paginator(
+                new Zend_Paginator_Adapter_DbSelect($select)
+            );
+            $paginator->setItemCountPerPage(15)
+                      ->setCurrentPageNumber($page);
+            return $paginator;
+        } else {
+            $this->_setLimit($select, $limit, $offset)
+                 ->_setSort($select);
+        }
+        $rowSet = $this->getDbTable('bug')->fetchAll($select);
+        return new Spindle_Model_ResultSet($rowSet->toArray());
     }
 
     /**

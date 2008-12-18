@@ -52,6 +52,7 @@ class Spindle_BugController extends Zend_Controller_Action
             'developer' => $this->_getParam('developer', ''),
             'reporter'  => $this->_getParam('reporter', ''),
             'status'    => $this->_getParam('status', 'open'),
+            'page'      => $this->_getParam('page', 1),
             'userModel' => new Spindle_Model_User(),
         ));
     }

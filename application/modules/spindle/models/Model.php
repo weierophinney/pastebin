@@ -65,6 +65,11 @@ abstract class Spindle_Model_Model
     protected $_resourceLoader;
 
     /**
+     * @var bool Whether or not to use a paginator for result sets
+     */
+    protected $_usePaginator = false;
+
+    /**
      * Constructor
      * 
      * @param  array|Zend_Config|null $options 
@@ -221,6 +226,28 @@ abstract class Spindle_Model_Model
         }
 
         return $this->getAcl()->isAllowed($role, $this->_aclResource, $privilege);
+    }
+
+    /**
+     * Set flag indicating whether or not to use paginator
+     * 
+     * @param  bool $flag 
+     * @return Spindle_Model_Model
+     */
+    public function setUsePaginator($flag)
+    {
+        $this->_usePaginator = (bool) $flag;
+        return $this;
+    }
+
+    /**
+     * Use a paginator?
+     * 
+     * @return bool
+     */
+    public function usePaginator()
+    {
+        return $this->_usePaginator;
     }
 
     /**
