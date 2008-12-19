@@ -1,0 +1,18 @@
+# PHP values we need to set
+# - timezone should be set
+# - need short open tags for view scripts
+php_value date.timezone "UTC"
+php_value short_open_tag 1
+php_value error_reporting 8191
+php_flag  display_errors On
+php_flag  display_startup_errors Off
+
+# Rewrite Rules
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^bug/list          list.php  [L,QSA]
+RewriteRule ^.*$ index.php [NC,L]
+

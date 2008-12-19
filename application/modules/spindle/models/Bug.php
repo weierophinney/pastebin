@@ -262,6 +262,11 @@ class Spindle_Model_Bug extends Spindle_Model_Model
         return (null !== $row) ? new Spindle_Model_Result($row->toArray()) : null;
     }
 
+    public function fetchAllBugs($offset = null, $limit = null)
+    {
+        return $this->_fetchBugs(array(), $limit, $offset);
+    }
+
     /**
      * Fetch all open bugs
      * 

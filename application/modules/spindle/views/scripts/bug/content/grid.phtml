@@ -1,0 +1,27 @@
+<span dojoType="dojox.data.QueryReadStore" jsId="bug<?= ucfirst($this->type) ?>Store"
+    url="<?= $this->baseUrl() ?>/api/spindle/bug/list/<?= $this->type ?>"></span>
+<table id="bug<?= ucfirst($this->type) ?>Grid" dojoType="dojox.grid.DataGrid" 
+    store="bug<?= ucfirst($this->type) ?>Store" jsId="bug<?= ucfirst($this->type) ?>Grid" 
+    rowsPerPage="30" selectionMode="single" clientSort="false" query="{ id: '*' }" 
+    delayScroll="true">
+    <script type="dojo/method" event="onClick" args="evt">
+var row = bug<?= ucfirst($this->type) ?>Grid.selection.getFirstSelected();
+
+var bugTreePane = dijit.byId("bugTreePane");
+bugTreePane.tree.model.newItem({ name: row.i.id });
+
+var bugPane = dijit.byId("bugPane");
+bugPane.setHref("/api/spindle/bug/content/" + row.i.id + ".html");
+bugPane.refresh();
+    </script>
+    <thead>
+        <tr>
+            <th field="id" width="16em">ID</th>
+            <th field="summary">Summary</th>
+            <th field="type">Type</th>
+            <th field="priority">Priority</th>
+            <th field="date_created">Date Created</th>
+        </tr>
+    </thead>
+</table>
+

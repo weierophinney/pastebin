@@ -14,15 +14,21 @@ dojo.provide("bug.layout.BugListTabContainer");
         postCreate: function() {
             this.bugsOpen = new dijit.layout.ContentPane({
                 id:    "bugListOpen",
-                title: "Open Bugs"
+                title: "Open Bugs",
+                href:  spindle.baseUrl + "/api/spindle/bug/content/open-grid.html",
+                parseOnLoad: true
             });
             this.bugsResolved = new dijit.layout.ContentPane({
                 id:    "bugListResolved",
-                title: "Resolved Bugs"
+                title: "Resolved Bugs",
+                href:  spindle.baseUrl + "/api/spindle/bug/content/resolved-grid.html",
+                parseOnLoad: true
             });
             this.bugsAll = new dijit.layout.ContentPane({
                 id:    "bugListAll",
-                title: "All Bugs"
+                title: "All Bugs",
+                href:  spindle.baseUrl + "/api/spindle/bug/content/all-grid.html",
+                parseOnLoad: true
             });
 
             this.addChild(this.bugsOpen);

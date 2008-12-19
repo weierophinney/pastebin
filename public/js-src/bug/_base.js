@@ -2,6 +2,8 @@ dojo.provide("bug._base");
 
 (function(){
     dojo.require("bug.layout.BugLayout");
+    dojo.require("dojox.data.QueryReadStore");
+    dojo.require("dojox.grid.DataGrid");
 
     bug.initLayout = function() {
         console.log("In bug.initLayout()");
