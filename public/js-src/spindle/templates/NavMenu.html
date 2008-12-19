@@ -5,12 +5,22 @@
 	</div>
 	<div class="dojoxExpandoWrapper" dojoAttachPoint="cwrapper" dojoAttachEvent="ondblclick:_trap">
         <div class="dojoxExpandoContent" dojoAttachPoint="containerNode">
-            <div dojoType="dijit.layout.AccordionContainer" duration="250" style="height:100%">
-                <div dojoType="dijit.layout.AccordionPane" title="Pastebin">
+            <div id="spindleNavMenuAccordion" "dojoType="dijit.layout.AccordionContainer" 
+                duration="250" style="height:100%">
+                <div id="spindleNavMenuPaste" dojoType="dijit.layout.AccordionPane" 
+                    title="Pastebin">
                     <ul class="menu">
-                        <li><a onClick="dijit.byId('pastebin').selectChild(dijit.byId('about'));">About</a></li>
-                        <li><a onClick="dijit.byId('pastebin').selectChild(dijit.byId('new-paste'));">New Paste</a></li>
-                        <li><a onClick="dijit.byId('pastebin').selectChild(dijit.byId('active'));">Current Pastes</a></li>
+                        <li><a onClick="spindle.layoutSwitch('paste');dijit.byId('pastebin').selectChild(dijit.byId('about'));">About</a></li>
+                        <li><a onClick="spindle.layoutSwitch('paste');dijit.byId('pastebin').selectChild(dijit.byId('new-paste'));">New Paste</a></li>
+                        <li><a onClick="spindle.layoutSwitch('paste');dijit.byId('pastebin').selectChild(dijit.byId('active'));">Current Pastes</a></li>
+                    </ul>
+                </div>
+                <div id="spindleNavMenuBugs" dojoType="dijit.layout.AccordionPane" 
+                    title="Bugs">
+                    <ul class="menu">
+                        <li><a onClick="spindle.layoutSwitch('bug');dijit.byId('bugListTabContainer').selectChild(dijit.byId('bugListOpen'));">Open Bugs</a></li>
+                        <li><a onClick="spindle.layoutSwitch('bug');dijit.byId('bugListTabContainer').selectChild(dijit.byId('bugListResolved'));">Resolved Bugs</a></li>
+                        <li><a onClick="spindle.layoutSwitch('bug');dijit.byId('bugListTabContainer').selectChild(dijit.byId('bugListAll'));">All Bugs</a></li>
                     </ul>
                 </div>
             </div>

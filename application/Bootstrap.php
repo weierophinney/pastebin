@@ -134,6 +134,7 @@ class Bootstrap extends My_Application_Bootstrap_Base
         $view->headTitle()->setSeparator(' - ')->append('Spindle');
         $view->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=utf-8');
         $view->dojo()->setDjConfigOption('isDebug', $this->config->view->dojo->isDebug)
+                     ->setDjConfigOption('preventBackButtonFix', false)
                      ->setLocalPath('/js/dojo/dojo.js')
                      ->registerModulePath('../spindle', 'spindle')
                      ->addStylesheetModule('spindle.themes.spindle')

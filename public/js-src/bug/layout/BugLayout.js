@@ -7,6 +7,11 @@ dojo.provide("bug.layout.BugLayout");
     dojo.require("bug.layout.BugTreePane")
 
     dojo.declare("bug.layout.BugLayout", dijit.layout.BorderContainer, {
+        postMixInProperties: function() {
+            this.inherited(arguments);
+            this.id = "bugLayout";
+        },
+
         postCreate: function() {
             this.bugListPane = new bug.layout.BugListPane();
             this.bugPane     = new bug.layout.BugPane();

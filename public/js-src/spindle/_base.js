@@ -65,6 +65,13 @@ dojo.provide("spindle._base");
         }
     };
 
+    spindle.layoutSwitch = function(app) {
+        var module = app + "._base";
+        dojo.require(module);
+        console.log("Calling " + app + ".initLayout()");
+        window[app].initLayout();
+    };
+
     spindle.loginDialog = function(e) {
         if (!spindle._loginDialog) {
             spindle._loginDialog = new dijit.Dialog({
@@ -140,6 +147,28 @@ dojo.provide("spindle._base");
         var ret = {};
         ret[formName] = mapped;
         return ret;
+    };
+
+    spindle.prepareMainPane = function(content) {
+        var layout = dijit.byId("layout");
+        var mainPane = dijit.byId("mainPane");
+        if (mainPane) {
+            mainPane.destroyRecursive();
+        }
+
+        var args = {
+            id:     "mainPane",
+            region: "center"
+        };
+        if (content) {
+            args.content = content;
+        }
+
+        mainPane = new dijit.layout.ContentPane(args);
+        mainPane.startup();
+        layout.addChild(mainPane);
+
+        return mainPane;
     };
 
     spindle._processAuthForm = function(lform) {

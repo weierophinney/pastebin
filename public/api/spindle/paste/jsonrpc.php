@@ -2,7 +2,7 @@
 require_once dirname(__FILE__) . '/bootstrap.php';
 
 $bootstrap = Zend_Registry::get('bootstrap');
-$request   = $bootstrap->getRequest();
+$request   = $bootstrap->request;
 $bootstrap->initDb();
 
 $loader   = new My_Controller_Helper_ResourceLoader;

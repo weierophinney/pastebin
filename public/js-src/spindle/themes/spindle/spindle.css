@@ -13,13 +13,18 @@ body, html {
     height: 100%;
 }
 
-#navPane {
-    width: 200px;
+#navPane, #bugTreePane {
     border: 1px solid #ccc;
     background: #fff;
 }
 
-#navPane .dojoxExpandoTitle {
+#navPane {
+    width: 200px;
+}
+
+#navPane .dojoxExpandoTitle,
+#bugTreePane .dojoxExpandoTitle
+{
     border: none;
 }
 
