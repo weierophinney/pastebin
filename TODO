@@ -1,6 +1,23 @@
 - Import bugapp into Spindle module
   - Refactor views
     - Determine optimal UI for app
+      - split BorderContainer (top and center)
+        - top: Tab container (tabs on left)
+          - Open bugs
+          - Resolved bugs
+          - All bugs
+          - When user logged in:
+            - open bugs you own
+            - open bugs you reported
+        - center (bottom)
+          - three options:
+            - Current bug only
+            - tab container
+              - closable tabs
+              - 1 bug per tab
+            - split
+              - left: tree of bugs that have been opened
+              - center: current bug
 - layout builders per module
   - JS that updates main content pane either 
     - from HREF

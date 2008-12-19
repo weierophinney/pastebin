@@ -33,7 +33,8 @@ class Spindle_BugController extends Zend_Controller_Action
 
 
         $this->view->headTitle()->prepend('Bugs');
-        $this->view->dojo()->enable();
+        $this->view->dojo()->requireModule('bug.main')
+                           ->enable();
         $this->view->placeholder('nav')->append(
             $this->view->render('bug/_nav.phtml')
         );
