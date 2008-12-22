@@ -8,7 +8,7 @@ $bootstrap->initDb();
 $loader   = new My_Controller_Helper_ResourceLoader;
 $loader->initModule('spindle');
 
-$paste = $loader->getService('Paste');
+$paste = new Spindle_Model_Service_Pastebin();
 
 $server = new Zend_Json_Server();
 $server->setClass($paste);

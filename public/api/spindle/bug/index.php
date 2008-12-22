@@ -24,7 +24,7 @@ $bootstrap->initView()
 $loader = new My_Controller_Helper_ResourceLoader;
 $loader->initModule('spindle');
 
-$model = $loader->getModel('Bug');
+$model = new Spindle_Model_BugTracker();
 $view  = Zend_Registry::get('view');
 
 $view->addBasePath(APPLICATION_PATH . '/views');

@@ -10,7 +10,7 @@
  * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version    $Id: $
  */
-class Spindle_Model_Comment extends Spindle_Model_Model
+class Spindle_Model_CommentManager extends Spindle_Model_Model
 {
     /**
      * @var string ACL resource to query

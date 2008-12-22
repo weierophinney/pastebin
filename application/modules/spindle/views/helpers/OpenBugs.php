@@ -36,7 +36,7 @@ class Spindle_View_Helper_OpenBugs extends Zend_View_Helper_Abstract
     public function getModel()
     {
         if (null === $this->_model) {
-            $this->_model = new Spindle_Model_Bug();
+            $this->_model = new Spindle_Model_BugTracker();
         }
         return $this->_model;
     }

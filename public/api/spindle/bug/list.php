@@ -8,7 +8,7 @@ $loader = new My_Controller_Helper_ResourceLoader;
 $loader->initModule('spindle');
 
 $request  = $bootstrap->request;
-$model    = $loader->getModel('Bug');
+$model    = new Spindle_Model_BugTracker();
 
 $url      = $request->getBaseUrl();
 $segments = explode('/', $url);

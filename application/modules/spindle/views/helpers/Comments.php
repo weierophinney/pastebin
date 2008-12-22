@@ -5,7 +5,7 @@ class Spindle_View_Helper_Comments extends Zend_View_Helper_Abstract
 
     public function comments($path)
     {
-        $commentModel = $this->getModel('Comment');
+        $commentModel = $this->getModel('CommentManager');
         $comments     = $commentModel->fetchCommentsByPath($path);
         if (0 == count($comments)) {
             return '<p>No comments</p>'
@@ -14,7 +14,7 @@ class Spindle_View_Helper_Comments extends Zend_View_Helper_Abstract
 
         $html = '';
         foreach ($comments as $comment) {
-            $user  = $this->getModel('User')->fetchUser($comment->user_id);
+            $user  = $this->getModel('UserManager')->fetchUser($comment->user_id);
             $link  = $this->view->url(
                 array(
                     'controller' => 'user',
@@ -25,7 +25,7 @@ class Spindle_View_Helper_Comments extends Zend_View_Helper_Abstract
                 true
             );
             $html .= '<div class="comment">'
-                  .  '<h4>Poseted by <a href="' . $link . '">' . $this->view->escape($user->fullname) . '</a>'
+                  .  '<h4>Posted by <a href="' . $link . '">' . $this->view->escape($user->fullname) . '</a>'
                   .  ' on ' . date('Y-m-d', strtotime($comment->date_created)) . '</h4>'
                   .  '<p>' . $this->view->escape($comment->comment) . '</p>'
                   .  '</div>';
@@ -39,7 +39,7 @@ class Spindle_View_Helper_Comments extends Zend_View_Helper_Abstract
     public function renderForm($path)
     {
         $html = '';
-        $commentModel = $this->getModel('Comment');
+        $commentModel = $this->getModel('CommentManager');
         if ($commentModel->checkAcl('save')) {
             $form = $commentModel->getCommentForm();
             $form->setMethod('post')

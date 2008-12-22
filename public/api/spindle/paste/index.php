@@ -20,7 +20,7 @@ $bootstrap->initView()
 $loader = new My_Controller_Helper_ResourceLoader;
 $loader->initModule('spindle');
 
-$model = $loader->getModel('Paste');
+$model = new Spindle_Model_Pastebin();
 $view  = Zend_Registry::get('view');
 
 $view->addBasePath(APPLICATION_PATH . '/views');

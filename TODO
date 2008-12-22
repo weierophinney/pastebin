@@ -1,4 +1,7 @@
 - Import bugapp into Spindle module
+  - Refactor User model
+    - authenticate() should validate via the form
+    - loginAction() of UserController should then only call authenticate()
   - Refactor views
     - Determine optimal UI for app
       - split BorderContainer (top and center)

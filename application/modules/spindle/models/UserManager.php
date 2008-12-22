@@ -13,7 +13,7 @@ require_once dirname(__FILE__) . '/Model.php';
  * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version    $Id: $
  */
-class Spindle_Model_User extends Spindle_Model_Model implements Zend_Auth_Adapter_Interface
+class Spindle_Model_UserManager extends Spindle_Model_Model implements Zend_Auth_Adapter_Interface
 {
     /** @var string Primary table */
     protected $_primaryTable = 'user';

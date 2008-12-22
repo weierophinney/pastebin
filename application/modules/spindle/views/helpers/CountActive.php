@@ -17,8 +17,14 @@ class Spindle_View_Helper_CountActive extends Zend_View_Helper_Abstract
      */
     public function countActive()
     {
-        require_once dirname(__FILE__) . '/../../models/Paste.php';
-        $model = new Spindle_ModeL_Paste;
-        return $model->fetchActiveCount();
+        return $this->getModel()->fetchActiveCount();
+    }
+
+    public function getModel()
+    {
+        if (!isset($this->model)) {
+            $this->model = new Spindle_Model_Pastebin();
+        }
+        return $this->model;
     }
 }

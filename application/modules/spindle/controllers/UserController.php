@@ -32,7 +32,7 @@ class Spindle_UserController extends Zend_Controller_Action
         $this->view->headTitle()->prepend('User');
         $this->view->dojo()->enable();
 
-        $this->view->model = $this->model = new Spindle_Model_User;
+        $this->view->model = $this->model = new Spindle_Model_UserManager;
     }
 
     public function indexAction()

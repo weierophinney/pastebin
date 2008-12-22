@@ -186,7 +186,7 @@ class Spindle_PasteController extends Zend_Controller_Action
     public function getModel()
     {
         if (null === $this->_model) {
-            $this->_model = $this->_helper->resourceLoader->getModel('Paste');
+            $this->_model = new Spindle_Model_Pastebin();
         }
         return $this->_model;
     }

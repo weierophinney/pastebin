@@ -10,7 +10,7 @@
  * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version    $Id: $
  */
-class Spindle_Model_Bug extends Spindle_Model_Model
+class Spindle_Model_BugTracker extends Spindle_Model_Model
 {
     /**
      * @var string ACL resource to query
@@ -248,7 +248,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * Fetch an individual bug by id
      * 
      * @param  int $id 
-     * @return Zend_Paginator|Spindle_Model_Result|null|false False on lack of privileges
+     * @return Zend_Paginator|Spindle_Model_BugTracker_Bug|null|false False on lack of privileges
      */
     public function fetchBug($id)
     {
@@ -259,7 +259,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
         $select->where('b.id = ?', $id)
                ->where('date_deleted IS NULL');
         $row = $this->getDbTable('bug')->fetchRow($select);
-        return (null !== $row) ? new Spindle_Model_Result($row->toArray()) : null;
+        return (null !== $row) ? new Spindle_Model_BugTracker_Bug($row->toArray()) : null;
     }
 
     public function fetchAllBugs($offset = null, $limit = null)
@@ -437,7 +437,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
      * @param  array $criteria 
      * @param  string $limit 
      * @param  int $offset 
-     * @return false|Spindle_Model_ResultSet|Zend_Paginator
+     * @return false|Spindle_Model_BugTracker_Bugs|Zend_Paginator
      */
     protected function _fetchBugs(array $criteria, $limit, $offset)
     {
@@ -470,7 +470,7 @@ class Spindle_Model_Bug extends Spindle_Model_Model
                  ->_setSort($select);
         }
         $rowSet = $this->getDbTable('bug')->fetchAll($select);
-        return new Spindle_Model_ResultSet($rowSet->toArray());
+        return new Spindle_Model_BugTracker_Bugs($rowSet->toArray());
     }
 
     /**

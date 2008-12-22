@@ -8,7 +8,7 @@ $loader = new My_Controller_Helper_ResourceLoader;
 $loader->initModule('spindle');
 
 $request  = $bootstrap->request;
-$model    = $loader->getModel('Paste');
+$model    = new Spindle_Model_Pastebin();
 $dojoData = new Zend_Dojo_Data('id', $model->fetchActive($request->getQuery()), 'id');
 $dojoData->setMetadata('count', $model->fetchActiveCount());
 

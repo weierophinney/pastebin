@@ -14,8 +14,8 @@ class Spindle_BugController extends Zend_Controller_Action
 
     public function preDispatch()
     {
-        $this->model        = new Spindle_Model_Bug;
-        $this->commentModel = new Spindle_Model_Comment;
+        $this->model        = new Spindle_Model_BugTracker;
+        $this->commentModel = new Spindle_Model_CommentManager;
 
         $commentsHelper = $this->view->getHelper('comments');
         $commentsHelper->setModel('Comment', $this->commentModel);
@@ -54,7 +54,7 @@ class Spindle_BugController extends Zend_Controller_Action
             'reporter'  => $this->_getParam('reporter', ''),
             'status'    => $this->_getParam('status', 'open'),
             'page'      => $this->_getParam('page', 1),
-            'userModel' => new Spindle_Model_User(),
+            'userModel' => new Spindle_Model_UserManager(),
         ));
     }
 

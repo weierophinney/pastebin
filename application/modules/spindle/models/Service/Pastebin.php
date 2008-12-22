@@ -1,10 +1,10 @@
 <?php
-class Spindle_Model_Service_Paste
+class Spindle_Model_Service_Pastebin
 {
     /**
-     * @var Paste
+     * @var Spindle_Model_Pastebin
      */
-    protected $_paste;
+    protected $_pastebin;
 
     /**
      * @var My_Controller_Helper_ResourceLoader
@@ -14,13 +14,13 @@ class Spindle_Model_Service_Paste
     /**
      * Constructor
      * 
-     * @param  Paste|null $paste 
+     * @param  Spindle_Model_Pastebin|null $pastebin
      * @return void
      */
-    public function __construct(Paste $paste = null)
+    public function __construct(Spindle_Model_Pastebin $pastebin = null)
     {
-        if (null !== $paste) {
-            $this->_setPaste($paste);
+        if (null !== $pastebin) {
+            $this->_setPastebin($pastebin);
         }
     }
 
@@ -46,15 +46,15 @@ class Spindle_Model_Service_Paste
      */
     public function add(array $data)
     {
-        $paste  = $this->_getPaste();
-        $result = $this->_getPaste()->add($data);
+        $pastebin = $this->_getPastebin();
+        $result   = $pastebin->add($data);
         if ($result) {
             return array(
                 'success' => $result,
             );
         }
 
-        $form     = $paste->getForm();
+        $form     = $pastebin->getForm();
         $messages = array();
         $info     = $form->getMessages();
         if (isset($info['pasteform'])) {
@@ -101,7 +101,7 @@ class Spindle_Model_Service_Paste
      */
     public function get($id)
     {
-        return $this->_getPaste($id);
+        return $this->_getPastebin()->get($id);
     }
 
     /**
@@ -117,7 +117,7 @@ class Spindle_Model_Service_Paste
      */
     public function fetchActive($criteria = null)
     {
-        return $this->_getPaste()->fetchActive($criteria);
+        return $this->_getPastebin()->fetchActive($criteria);
     }
 
     /**
@@ -127,18 +127,18 @@ class Spindle_Model_Service_Paste
      */
     public function fetchActiveCount()
     {
-        return $this->_getPaste()->fetchActiveCount();
+        return $this->_getPastebin()->fetchActiveCount();
     }
 
     /**
      * Set paste object
      * 
-     * @param  Paste $paste 
-     * @return Paste_Service
+     * @param  Spindle_Model_Pastebin $pastebin
+     * @return Spindle_Model_Service_Pastebin
      */
-    protected function _setPaste(Paste $paste)
+    protected function _setPastebin(Spindle_Model_Pastebin $pastebin)
     {
-        $this->_paste = $paste;
+        $this->_pastebin = $pastebin;
         return $this;
     }
 
@@ -147,12 +147,12 @@ class Spindle_Model_Service_Paste
      * 
      * @return Paste
      */
-    protected function _getPaste()
+    protected function _getPastebin()
     {
-        if (null === $this->_paste) {
-            $this->_paste = $this->_getResourceLoader()->getModel('paste');
+        if (null === $this->_pastebin) {
+            $this->_pastebin = $this->_getResourceLoader()->getModel('pastebin');
         }
-        return $this->_paste;
+        return $this->_pastebin;
     }
 
     /**
