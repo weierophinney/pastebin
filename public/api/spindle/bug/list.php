@@ -10,7 +10,7 @@ $loader->initModule('spindle');
 $request  = $bootstrap->request;
 $model    = new Spindle_Model_BugTracker();
 
-$url      = $request->getBaseUrl();
+$url      = $request->getPathInfo();
 $segments = explode('/', $url);
 $type     = array_pop($segments);
 
@@ -30,9 +30,14 @@ if ($sort = $request->getParam('sort', false)) {
     $model->setSortOrder($sort, $dir);
 }
 
-$dojoData = new Zend_Dojo_Data('id', $model->$model($offset, $limit), 'id');
-/* @todo Need to add methods for *COUNTING* total results */
-// $dojoData->setMetadata('count', $model->fetchActiveCount());
+$items = $model->$method($offset, $limit);
+
+$model->setDoCount(true);
+$count = $model->$method();
+$model->setDoCount(false);
+
+$dojoData = new Zend_Dojo_Data('id', $items, 'id');
+$dojoData->setMetadata('count', $count);
 
 header('Content-Type: application/json');
 echo $dojoData;

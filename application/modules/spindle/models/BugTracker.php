@@ -23,6 +23,11 @@ class Spindle_Model_BugTracker extends Spindle_Model_Model
     protected $_defaultValidator = 'bug';
 
     /**
+     * @var bool Do a count of records only
+     */
+    protected $_doCount = false;
+
+    /**
      * @var Spindle_Model_Form_Bug
      */
     protected $_form;
@@ -94,6 +99,28 @@ class Spindle_Model_BugTracker extends Spindle_Model_Model
                 $row->reporter_id = $identity->id;
             }
         }
+    }
+
+    /**
+     * Do a count of records only
+     * 
+     * @param  bool $flag 
+     * @return Spindle_Model_BugTracker
+     */
+    public function setDoCount($flag = true)
+    {
+        $this->_doCount = (bool) $flag;
+        return $this;
+    }
+
+    /**
+     * Only do a count of records?
+     * 
+     * @return bool
+     */
+    public function doCount()
+    {
+        return $this->_doCount;
     }
 
     /**
@@ -469,6 +496,11 @@ class Spindle_Model_BugTracker extends Spindle_Model_Model
             $this->_setLimit($select, $limit, $offset)
                  ->_setSort($select);
         }
+
+        if ($this->doCount()) {
+            return $this->getDbTable('bug')->getAdapter()->fetchOne($select);
+        }
+
         $rowSet = $this->getDbTable('bug')->fetchAll($select);
         return new Spindle_Model_BugTracker_Bugs($rowSet->toArray());
     }
@@ -482,11 +514,18 @@ class Spindle_Model_BugTracker extends Spindle_Model_Model
     {
         $bugTable = $this->getDbTable('bug');
         $select   = $bugTable->select()->setIntegrityCheck(false);
-        $select->from(array('b' => 'bug'))
-               ->joinLeft(array('i' => 'issue_type'), 'i.id = b.type_id', array('issue_type' => 'type'))
+
+        if ($this->doCount()) {
+            $select->from(array('b' => 'bug'), array('count' => 'count(*)'));
+        } else {
+            $select->from(array('b' => 'bug'));
+        }
+
+        $select->joinLeft(array('i' => 'issue_type'), 'i.id = b.type_id', array('issue_type' => 'type'))
                ->joinLeft(array('r' => 'resolution_type'), 'r.id = b.resolution_id', array('resolution'))
                ->joinLeft(array('p' => 'priority_type'), 'p.id = b.priority_id', array('priority'))
                ->where('date_deleted IS NULL'); // never fetch deleted bugs
+
         return $select;
     }
 
@@ -500,12 +539,14 @@ class Spindle_Model_BugTracker extends Spindle_Model_Model
      */
     protected function _setLimit(Zend_Db_Table_Select $select, $limit, $offset)
     {
-        if (null !== $limit) {
-            if (null === $offset) {
-                $offset = 0;
-            }
+        if (!$this->doCount()) {
+            if (null !== $limit) {
+                if (null === $offset) {
+                    $offset = 0;
+                }
 
-            $select->limit((int) $limit, (int) $offset);
+                $select->limit((int) $limit, (int) $offset);
+            }
         }
         return $this;
     }
@@ -518,9 +559,11 @@ class Spindle_Model_BugTracker extends Spindle_Model_Model
      */
     protected function _setSort(Zend_Db_Table_Select $select)
     {
-        if (!empty($this->_sortOrder)) {
-            foreach ($this->_sortOrder as $sortSpec) {
-                $select->order($sortSpec);
+        if (!$this->doCount()) {
+            if (!empty($this->_sortOrder)) {
+                foreach ($this->_sortOrder as $sortSpec) {
+                    $select->order($sortSpec);
+                }
             }
         }
         return $this;
