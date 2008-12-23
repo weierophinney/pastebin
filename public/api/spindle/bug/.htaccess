@@ -14,5 +14,7 @@ RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^.*$ - [NC,L]
 RewriteRule ^list          list.php  [L,QSA]
+RewriteRule ^jsonrpc           jsonrpc.php [L]
+RewriteRule ^content/jsonrpc   jsonrpc.php [L]
 RewriteRule ^.*$ index.php [NC,L]
 

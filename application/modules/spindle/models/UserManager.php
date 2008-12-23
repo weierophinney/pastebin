@@ -169,7 +169,7 @@ class Spindle_Model_UserManager extends Spindle_Model_Model
     public function getRegisterForm()
     {
         if (empty($this->_formRegister)) {
-            $this->_formRegister = new Spindle_Model_Form_Register;
+            $this->_formRegister = new Spindle_Model_Form_Register(array('model' => $this));
         }
         return $this->_formRegister;
     }

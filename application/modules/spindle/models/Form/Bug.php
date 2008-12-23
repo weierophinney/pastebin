@@ -1,13 +1,15 @@
 <?php
 class Spindle_Model_Form_Bug extends Zend_Dojo_Form
 {
+    protected $_model;
+
     public function init()
     {
-        $this->addPrefixPath('My_Form_Element', 'My/Form/Element/', 'element');
-        $this->addPrefixPath('My_Form_Decorator', 'My/Form/Decorator/', 'decorator');
+        $this->setName('bugform')
+             ->addPrefixPath('My_Form_Element', 'My/Form/Element/', 'element')
+             ->addPrefixPath('My_Form_Decorator', 'My/Form/Decorator/', 'decorator');
 
-        $helper = Zend_Controller_Action_HelperBroker::getStaticHelper('ResourceLoader');
-        $model  = $helper->getModel('BugTracker');
+        $model  = $this->getModel();
 
         $priorities = $model->getPriorities();
         $types      = $model->getTypes();
@@ -50,5 +52,19 @@ class Spindle_Model_Form_Bug extends Zend_Dojo_Form
             'required'   => false,
             'decorators' => array('ViewHelper'),
         ));
+    }
+
+    public function setModel($model)
+    {
+        $this->_model = $model;
+        return $this;
+    }
+
+    public function getModel()
+    {
+        if (null === $this->_model) {
+            $this->setModel(new Spindle_Model_BugTracker());
+        }
+        return $this->_model;
     }
 }

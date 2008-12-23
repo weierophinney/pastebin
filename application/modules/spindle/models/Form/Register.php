@@ -1,13 +1,14 @@
 <?php
 class Spindle_Model_Form_Register extends Zend_Dojo_Form
 {
+    protected $_model;
+
     public function init()
     {
         $this->addPrefixPath('My_Form_Element', 'My/Form/Element/', 'element');
         $this->addPrefixPath('My_Form_Decorator', 'My/Form/Decorator/', 'decorator');
 
-        $helper = Zend_Controller_Action_HelperBroker::getStaticHelper('ResourceLoader');
-        $user   = $helper->getModel('UserManager'); // mainly ensure it's loaded, for validation'
+        $user   = $this->getModel();
 
         $this->addElementPrefixPath('Spindle_Model_Validate', dirname(__FILE__) . '/../Validate', 'validate');
 
@@ -77,5 +78,16 @@ class Spindle_Model_Form_Register extends Zend_Dojo_Form
             'ignore'   => true,
             'label'    => 'Register',
         ));
+    }
+
+    public function setModel($model)
+    {
+        $this->_model = $model;
+        return $this;
+    }
+
+    public function getModel()
+    {
+        return $this->_model;
     }
 }

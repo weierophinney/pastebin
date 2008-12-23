@@ -88,7 +88,7 @@ dojo.provide("spindle._base");
                     var rform = dojo.byId("register");
                     spindle.prepareForm(rform);
                     dojo.connect(rform, "onsubmit", spindle, "processRegisterForm");
-                },
+                }
             });
             dojo.body().appendChild(spindle._loginDialog.domNode);
         }

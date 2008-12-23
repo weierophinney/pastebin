@@ -183,7 +183,11 @@ abstract class Spindle_Model_Model implements Zend_Acl_Resource_Interface
     public function getIdentity()
     {
         if (null === $this->_identity) {
-            return 'guest';
+            $auth = Zend_Auth::getInstance();
+            if (!$auth->hasIdentity()) {
+                return 'guest';
+            }
+            $this->setIdentity($auth->getIdentity());
         }
 
         return $this->_identity;
@@ -321,7 +325,6 @@ abstract class Spindle_Model_Model implements Zend_Acl_Resource_Interface
             $info = $info[$parent];
         }
 
-
         if (array_key_exists('id', $info)) {
             $id = $info['id'];
             unset($info['id']);
@@ -331,7 +334,7 @@ abstract class Spindle_Model_Model implements Zend_Acl_Resource_Interface
             }
         }
         if (null === $row) {
-            $row = $table->createRow();
+            $row = $table->createRow($info);
             $row->date_created = date('Y-m-d');
         }
 

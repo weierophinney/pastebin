@@ -12,7 +12,9 @@ $whitelist = array(
     '/content/all-grid.html',
 );
 
-if (!in_array($file, $whitelist)) {
+if (!in_array($file, $whitelist)
+    && !preg_match('#^/content/(bug)-(\d+)\.html$#', $file, $matches)
+) {
     header('HTTP/1.0 501 Not Implemented');
     echo "<h1>501 - Not Implemented</h1>";
     echo "<p>Page requested: " . htmlentities($file) . "</p>";
@@ -33,10 +35,11 @@ $view->baseUrl = Zend_Registry::get('baseUrl');
 $view->model   = $model;
 
 if (isset($matches) && $matches) {
-    $view->id    = $matches[2];
+    $view->bug    = $model->fetchBug($matches[2]);
     switch ($matches[1]) {
+        case 'bug':
         default:
-            $viewScript = '';
+            $viewScript = 'bug/content/view.phtml';
             break;
     }
 } else {

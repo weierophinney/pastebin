@@ -4,6 +4,7 @@ class Spindle_Model_UserManager_User
     implements Zend_Auth_Adapter_Interface, Zend_Acl_Role_Interface
 {
     protected $_allowed = array(
+        'id',
         'username',
         'password',
         'email',

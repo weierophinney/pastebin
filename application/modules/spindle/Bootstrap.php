@@ -31,8 +31,6 @@ class Spindle_Bootstrap extends My_Application_Bootstrap_Module
     public function initAutoloader()
     {
         $autoloader = $this->getResourceLoader();
-        $helper = Zend_Controller_Action_HelperBroker::getStaticHelper('ResourceLoader');
-        $helper->addResourceLoader('spindle', $autoloader);
         return $this;
     }
 

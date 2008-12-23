@@ -14,6 +14,10 @@ class Spindle_BugController extends Zend_Controller_Action
 
     public function preDispatch()
     {
+        $ac = $this->_helper->getHelper('AjaxContext');
+        $ac->addActionContext('add', 'html');
+        $ac->initContext($this->_getParam('format'));
+
         $this->model        = new Spindle_Model_BugTracker;
         $this->commentModel = new Spindle_Model_CommentManager;
 

@@ -53,7 +53,6 @@ class Bootstrap extends My_Application_Bootstrap_Base
     public function initHelpers()
     {
         Zend_Controller_Action_HelperBroker::addPrefix('My_Controller_Helper');
-        Zend_Controller_Action_HelperBroker::getStaticHelper('ResourceLoader');
         return $this;
     }
 

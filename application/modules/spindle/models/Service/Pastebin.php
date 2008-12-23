@@ -150,7 +150,7 @@ class Spindle_Model_Service_Pastebin
     protected function _getPastebin()
     {
         if (null === $this->_pastebin) {
-            $this->_pastebin = $this->_getResourceLoader()->getModel('pastebin');
+            $this->_pastebin = new Spindle_Model_Pastebin();
         }
         return $this->_pastebin;
     }

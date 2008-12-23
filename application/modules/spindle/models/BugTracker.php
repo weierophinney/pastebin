@@ -280,6 +280,24 @@ class Spindle_Model_BugTracker extends Spindle_Model_Model
         return $adapter->fetchPairs('select id, priority FROM priority_type');
     }
 
+    public function save(array $info, $validator = null)
+    {
+        if (empty($info['reporter_id'])) {
+            $user  = $this->getIdentity();
+            if (isset($user->id)) {
+                $info['reporter_id'] = $user->id;
+            }
+        }
+        $form = $this->getBugForm();
+        $form->addElement('hidden', 'reporter_id', array(
+            'required'   => true,
+            'validators' => array(
+                'Digits',
+            ),
+        ));
+        return parent::save($info, $validator);
+    }
+
     /**
      * Fetch an individual bug by id
      * 
@@ -452,7 +470,7 @@ class Spindle_Model_BugTracker extends Spindle_Model_Model
     public function getBugForm()
     {
         if (null === $this->_form) {
-            $this->_form = new Spindle_Model_Form_Bug;
+            $this->_form = new Spindle_Model_Form_Bug(array('model' => $this));
         }
         return $this->_form;
     }
