@@ -13,11 +13,6 @@
 class Spindle_Model_CommentManager extends Spindle_Model_Model
 {
     /**
-     * @var string ACL resource to query
-     */
-    protected $_aclResource = 'comment';
-
-    /**
      * @var string default validation chain (form)
      */
     protected $_defaultValidator = 'comment';
@@ -34,6 +29,15 @@ class Spindle_Model_CommentManager extends Spindle_Model_Model
     protected $_primaryTable = 'comment';
 
     /**
+     * @var array ACL privilege map
+     */
+    protected $_privilegeMap = array(
+        'guest'     => array('list'),
+        'user'      => array('save'),
+        'developer' => array('delete'),
+    );
+
+    /**
      * Columns protected from save operations
      * @var array
      */
@@ -41,6 +45,11 @@ class Spindle_Model_CommentManager extends Spindle_Model_Model
         'date_created',
         'date_deleted',
     );
+
+    /**
+     * @var string ACL resource identifier
+     */
+    protected $_resourceId = 'comment';
 
     /**
      * Fetch all comments by path

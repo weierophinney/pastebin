@@ -13,11 +13,6 @@
 class Spindle_Model_BugTracker extends Spindle_Model_Model
 {
     /**
-     * @var string ACL resource to query
-     */
-    protected $_aclResource = 'bug';
-
-    /**
      * @var string default validation chain (form)
      */
     protected $_defaultValidator = 'bug';
@@ -39,6 +34,15 @@ class Spindle_Model_BugTracker extends Spindle_Model_Model
     protected $_primaryTable = 'bug';
 
     /**
+     * @var array ACL privilege map
+     */
+    protected $_privilegeMap = array(
+        'guest'     => array('view', 'list'),
+        'user'      => array('comment', 'save', 'link'),
+        'developer' => array('resolve', 'close', 'delete'),
+    );
+
+    /**
      * Columns that may not be specified in save operations
      * @var array
      */
@@ -47,6 +51,11 @@ class Spindle_Model_BugTracker extends Spindle_Model_Model
         'date_resolved',
         'date_deleted',
     );
+
+    /**
+     * @var string ACL resource
+     */
+    protected $_resourceId = 'bug';
 
     /**
      * @var array Sort orders

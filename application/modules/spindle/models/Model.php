@@ -10,17 +10,12 @@
  * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version    $Id: $
  */
-abstract class Spindle_Model_Model
+abstract class Spindle_Model_Model implements Zend_Acl_Resource_Interface
 {
     /**
      * @var Spindle_Model_Acl_Spindle
      */
     protected $_acl;
-
-    /**
-     * @var string Resource in ACL to query
-     */
-    protected $_aclResource;
 
     /**
      * @var array Class methods
@@ -60,9 +55,19 @@ abstract class Spindle_Model_Model
     protected $_protectedColumns = array();
 
     /**
+     * @var string ACL resource identifier
+     */
+    protected $_resourceId;
+
+    /**
      * @var My_Controller_Helper_ResourceLoader
      */
     protected $_resourceLoader;
+
+    /**
+     * @var array Privilege map (role => privileges)
+     */
+    protected $_privilegeMap;
 
     /**
      * @var bool Whether or not to use a paginator for result sets
@@ -185,6 +190,29 @@ abstract class Spindle_Model_Model
     }
 
     /**
+     * ACL resource identifier
+     * 
+     * @return string
+     */
+    public function getResourceId()
+    {
+        if (null === $this->_resourceId) {
+            throw new Spindle_Model_Exception('No ACL resource identifier specified for model');
+        }
+        return $this->_resourceId;
+    }
+
+    /**
+     * ACL privilege map for this resource
+     * 
+     * @return array
+     */
+    public function getPrivilegeMap()
+    {
+        return $this->_privilegeMap;
+    }
+
+    /**
      * Set ACLs
      * 
      * @param  Zend_Acl $acl 
@@ -193,6 +221,14 @@ abstract class Spindle_Model_Model
     public function setAcl(Zend_Acl $acl)
     {
         $this->_acl = $acl;
+
+        if (!$acl->has($this)) {
+            $acl->add($this);
+            foreach ($this->getPrivilegeMap() as $role => $privileges) {
+                $acl->allow($role, $this, $privileges);
+            }
+        }
+
         return $this;
     }
 
@@ -219,13 +255,9 @@ abstract class Spindle_Model_Model
      */
     public function checkAcl($privilege)
     {
-        if (null === $this->_aclResource) {
-            throw new Spindle_Model_Exception('No ACL resource defined');
-        }
-
         return $this->getAcl()->isAllowed(
             $this->getIdentity(), 
-            $this->_aclResource, 
+            $this, 
             $privilege
         );
     }
