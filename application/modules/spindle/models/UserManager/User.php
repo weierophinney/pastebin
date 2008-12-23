@@ -1,7 +1,7 @@
 <?php
 class Spindle_Model_UserManager_User 
     extends Spindle_Model_Result 
-    implements Zend_Auth_Adapter_Interface
+    implements Zend_Auth_Adapter_Interface, Zend_Acl_Role_Interface
 {
     protected $_allowed = array(
         'username',
@@ -72,5 +72,13 @@ class Spindle_Model_UserManager_User
             $result = new Zend_Auth_Result(Zend_Auth_Result::SUCCESS, $this);
         }
         return $result;
+    }
+
+    public function getRoleId()
+    {
+        if (!isset($this->role)) {
+            return 'guest';
+        }
+        return $this->role;
     }
 }

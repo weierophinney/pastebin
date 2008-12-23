@@ -177,6 +177,10 @@ abstract class Spindle_Model_Model
      */
     public function getIdentity()
     {
+        if (null === $this->_identity) {
+            return 'guest';
+        }
+
         return $this->_identity;
     }
 
@@ -215,17 +219,15 @@ abstract class Spindle_Model_Model
      */
     public function checkAcl($privilege)
     {
-        $identity = $this->getIdentity();
-        if (!$identity || !isset($identity->role)) {
-            $role = 'guest';
-        } else {
-            $role = $identity->role;
-        }
         if (null === $this->_aclResource) {
             throw new Spindle_Model_Exception('No ACL resource defined');
         }
 
-        return $this->getAcl()->isAllowed($role, $this->_aclResource, $privilege);
+        return $this->getAcl()->isAllowed(
+            $this->getIdentity(), 
+            $this->_aclResource, 
+            $privilege
+        );
     }
 
     /**

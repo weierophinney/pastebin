@@ -73,7 +73,7 @@ class Spindle_BugController extends Zend_Controller_Action
     public function addAction()
     {
         if (!$this->model->checkAcl('save')) {
-            $this->_forward('list');
+            return $this->_forward('list');
         }
     }
 

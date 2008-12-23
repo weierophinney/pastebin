@@ -7,7 +7,7 @@ class Spindle_Model_Form_Bug extends Zend_Dojo_Form
         $this->addPrefixPath('My_Form_Decorator', 'My/Form/Decorator/', 'decorator');
 
         $helper = Zend_Controller_Action_HelperBroker::getStaticHelper('ResourceLoader');
-        $model  = $helper->getModel('bug');
+        $model  = $helper->getModel('BugTracker');
 
         $priorities = $model->getPriorities();
         $types      = $model->getTypes();
