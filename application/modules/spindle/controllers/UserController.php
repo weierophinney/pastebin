@@ -48,22 +48,19 @@ class Spindle_UserController extends Zend_Controller_Action
             return $this->_helper->redirector('index');
         }
 
-
-        // Get our form and validate it
-        $form = $this->view->form = $this->model->getLoginForm();
-        if (!$form->isValid($request->getPost())) {
-            // Invalid entries
-            return $this->render('index'); // re-render the login form
+        if (!$credentials = $request->getPost('login', false)) {
+            return $this->_helper->redirector('index');
         }
 
         // Setup our authentication adapter and check credentials
-        $this->model->setIdentity($form->getValue('username'))
-                    ->setCredentials($form->getValue('password'));
-        $auth    = Zend_Auth::getInstance();
-        $result  = $auth->authenticate($this->model);
+        Phly_PubSub::publish('log', "Validating credentials: ". var_export($credentials, 1));
+        $user   = $this->model->create($credentials);
+        $auth   = Zend_Auth::getInstance();
+        $result = $auth->authenticate($user);
         if (!$result->isValid()) {
             // Invalid credentials
-            $form->setDescription('Invalid credentials provided')
+            $this->model->getLoginForm()
+                 ->setDescription('Invalid credentials provided')
                  ->addErrorMessage('Invalid credentials provided');
             return $this->render('index'); // re-render the login form
         }
@@ -105,14 +102,7 @@ class Spindle_UserController extends Zend_Controller_Action
         }
 
         // Authenticate and persist user identity
-        $userRow = $this->model->fetchUser($id);
-        $user    = array(
-            'id'           => $userRow->id,
-            'username'     => $userRow->username,
-            'fullname'     => $userRow->fullname,
-            'email'        => $userRow->email,
-            'date_created' => $userRow->date_created,
-        );
+        $user = $this->model->fetchUser($id);
         Zend_Auth::getInstance()->getStorage()->write((object) $user);
 
         if (null !== $this->_helper->ajaxContext->getCurrentContext()) {

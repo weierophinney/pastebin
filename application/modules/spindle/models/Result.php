@@ -10,6 +10,43 @@ abstract class Spindle_Model_Result
             throw new Spindle_Model_Exception('No allowed fields specified!');
         }
 
+        $this->populate($data);
+    }
+
+    public function __set($key, $value)
+    {
+        if (!in_array($key, $this->_allowed)) {
+            throw new Spindle_Model_Exception('Result does not allow setting arbitrary values ("' . $key . '")');
+        }
+        $this->_data[$key] = $value;
+    }
+
+    public function __get($key)
+    {
+        if (!array_key_exists($key, $this->_data)) {
+            return null;
+        }
+        return $this->_data[$key];
+    }
+
+    public function __isset($key)
+    {
+        return isset($this->_data[$key]);
+    }
+
+    public function __unset($key)
+    {
+        if ($this->__isset($key)) {
+            unset($this->_data[$key]);
+        }
+    }
+
+    public function populate($data)
+    {
+        if (null === $data) {
+            return;
+        }
+
         if (is_object($data) && method_exists($data, 'toArray')) {
             $data = $data->toArray();
         } elseif (is_object($data)) {
@@ -22,24 +59,18 @@ abstract class Spindle_Model_Result
 
         foreach ($data as $key => $value) {
             if (in_array($key, $this->_allowed)) {
-                $this->_data[$key] = $value;
+                $this->{$key} = $value;
             }
         }
     }
 
-    public function __set($key, $value)
+    public function toArray()
     {
-        if (!in_array($key, $this->_allowed)) {
-            throw new Spindle_Model_Exception('Bug result does not allow setting arbitrary values');
-        }
-        $this->_data[$key] = $value;
+        return $this->_data;
     }
 
-    public function __get($key)
+    public function toJson()
     {
-        if (!array_key_exists($key, $this->_data)) {
-            return null;
-        }
-        return $this->_data[$key];
+        return Zend_Json::encode($this->toArray());
     }
 }

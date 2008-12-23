@@ -9,7 +9,7 @@ class Spindle_Model_Validate_UniqueUsername extends Zend_Validate_Abstract
 
     protected $_model;
 
-    public function __construct(Spindle_Model_User $model)
+    public function __construct(Spindle_Model_UserManager $model)
     {
         $this->_model = $model;
     }

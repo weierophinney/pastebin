@@ -7,7 +7,7 @@ class Spindle_Model_Form_Register extends Zend_Dojo_Form
         $this->addPrefixPath('My_Form_Decorator', 'My/Form/Decorator/', 'decorator');
 
         $helper = Zend_Controller_Action_HelperBroker::getStaticHelper('ResourceLoader');
-        $user   = $helper->getModel('User'); // mainly ensure it's loaded, for validation'
+        $user   = $helper->getModel('UserManager'); // mainly ensure it's loaded, for validation'
 
         $this->addElementPrefixPath('Spindle_Model_Validate', dirname(__FILE__) . '/../Validate', 'validate');
 

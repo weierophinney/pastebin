@@ -13,8 +13,11 @@ require_once dirname(__FILE__) . '/Model.php';
  * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version    $Id: $
  */
-class Spindle_Model_UserManager extends Spindle_Model_Model implements Zend_Auth_Adapter_Interface
+class Spindle_Model_UserManager extends Spindle_Model_Model
 {
+    /** @var array Array of Zend_Db_Table_Abstract objects */
+    protected $_dbTable = array();
+
     /** @var string Primary table */
     protected $_primaryTable = 'user';
 
@@ -24,12 +27,6 @@ class Spindle_Model_UserManager extends Spindle_Model_Model implements Zend_Auth
         'date_banned',
     );
 
-    /** @var string username to authenticate */
-    protected $_identity;
-
-    /** @var string password to use when authenticating */
-    protected $_credentials;
-
     /** @var Spindle_Model_Form_Login */
     protected $_formLogin;
 
@@ -37,84 +34,9 @@ class Spindle_Model_UserManager extends Spindle_Model_Model implements Zend_Auth
     protected $_formRegister;
 
     /**
-     * Set authentication identity
-     * 
-     * @param  string $username 
-     * @return Spindle_Model_User
-     */
-    public function setIdentity($username)
-    {
-        $this->_identity = (string) $username;
-        return $this;
-    }
-
-    /**
-     * Retrieve user identity
-     * 
-     * @return string|null
-     */
-    public function getIdentity()
-    {
-        return $this->_identity;
-    }
-
-    /**
-     * Set authentication credentials
-     * 
-     * @param  string $password 
-     * @return Spindle_Model_User
-     */
-    public function setCredentials($password)
-    {
-        $this->_credentials = (string) $password;
-        return $this;
-    }
-
-    /**
-     * Retrieve authentication credentials
-     * 
-     * @return string|null
-     */
-    public function getCredentials()
-    {
-        return $this->_credentials;
-    }
-
-    /**
-     * Authenticate a user
-     * 
-     * @return Zend_Auth_Result
-     */
-    public function authenticate()
-    {
-        $table = new Spindle_Model_DbTable_User;
-        $select = $table->select();
-        $select->where('username = ?', $this->getIdentity())
-               ->where('password = ?', md5($this->getCredentials()))
-               ->where('date_banned IS NULL');
-        $user = $table->fetchRow($select);
-        if (null === $user) {
-            // failed
-            $result = new Zend_Auth_Result(
-                Zend_Auth_Result::FAILURE_UNCATEGORIZED,
-                null
-            );
-        } else {
-            // passed
-            $identity = $user->toArray();
-            unset(
-                $identity['password'],
-                $identity['date_banned']
-            );
-            $result = new Zend_Auth_Result(Zend_Auth_Result::SUCCESS, (object) $identity);
-        }
-        return $result;
-    }
-
-    /**
      * Fetch all current users
      * 
-     * @return Zend_Db_Table_Rowset_Abstract
+     * @return Spindle_Model_UserManager_Users
      */
     public function fetchUsers()
     {
@@ -122,14 +44,14 @@ class Spindle_Model_UserManager extends Spindle_Model_Model implements Zend_Auth
         $select = $table->select();
         $select->from($table, array('id', 'username', 'email', 'fullname', 'date_created'))
                ->where('date_banned IS NULL');
-        return $table->fetchAll($select);
+        return new Spindle_Model_UserManager_Users($table->fetchAll($select));
     }
 
     /**
      * Fetch user
      * 
      * @param  int|string $id User id, username, or email
-     * @return Zend_Db_Table_Row_Abstract|null
+     * @return Spindle_Model_UserManager_User|null
      */
     public function fetchUser($id)
     {
@@ -139,7 +61,15 @@ class Spindle_Model_UserManager extends Spindle_Model_Model implements Zend_Auth
         $select = $table->select();
         $select->where('date_banned IS NULL')
                ->where($this->_createUserCondition($id));
-        return $table->fetchRow($select);
+        $row = $table->fetchRow($select);
+
+        if (null === $row) {
+            return null;
+        }
+
+        $user = new Spindle_Model_UserManager_User($row);
+        $user->setManager($this);
+        return $user;
     }
 
     /**
@@ -203,6 +133,19 @@ class Spindle_Model_UserManager extends Spindle_Model_Model implements Zend_Auth
 
         Phly_PubSub::publish(__CLASS__ . '::save::end', $id, $this);
         return $id;
+    }
+
+    /**
+     * 
+     * 
+     * @param mixed $data 
+     * @return void
+     */
+    public function create($data = null)
+    {
+        $user = new Spindle_Model_UserManager_User($data);
+        $user->setManager($this);
+        return $user;
     }
 
     /**
