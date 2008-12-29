@@ -21,6 +21,26 @@ class Spindle_Model_Comment extends Spindle_Model_Value implements Zend_Acl_Reso
     protected $_table;
 
     /**
+     * Constructor
+     * 
+     * @param  int|array|object $data 
+     * @param  null|array|object $options 
+     * @return void
+     */
+    public function __construct($data, $options = null)
+    {
+        if (is_string($data)) {
+            if (!$this->fetch($data)) {
+                throw new Spindle_Model_Exception('Could not load user from provided data');
+            }
+            $this->setOptions($options);
+            return;
+        }
+
+        parent::__construct($data, $options);
+    }
+
+    /**
      * ACL resource
      * 
      * @return string
@@ -166,6 +186,31 @@ class Spindle_Model_Comment extends Spindle_Model_Value implements Zend_Acl_Reso
             $this,
             $action
         );
+    }
+
+    public function fetch($criteria = null)
+    {
+        $table  = $this->getDbTable();
+        $select = $table->select();
+        if ($criteria) {
+            $select->where('id = ?', $criteria);
+        } else {
+            if (isset($this->id)) {
+                $select->where('id = ?', $this->id);
+                $criteria = $this->id;
+            }
+            if (null === $criteria) {
+                throw new Spindle_Model_Exception('No criteria provided');
+            }
+        }
+
+        $row = $table->fetchRow($select);
+        if ($row) {
+            $this->populate($row);
+            return true;
+        }
+
+        return false;
     }
 
     public function save($data = null)

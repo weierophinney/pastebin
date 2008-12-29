@@ -21,20 +21,16 @@ class Spindle_BugController extends Zend_Controller_Action
         $this->model        = new Spindle_Model_BugTracker;
         $this->commentModel = new Spindle_Model_CommentGateway;
 
-        $commentsHelper = $this->view->getHelper('comments');
-        $commentsHelper->setModel('Comment', $this->commentModel);
-
         $auth = Zend_Auth::getInstance();
         if ($auth->hasIdentity()) {
-            $identity = $auth->getIdentity();
-            $this->model->setIdentity($identity);
-            $this->commentModel->setIdentity($identity);
-            $this->userId = $identity->id;
+            $this->identity = $auth->getIdentity();
+            $this->model->setIdentity($this->identity);
+            $this->commentModel->setIdentity($this->identity);
+            $this->userId = $this->identity->id;
         } else {
             $this->model->setIdentity(null);
             $this->commentModel->setIdentity(null);
         }
-
 
         $this->view->headTitle()->prepend('Bugs');
         $this->view->dojo()->requireModule('bug.main')
@@ -43,6 +39,9 @@ class Spindle_BugController extends Zend_Controller_Action
         $this->view->placeholder('nav')->append(
             $this->view->render('bug/_nav.phtml')
         );
+
+        $commentsHelper = $this->view->getHelper('comments');
+        $commentsHelper->setModel('CommentGateway', $this->commentModel);
 
         $this->view->model = $this->model;
     }
@@ -69,8 +68,7 @@ class Spindle_BugController extends Zend_Controller_Action
             return $this->_helper->redirector('list');
         }
 
-        $this->view->bug = $this->model->fetchBug($id);
-        if (null === $this->view->bug) {
+        if (!$this->view->bug = $this->model->fetch($id)) {
             return $this->render('not-found');
         }
     }
@@ -90,9 +88,10 @@ class Spindle_BugController extends Zend_Controller_Action
             return $this->_helper->redirector('list');
         }
 
-        $form = $this->model->getBugForm();
+        $bug  = $this->model->fetch();
+        $form = $bug->getForm();
         $form->removeElement('id');
-        if (!$id = $this->model->save($request->getPost())) {
+        if (!$id = $bug->save($request->getPost())) {
             // failed
             return $this->render('add');
         }
@@ -115,7 +114,10 @@ class Spindle_BugController extends Zend_Controller_Action
         $segments = explode('/', $path);
         $bugId    = array_pop($segments);
 
-        if (!$id = $this->commentModel->save($request->getPost())) {
+        $comment = new Spindle_Model_Comment(array(), array(
+            'identity' => $this->identity,
+        ));
+        if (!$id = $comment->save($request->getPost())) {
             $request->setParam('id', $bugId);
             $this->_helper->viewRenderer->setScriptAction('view');
             $this->viewAction();
@@ -135,8 +137,10 @@ class Spindle_BugController extends Zend_Controller_Action
             return $this->render('not-found');
         }
 
-        if (!$this->model->delete($id)) {
-            $this->message = "Insufficient permissions to delete issues.";
+        $bug = $this->model->fetch($id);
+
+        if (!$bug->delete()) {
+            $this->message = "Insufficient permissions to delete issues or database error.";
             return $this->render('error');
         }
         return $this->_helper->redirector('list');

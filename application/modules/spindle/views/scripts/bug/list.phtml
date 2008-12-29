@@ -8,16 +8,14 @@ if (!in_array($status, array('Open', 'Resolved', 'Closed'))) {
 
 $method= 'fetch' . $status . 'Bugs';
 if ('' != $this->developer) {
-    $user = new Spindle_Model_User(array());
-    $user->fetch($this->developer);
+    $user = new Spindle_Model_User($this->developer);
     if ($user->id) {
         $method  .= 'ByDeveloper';
         $bugs     = $this->model->$method($this->developer, $this->page);
         $listType = $status . ' bugs owned by ' . $user->username;
     }
 } elseif ('' != $this->reporter) {
-    $user = new Spindle_Model_User(array());
-    $user->fetch($this->reporter);
+    $user = new Spindle_Model_User($this->reporter);
     if ($user->id) {
         $method  .= 'ByReporter';
         $bugs     = $this->model->$method($this->reporter, $this->page);
@@ -38,7 +36,6 @@ if (!isset($bugs) || !$bugs) {
     <li><b>No bugs found matching this criteria</b></li>
 <? else: ?>
     <? foreach ($bugs as $bug): ?>
-    <? $bug = (object) $bug ?>
     <li><?= $this->bugLink($bug->id, $bug->summary) ?></li>
     <? endforeach ?>
 <? endif ?>

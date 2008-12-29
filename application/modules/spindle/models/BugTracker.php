@@ -133,118 +133,6 @@ class Spindle_Model_BugTracker extends Spindle_Model_Gateway
     }
 
     /**
-     * Link one bug to another
-     * 
-     * @param  int $originalBug 
-     * @param  int $linkedBug 
-     * @param  int $linkType 
-     * @return bool False if not allowed, true otherwise
-     */
-    public function link($originalBug, $linkedBug, $linkType)
-    {
-        if (!$this->checkAcl('link')) {
-            return false;
-        }
-        $table  = $this->getDbTable('BugRelation');
-        $select = $table->select();
-        $select->where('bug_id = ?', $originalBug)
-               ->where('related_id = ?', $linkedBug);
-        $links = $table->fetchAll($select);
-        if (count($links) > 0) {
-            $link = $links->current();
-            if ($link->relation_type != $linkType) {
-                $link->relation_type = $linkType;
-                $link->save();
-            }
-            return true;
-        }
-
-        $select = $table->select();
-        $select->where('bug_id = ?', $linkedBug)
-               ->where('related_id = ?', $originalBug);
-        $links = $table->fetchAll($select);
-        if (count($links) > 0) {
-            $link = $links->current();
-            if ($link->relation_type != $linkType) {
-                $link->relation_type = $linkType;
-                $link->save();
-            }
-            return true;
-        }
-
-        $data = array(
-            'bug_id'        => $originalBug,
-            'related_id'    => $linkedBug,
-            'relation_type' => $linkType,
-        );
-        $table->insert($data);
-        return true;
-    }
-
-    /**
-     * Resolve a bug
-     * 
-     * @param  int $bugId 
-     * @param  int $resolutionId 
-     * @param  int $developerId 
-     * @return false|int False if no privs, ID of row otherwise
-     */
-    public function resolve($bugId, $resolutionId, $developerId)
-    {
-        if (!$this->checkAcl('resolve')) {
-            return false;
-        }
-        $resolutions = $this->getResolutions();
-        if (!in_array($resolutionId, array_keys($resolutions))) {
-            throw new Exception('Invalid resolution type provided');
-        }
-
-        $table = $this->getDbTable('bug');
-        $where = $table->getAdapter()->quoteInto('id = ?', $bugId);
-        $data  = array(
-            'date_resolved' => date('Y-m-d'),
-            'developer_id'  => $developerId,
-            'resolution_id' => $resolutionId,
-        );
-        return $table->update($data, $where);
-    }
-
-    /**
-     * Close a bug
-     * 
-     * @param  int $bugId 
-     * @return int|false ID of row on success, false otherwise
-     */
-    public function close($bugId)
-    {
-        if (!$this->checkAcl('close')) {
-            return false;
-        }
-        $table = $this->getDbTable('bug');
-        $where = $table->getAdapter()->quoteInto('id = ?', $bugId);
-        $data  = array(
-            'date_closed' => date('Y-m-d'),
-        );
-        return $table->update($data, $where);
-    }
-
-    /**
-     * Delete a bug
-     * 
-     * @param  int $bugId 
-     * @return int|false Number of rows updated; false if no privileges
-     */
-    public function delete($bugId)
-    {
-        if (!$this->checkAcl('delete')) {
-            return false;
-        }
-        $table = $this->getDbTable('bug');
-        $where = $table->getAdapter()->quoteInto('id = ?', $bugId);
-        return $table->update(array('date_deleted' => date('Y-m-d')), $where);
-    }
-
-    /**
      * Get bug types as assoc array
      * 
      * @return array
@@ -302,18 +190,17 @@ class Spindle_Model_BugTracker extends Spindle_Model_Gateway
      * Fetch an individual bug by id
      * 
      * @param  int $id 
-     * @return Zend_Paginator|Spindle_Model_BugTracker_Bug|null|false False on lack of privileges
+     * @return Zend_Paginator|Spindle_Model_Bug|null|false False on lack of privileges
      */
-    public function fetchBug($id)
+    public function fetch($id = array())
     {
         if (!$this->checkAcl('view')) {
             return false;
         }
-        $select = $this->_getSelect();
-        $select->where('b.id = ?', $id)
-               ->where('date_deleted IS NULL');
-        $row = $this->getDbTable('bug')->fetchRow($select);
-        return (null !== $row) ? new Spindle_Model_BugTracker_Bug($row->toArray()) : null;
+
+        return new Spindle_Model_Bug($id, array(
+            'gateway' => $this,
+        ));
     }
 
     public function fetchAllBugs($offset = null, $limit = null)
@@ -463,19 +350,6 @@ class Spindle_Model_BugTracker extends Spindle_Model_Gateway
     }
 
     /**
-     * Bug form/validation chain
-     * 
-     * @return Spindle_Model_Form_Bug
-     */
-    public function getBugForm()
-    {
-        if (null === $this->_form) {
-            $this->_form = new Spindle_Model_Form_Bug(array('model' => $this));
-        }
-        return $this->_form;
-    }
-
-    /**
      * Cleanup test bugs
      * 
      * @return void
@@ -491,7 +365,7 @@ class Spindle_Model_BugTracker extends Spindle_Model_Gateway
      * @param  array $criteria 
      * @param  string $limit 
      * @param  int $offset 
-     * @return false|Spindle_Model_BugTracker_Bugs|Zend_Paginator
+     * @return false|Spindle_Model_Bugs|Zend_Paginator
      */
     protected function _fetchBugs(array $criteria, $limit, $offset)
     {
@@ -529,7 +403,7 @@ class Spindle_Model_BugTracker extends Spindle_Model_Gateway
         }
 
         $rowSet = $this->getDbTable('bug')->fetchAll($select);
-        return new Spindle_Model_BugTracker_Bugs($rowSet->toArray());
+        return new Spindle_Model_Bugs($rowSet->toArray(), $this);
     }
 
     /**

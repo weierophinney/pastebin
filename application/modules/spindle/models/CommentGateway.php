@@ -50,7 +50,7 @@ class Spindle_Model_CommentGateway extends Spindle_Model_Gateway
      * Fetch all comments by path
      * 
      * @param  string $path
-     * @return Spindle_Model_ResultSet|false False if no privileges
+     * @return Spindle_Model_Comments|false False if no privileges
      */
     public function fetchCommentsByPath($path)
     {
@@ -59,14 +59,14 @@ class Spindle_Model_CommentGateway extends Spindle_Model_Gateway
         }
         $select = $this->_getSelect()->where('path = ?', $path);
         $rowSet = $this->getDbTable('comment')->fetchAll($select);
-        return new Spindle_Model_ResultSet($rowSet->toArray());
+        return new Spindle_Model_Comments($rowSet->toArray());
     }
 
     /**
      * Fetch comments by user ID
      * 
      * @param  int $userId 
-     * @return Zend_Db_Table_Rowset_Abstract|
+     * @return Spindle_Model_Comments
      */
     public function fetchCommentsByUser($userId)
     {
@@ -75,7 +75,7 @@ class Spindle_Model_CommentGateway extends Spindle_Model_Gateway
         }
         $select = $this->_getSelect()->where('user_id = ?', $userId);
         $rowSet = $this->getDbTable('comment')->fetchAll($select);
-        return new Spindle_Model_ResultSet($rowSet->toArray());
+        return new Spindle_Model_Comments($rowSet->toArray());
     }
 
     /**

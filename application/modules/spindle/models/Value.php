@@ -36,20 +36,8 @@ abstract class Spindle_Model_Value
             throw new Spindle_Model_Exception('No allowed fields specified!');
         }
 
-        if (null !== $options) {
-            if ($options instanceof Zend_Config) {
-                $options = $options->toArray();
-            } elseif (is_object($options)) {
-                $options = (array) $options;
-            }
-
-            if (!is_array($options)) {
-                throw new Spindle_Model_Exception('Invalid options provided; must be an array or object');
-            }
-            $this->setOptions($options);
-        }
-
-        $this->populate($data);
+        $this->setOptions($options)
+             ->populate($data);
     }
 
     /**
@@ -58,8 +46,22 @@ abstract class Spindle_Model_Value
      * @param  array $options 
      * @return Spindle_Model_Value
      */
-    public function setOptions(array $options)
+    public function setOptions($options)
     {
+        if (null === $options) {
+            return $this;
+        }
+
+        if ($options instanceof Zend_Config) {
+            $options = $options->toArray();
+        } elseif (is_object($options)) {
+            $options = (array) $options;
+        }
+
+        if (!is_array($options)) {
+            throw new Spindle_Model_Exception('Invalid options provided; must be an array or object');
+        }
+
         $methods = get_class_methods($this);
         foreach ($options as $key => $value) {
             $method = 'set' . ucfirst($key);

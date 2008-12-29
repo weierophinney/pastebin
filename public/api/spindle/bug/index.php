@@ -35,7 +35,7 @@ $view->baseUrl = Zend_Registry::get('baseUrl');
 $view->model   = $model;
 
 if (isset($matches) && $matches) {
-    $view->bug    = $model->fetchBug($matches[2]);
+    $view->bug    = $model->fetch($matches[2]);
     switch ($matches[1]) {
         case 'bug':
         default:

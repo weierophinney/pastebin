@@ -11,7 +11,7 @@ var bugTreePane = dijit.byId("bugTreePane");
 bugTreePane.tree.model.newItem({ name: row.i.id });
 
 var bugPane = dijit.byId("bugPane");
-bugPane.setHref("/api/spindle/bug/content/" + row.i.id + ".html");
+bugPane.setHref("/api/spindle/bug/content/bug-" + row.i.id + ".html");
 bugPane.refresh();
     </script>
     <thead>

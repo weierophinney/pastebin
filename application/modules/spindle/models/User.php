@@ -44,8 +44,17 @@ class Spindle_Model_User
      */
     public function __construct($data, $options = null)
     {
-        parent::__construct($data, $options);
         $this->_pluginProvider = new Phly_PubSub_Provider();
+
+        if (is_string($data)) {
+            if (!$this->fetch($data)) {
+                throw new Spindle_Model_Exception('Could not load user from provided data');
+            }
+            $this->setOptions($options);
+            return;
+        }
+
+        parent::__construct($data, $options);
     }
 
     /**
