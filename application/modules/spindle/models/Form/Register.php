@@ -20,7 +20,6 @@ class Spindle_Model_Form_Register extends Zend_Dojo_Form
             'validators' => array(
                 'Alpha',
                 array('StringLength', true, array(3, 20)),
-                array('UniqueUsername', false, array($user)),
             ),
             'required'   => true,
             'lowercase'  => true,
@@ -43,7 +42,6 @@ class Spindle_Model_Form_Register extends Zend_Dojo_Form
             'filters'    => array('StringTrim'),
             'validators' => array(
                 array('EmailAddress', true),
-                array('UniqueUsername', true, array($user)),
             ),
             'required'   => false,
             'trim'       => true,

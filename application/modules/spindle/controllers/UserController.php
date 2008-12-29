@@ -31,8 +31,6 @@ class Spindle_UserController extends Zend_Controller_Action
 
         $this->view->headTitle()->prepend('User');
         $this->view->dojo()->enable();
-
-        $this->view->model = $this->model = new Spindle_Model_UserManager;
     }
 
     public function indexAction()
@@ -54,12 +52,12 @@ class Spindle_UserController extends Zend_Controller_Action
 
         // Setup our authentication adapter and check credentials
         Phly_PubSub::publish('log', "Validating credentials: ". var_export($credentials, 1));
-        $user   = $this->model->create($credentials);
+        $user   = new Spindle_Model_User($credentials);
         $auth   = Zend_Auth::getInstance();
         $result = $auth->authenticate($user);
         if (!$result->isValid()) {
             // Invalid credentials
-            $this->model->getLoginForm()
+            $user->getForm('login')
                  ->setDescription('Invalid credentials provided')
                  ->addErrorMessage('Invalid credentials provided');
             return $this->render('index'); // re-render the login form
@@ -96,13 +94,13 @@ class Spindle_UserController extends Zend_Controller_Action
         }
 
         // Get our form and validate it
-        if (!$id = $this->model->save($request->getPost(), 'Register')) {
-            $this->view->form = $this->model->getRegistrationForm();
+        $user = new Spindle_Model_User(array());
+        if (!$id = $user->save($request->getPost())) {
+            $this->view->form = $user->getForm('register');
             return $this->render('index'); // re-render the login form
         }
 
         // Authenticate and persist user identity
-        $user = $this->model->fetchUser($id);
         Zend_Auth::getInstance()->getStorage()->write((object) $user);
 
         if (null !== $this->_helper->ajaxContext->getCurrentContext()) {

@@ -5,7 +5,7 @@ class Spindle_View_Helper_Comments extends Zend_View_Helper_Abstract
 
     public function comments($path)
     {
-        $commentModel = $this->getModel('CommentManager');
+        $commentModel = $this->getModel('CommentGateway');
         $comments     = $commentModel->fetchCommentsByPath($path);
         if (0 == count($comments)) {
             return '<p>No comments</p>'
@@ -14,7 +14,8 @@ class Spindle_View_Helper_Comments extends Zend_View_Helper_Abstract
 
         $html = '';
         foreach ($comments as $comment) {
-            $user  = $this->getModel('UserManager')->fetchUser($comment->user_id);
+            $user  = $this->getModel('User', array());
+            $user->fetch($comment->user_id);
             $link  = $this->view->url(
                 array(
                     'controller' => 'user',
@@ -39,7 +40,7 @@ class Spindle_View_Helper_Comments extends Zend_View_Helper_Abstract
     public function renderForm($path)
     {
         $html = '';
-        $commentModel = $this->getModel('CommentManager');
+        $commentModel = $this->getModel('CommentGateway');
         if ($commentModel->checkAcl('save')) {
             $form = $commentModel->getCommentForm();
             $form->setMethod('post')
@@ -60,11 +61,15 @@ class Spindle_View_Helper_Comments extends Zend_View_Helper_Abstract
         return $html;
     }
 
-    public function getModel($name)
+    public function getModel($name, $args = null)
     {
         if (!isset($this->_model[$name])) {
             $class = 'Spindle_Model_' . $name;
-            $this->_model[$name] = new $class;
+            if ($args) {
+                $this->_model[$name] = new $class($args);
+            } else {
+                $this->_model[$name] = new $class;
+            }
         }
         return $this->_model[$name];
     }

@@ -1,5 +1,5 @@
 <?php
-class Spindle_Model_BugTracker_Bug extends Spindle_Model_Result
+class Spindle_Model_BugTracker_Bug extends Spindle_Model_Value
 {
     protected $_allowed = array(
         'id',
@@ -9,6 +9,7 @@ class Spindle_Model_BugTracker_Bug extends Spindle_Model_Result
         'priority_id',
         'issue_type',
         'type_id',
+        'resolution',
         'resolution_id',
         'summary',
         'description',

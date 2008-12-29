@@ -19,7 +19,7 @@ class Spindle_BugController extends Zend_Controller_Action
         $ac->initContext($this->_getParam('format'));
 
         $this->model        = new Spindle_Model_BugTracker;
-        $this->commentModel = new Spindle_Model_CommentManager;
+        $this->commentModel = new Spindle_Model_CommentGateway;
 
         $commentsHelper = $this->view->getHelper('comments');
         $commentsHelper->setModel('Comment', $this->commentModel);
@@ -59,7 +59,7 @@ class Spindle_BugController extends Zend_Controller_Action
             'reporter'  => $this->_getParam('reporter', ''),
             'status'    => $this->_getParam('status', 'open'),
             'page'      => $this->_getParam('page', 1),
-            'userModel' => new Spindle_Model_UserManager(),
+            'userModel' => new Spindle_Model_UserGateway(),
         ));
     }
 

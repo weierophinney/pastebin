@@ -1,6 +1,6 @@
 <?php
 /**
- * Base model
+ * Base gateway
  *
  * Defines methods for setting options, retrieving resource loader, creating 
  * and manipulating plugin hooks, and registering and manipulating plugins.
@@ -10,7 +10,7 @@
  * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version    $Id: $
  */
-abstract class Spindle_Model_Model implements Zend_Acl_Resource_Interface
+abstract class Spindle_Model_Gateway implements Zend_Acl_Resource_Interface
 {
     /**
      * @var Spindle_Model_Acl_Spindle
@@ -58,11 +58,6 @@ abstract class Spindle_Model_Model implements Zend_Acl_Resource_Interface
      * @var string ACL resource identifier
      */
     protected $_resourceId;
-
-    /**
-     * @var My_Controller_Helper_ResourceLoader
-     */
-    protected $_resourceLoader;
 
     /**
      * @var array Privilege map (role => privileges)
@@ -122,35 +117,6 @@ abstract class Spindle_Model_Model implements Zend_Acl_Resource_Interface
             }
         }
         return $this;
-    }
-
-    /**
-     * Set resource loader
-     * 
-     * @param  object $loader 
-     * @return Spindle_Model_DbTable_Paste
-     */
-    public function setResourceLoader($loader)
-    {
-        if (!is_object($loader)) {
-            throw new Exception('Invalid resource loader provided to ' . __CLASS__);
-        }
-        $this->_resourceLoader = $loader;
-        return $this;
-    }
-
-    /**
-     * Retrieve resource loader
-     * 
-     * @return object
-     */
-    public function getResourceLoader()
-    {
-        if (null === $this->_resourceLoader) {
-            $this->_resourceLoader = new My_Controller_Helper_ResourceLoader;
-            $this->_resourceLoader->initModule('spindle');
-        }
-        return $this->_resourceLoader;
     }
 
     /**
@@ -289,73 +255,6 @@ abstract class Spindle_Model_Model implements Zend_Acl_Resource_Interface
     }
 
     /**
-     * Insert or update a row
-     * 
-     * @pubsub save::pre(array $info, string $validator, Spindle_Model_Model $model)
-     * @pubsub save::preSave(Zend_Db_Table_Row_Abstract $row, Spindle_Model_Model $model)
-     * @pubsub save::post(int|null $id, Spindle_Model_Model $model)
-     * @param  array $info New or updated row data
-     * @param  string|null $validator Validation chain to use; defaults to $_defaultValidator
-     * @return false|int Row ID of saved row, false if insufficient privileges
-     */
-    public function save(array $info, $validator = null)
-    {
-        $pluginProvider = $this->getPluginProvider();
-        $pluginProvider->publish('save::pre', $info, $validator, $this);
-        if (!$this->checkAcl('save')) {
-            return false;
-        }
-
-        if (empty($validator)) {
-            $validator = $this->_defaultValidator;
-        }
-
-        $accessor  = 'get' . ucfirst($validator) . 'Form';
-        $validator = $this->$accessor();
-        $table     = $this->getDbTable($this->_primaryTable);
-        $id        = null;
-        $row       = null;
-
-        if (!$validator->isValid($info)) {
-            return false;
-        }
-
-        $info = $validator->getValues();
-        if (null !== ($parent = $validator->getElementsBelongTo())) {
-            $info = $info[$parent];
-        }
-
-        if (array_key_exists('id', $info)) {
-            $id = $info['id'];
-            unset($info['id']);
-            $matches = $table->find($id);
-            if (0 < count($matches)) {
-                $row = $matches->current();
-            }
-        }
-        if (null === $row) {
-            $row = $table->createRow($info);
-            $row->date_created = date('Y-m-d');
-        }
-
-        $columns = $table->info('cols');
-        foreach ($this->_protectedColumns as $column) {
-            unset($columns[$column]);
-        }
-        foreach ($columns as $column) {
-            if (array_key_exists($column, $info)) {
-                $row->$column = $info[$column];
-            }
-        }
-
-        $pluginProvider->publish('Spindle_Model::save::preSave', $row, $this);
-        $id = $row->save();
-
-        $pluginProvider->publish('Spindle_Model::save::post', $id, $this);
-        return $id;
-    }
-
-    /**
      * Lazy loaded DB Table registry
      * 
      * @param  string $name 
@@ -369,5 +268,4 @@ abstract class Spindle_Model_Model implements Zend_Acl_Resource_Interface
         }
         return $this->_dbTables[$name];
     }
-
 }

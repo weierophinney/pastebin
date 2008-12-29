@@ -22,9 +22,8 @@ class Spindle_Plugin_Auth extends Zend_Controller_Plugin_Abstract
         }
 
         if (!empty($identity)) {
-            $jsonIdentity = Zend_Json::encode($identity);
             $this->view->dojo()->addOnLoad('function(){
-                spindle.statusBar.setStatusIdentity(' . $jsonIdentity . ');
+                spindle.statusBar.setStatusIdentity(' . $identity->toJson() . ');
             }');
         }
 

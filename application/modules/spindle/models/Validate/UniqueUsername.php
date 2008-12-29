@@ -9,7 +9,7 @@ class Spindle_Model_Validate_UniqueUsername extends Zend_Validate_Abstract
 
     protected $_model;
 
-    public function __construct(Spindle_Model_UserManager $model)
+    public function __construct(Spindle_Model_User $model = null)
     {
         $this->_model = $model;
     }
@@ -18,12 +18,25 @@ class Spindle_Model_Validate_UniqueUsername extends Zend_Validate_Abstract
     {
         $this->_setValue($value);
 
-        $user = $this->_model->fetchUser($value);
-        if (null === $user) {
+        if (!$this->getModel()->fetch($value)) {
             return true;
         }
 
         $this->_error(self::USER_EXISTS);
         return false;
+    }
+
+    public function setModel(Spindle_Model_User $model = null)
+    {
+        $this->_model = $model;
+        return $this;
+    }
+
+    public function getModel()
+    {
+        if (null === $this->_model) {
+            $this->setModel(new Spindle_Model_User(array()));
+        }
+        return $this->_model;
     }
 }

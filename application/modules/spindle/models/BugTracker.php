@@ -10,7 +10,7 @@
  * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version    $Id: $
  */
-class Spindle_Model_BugTracker extends Spindle_Model_Model
+class Spindle_Model_BugTracker extends Spindle_Model_Gateway
 {
     /**
      * @var string default validation chain (form)

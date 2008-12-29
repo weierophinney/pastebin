@@ -1,5 +1,6 @@
 <?php
-$loginForm    = $this->model->getLoginForm();
+$model     = new Spindle_Model_User(array());
+$loginForm = $model->getForm('login');
 $loginForm->setMethod('post')
           ->setAction($this->url(
               array(
@@ -11,7 +12,7 @@ $loginForm->setMethod('post')
               true
             ));
 
-$registerForm = $this->model->getregisterForm();
+$registerForm = $model->getForm('register');
 $registerForm->setMethod('post')
              ->setAction($this->url(
                  array(

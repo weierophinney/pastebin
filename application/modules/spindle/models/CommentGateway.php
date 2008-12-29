@@ -1,6 +1,6 @@
 <?php
 /**
- * Comment model
+ * Comment gateway
  * 
  * @uses       Spindle_Model_Model
  * @package    Spindle
@@ -10,17 +10,12 @@
  * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version    $Id: $
  */
-class Spindle_Model_CommentManager extends Spindle_Model_Model
+class Spindle_Model_CommentGateway extends Spindle_Model_Gateway
 {
     /**
      * @var string default validation chain (form)
      */
     protected $_defaultValidator = 'comment';
-
-    /**
-     * @var Spindle_Model_Form_Bug
-     */
-    protected $_form;
 
     /**
      * Primary table for operations
@@ -81,38 +76,6 @@ class Spindle_Model_CommentManager extends Spindle_Model_Model
         $select = $this->_getSelect()->where('user_id = ?', $userId);
         $rowSet = $this->getDbTable('comment')->fetchAll($select);
         return new Spindle_Model_ResultSet($rowSet->toArray());
-    }
-
-    /**
-     * Mark a comment as deleted
-     * 
-     * @param  int $id 
-     * @return int
-     */
-    public function delete($id)
-    {
-        if (!$this->checkAcl('delete')) {
-            return false;
-        }
-        $table = $this->getDbTable('comment');
-        $where = $table->getAdapter()->quoteInto('id = ?', $id);
-        return $table->update(
-            array('date_deleted' => date('Y-m-d')),
-            $where
-        );
-    }
-
-    /**
-     * Bug form/validation chain
-     * 
-     * @return Spindle_Model_Form_Comment
-     */
-    public function getCommentForm()
-    {
-        if (null === $this->_form) {
-            $this->_form = new Spindle_Model_Form_Comment;
-        }
-        return $this->_form;
     }
 
     /**
