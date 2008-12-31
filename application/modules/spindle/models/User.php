@@ -58,6 +58,18 @@ class Spindle_Model_User
     }
 
     /**
+     * Serialization (used for sessions)
+     *
+     * Only serialize properties that can be.
+     * 
+     * @return array
+     */
+    public function __sleep()
+    {
+        return array('_data', '_allowed');
+    }
+
+    /**
      * Overload: set property
      *
      * Overloads 'password' property to set value as md5 sum.

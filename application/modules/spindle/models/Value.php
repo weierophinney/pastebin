@@ -163,7 +163,13 @@ abstract class Spindle_Model_Value
      */
     public function toArray()
     {
-        return $this->_data;
+        $data = array();
+        foreach ($this->_data as $key => $value) {
+            if (null !== $value) {
+                $data[$key] = $value;
+            }
+        }
+        return $data;
     }
 
     /**
