@@ -16,15 +16,7 @@ class Spindle_View_Helper_Comments extends Zend_View_Helper_Abstract
         foreach ($comments as $comment) {
             $user  = $this->getModel('User', array());
             $user->fetch($comment->user_id);
-            $link  = $this->view->url(
-                array(
-                    'controller' => 'user',
-                    'action'     => 'view',
-                    'id'         => $user->id,
-                ),
-                'default',
-                true
-            );
+            $link  = $this->view->baseUrl() . '/user/view/id/' . $user->id;
             $html .= '<div class="comment">'
                   .  '<h4>Posted by <a href="' . $link . '">' . $this->view->escape($user->fullname) . '</a>'
                   .  ' on ' . date('Y-m-d', strtotime($comment->date_created)) . '</h4>'
@@ -40,19 +32,11 @@ class Spindle_View_Helper_Comments extends Zend_View_Helper_Abstract
     public function renderForm($path)
     {
         $html = '';
-        $commentModel = $this->getModel('CommentGateway');
+        $commentModel = $this->getModel('Comment', array());
         if ($commentModel->checkAcl('save')) {
-            $form = $commentModel->getCommentForm();
+            $form = $commentModel->getForm();
             $form->setMethod('post')
-                 ->setAction($this->view->url(
-                       array(
-                           'module'     => 'spindle',
-                           'controller' => 'bug',
-                           'action'     => 'comment',
-                       ),
-                       'default',
-                       true
-                   ));
+                 ->setAction($this->view->baseUrl() . '/spindle/bug/comment');
             $form->path->setValue($path);
             $form->user_id->setValue($commentModel->getIdentity()->id);
             $html .= '<h3>Submit a comment:</h3>'
@@ -65,7 +49,7 @@ class Spindle_View_Helper_Comments extends Zend_View_Helper_Abstract
     {
         if (!isset($this->_model[$name])) {
             $class = 'Spindle_Model_' . $name;
-            if ($args) {
+            if (null !== $args) {
                 $this->_model[$name] = new $class($args);
             } else {
                 $this->_model[$name] = new $class;
